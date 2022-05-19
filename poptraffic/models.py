@@ -15,3 +15,24 @@ class PopTrafficData(models.Model):
 
     def __str__(self):
         return self.type
+
+class PopTrafficHyperparameter(models.Model):
+
+    # hyperparameter
+    epochs = models.IntegerField()
+    batch_size = models.IntegerField()
+    lr = models.FloatField()
+    dropout = models.FloatField()
+
+    # road
+    road_num = models.IntegerField()
+    road_dim = models.IntegerField()
+
+    # region
+    region_num = models.IntegerField()
+    region_dim = models.IntegerField()
+
+    # zone
+    zone_num = models.IntegerField()
+    zone_dim = models.IntegerField()
+

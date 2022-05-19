@@ -2,8 +2,8 @@ from django.shortcuts import render, redirect
 from django.views import View
 from django.http import JsonResponse
 from django.template.defaultfilters import filesizeformat
-from .forms import PopTrafficDataForm
-from .models import PopTrafficData
+from .forms import PopTrafficDataForm, PopTrafficHyperparameterForm
+from .models import PopTrafficData, PopTrafficHyperparameter
 import os
 import time
 
@@ -47,53 +47,6 @@ class PopTrafficInputModelView(View):
         form = PopTrafficDataForm()       
         return render(request, "poptraffic/poptraffic_input_model.html",  {'form': form})
 
-    # def post(self, request):
-    #     _type = request.POST["type"]
-    #     print(_type)
-
-    #     if _type == "road_network":
-    #         form = RoadNetworkUpload(request.POST, request.FILES)
-    #         # print(form.errors)
-    #         if form.is_valid():
-    #             # get cleaned data
-    #             raw_file = form.cleaned_data.get("file")
-    #             new_file = RoadNetworkData()
-    #             new_file.file = handle_uploaded_file(raw_file, _type)
-    #             new_file.save()
-    #             # return render(request, self.template, {'form': form})
-    #             files = RoadNetworkData.objects.all().order_by('-id')
-    #             data = []
-    #             print(files[0].file.url)
-    #             print(files[0].file.size)
-    #             for file in files:
-    #                 data.append({
-    #                     "url": file.file.url,
-    #                     "size": filesizeformat(file.file.size)
-    #                     })
-    #             return JsonResponse(data, safe=False)
-    #         else:
-    #             data = {'error_msg': "Only jpg, pdf and xlsx files are allowed."}
-    #             return JsonResponse(data)
-    #     elif _type == "trajectory":
-    #         form = TrajectoryUpload(request.POST, request.FILES)
-    #         if form.is_valid():
-    #             # get cleaned data
-    #             raw_file = form.cleaned_data.get("file")
-    #             new_file = TrajectoryData()
-    #             new_file.file = handle_uploaded_file(raw_file, _type)
-    #             new_file.save()
-    #             return render(request, self.template, {'form': form})
-    #     elif _type == "POI":
-    #         form = POIUpload(request.POST, request.FILES)
-    #         if form.is_valid():
-    #             # get cleaned data
-    #             raw_file = form.cleaned_data.get("file")
-    #             new_file = POIData()
-    #             new_file.file = handle_uploaded_file(raw_file, _type)
-    #             new_file.save()
-    #             return render(request, self.template, {'form': form})
-    #     return JsonResponse({'error_msg': 'only POST method accpeted.'})
-
 # handling AJAX requests
 class PopTrafficUploadData(View):
 
@@ -133,3 +86,27 @@ class PopTrafficUploadData(View):
                 data = {'error_msg': "Only json, txt, csv files are allowed."}
             return JsonResponse(data)
 
+class PopTrafficTrain(View):
+
+    def post(self, request):
+        print(request.POST)
+
+        form = PopTrafficHyperparameterForm(data=request.POST)
+        print(form.errors)
+
+        if form.is_valid():
+            # get cleaned data
+            new_hyperparameter = PopTrafficHyperparameter()
+            new_hyperparameter.road_num = form.cleaned_data.get("road_num")
+            new_hyperparameter.road_dim = form.cleaned_data.get("road_dim")
+            new_hyperparameter.region_num = form.cleaned_data.get["region_num"]
+            new_hyperparameter.region_dim = form.cleaned_data.get["region_dim"]
+            new_hyperparameter.zone_num = form.cleaned_data.get["zone_num"]
+            new_hyperparameter.zone_dim = form.cleaned_data.get["zone_dim"]
+            new_hyperparameter.epochs = form.cleaned_data.get["epochs"]
+            new_hyperparameter.batch_size = form.cleaned_data.get["batch_size"]
+            new_hyperparameter.lr = form.cleaned_data.get["lr"]
+            new_hyperparameter.dropout = form.cleaned_data.get["dropout"]
+            new_hyperparameter.save()
+
+            

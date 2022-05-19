@@ -191,7 +191,7 @@
         <div class="">
           <div class="page-title">
             <div class="title_left">
-              <h3>数据上传</h3>
+              <h3>数据输入</h3>
             </div>
 
             <div class="title_right">
@@ -235,7 +235,7 @@
                     {% csrf_token %}
                     {{ form.as_p }}
                     <!-- <input type="button" class="btn btn-info form-control" name="type" value="submit" id="btn1" /> -->
-                    <button class="btn btn-info form-control submit-btn" name="type" type="submit" value="road_network" id="btn1">Upload</button>
+                    <button class="btn btn-info form-control upload-btn" name="type" type="submit" value="road_network" id="btn1">Upload</button>
                   </form>
                 </div>
                 <div style="height:260px; width:100%; display:none; overflow-y:auto" >
@@ -269,7 +269,7 @@
                     {% csrf_token %}
                     {{ form.as_p }}
                     <!-- <input type="button" class="btn btn-info form-control" name="type" value="submit" id="btn1" /> -->
-                    <button class="btn btn-info form-control submit-btn" name="type" type="submit" value="road_network" id="btn2">Upload</button>
+                    <button class="btn btn-info form-control upload-btn" name="type" type="submit" value="road_network" id="btn2">Upload</button>
                   </form>
                 </div>
                 <div style="height:260px; width:100%; display:none; overflow-y:auto" >
@@ -303,7 +303,7 @@
                     {% csrf_token %}
                     {{ form.as_p }}
                     <!-- <input type="button" class="btn btn-info form-control" name="type" value="submit" id="btn1" /> -->
-                    <button class="btn btn-info form-control submit-btn" name="type" type="submit" value="road_network" id="btn3">Upload</button>
+                    <button class="btn btn-info form-control upload-btn" name="type" type="submit" value="road_network" id="btn3">Upload</button>
                   </form>
                 </div>
                 <div style="height:260px; width:100%; display:none; overflow-y:auto" >
@@ -311,77 +311,141 @@
                 </div>
               </div>
             </div>
-            {% block js %}
-            <script src=" {% static 'assets/js/jquery.min.js' %} "></script>
-            <script src=" {% static 'assets/js/jquery.cookie.js' %} "></script>
-            <script>
-            var csrftoken = $.cookie('csrftoken');
-            function csrfSafeMethod(method) {
-                return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
-            }
-
-            $(document).ready(function(){
-              $('.submit-btn').click(function(e){
-                e.preventDefault();
-                // 构建FormData对象
-                var form_data = new FormData();
-                console.log($("#"+e.target.id).parent().find('#id_type').val())
-                form_data.append('file', $("#"+e.target.id).parent().find('#id_file')[0].files[0]);
-                form_data.append('type', $("#"+e.target.id).parent().find('#id_type').val());
-                console.log(form_data)
-                $.ajax({
-                  url: '/pop_traffic/upload_data/',
-                  data: form_data,
-                  type: 'POST',
-                  dataType: 'json',
-                  // 告诉jQuery不要去处理发送的数据, 发送对象。
-                  processData : false,
-                  // 告诉jQuery不要去设置Content-Type请求头
-                  contentType : false,
-                  // 获取POST所需的csrftoken
-                  beforeSend: function(xhr, settings) {
-                    if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
-                      xhr.setRequestHeader("X-CSRFToken", csrftoken);
-                    }},
-                  success: function (data) {
-                    console.log(data);
-                    if(data['error_msg']) {
-                      var content = '<li>Only json files are allowed.</li>';
-                      $("#"+e.target.id.replace("btn", "error")).html(content);
-                    }
-                    else{
-                      var content= '<thead><tr>' +
-                        '<th>Name and URL</th>' +
-                        '<th>Size</th>' +
-                        '<th>Data Type</th>' +
-                        '</tr></thead><tbody>';
-
-                      $.each(data, function(i, item) {
-                        console.log(item)
-                        content = content +
-                        '<tr><td>' +
-                        "<a href= ' " +
-                        item['url'] +
-                        " '> " +
-                        item['url'] +
-                        '</a></td><td>' +
-                        item['size'] +
-                        '</td><td>' +
-                        item['type'] +
-                        '</td><tr>'
-                      });
-                      content = content + "</tbody>";
-                      console.log($("#"+e.target.id.replace("btn", "result")).parent())
-                      $("#"+e.target.id.replace("btn", "result")).parent().css("display", "block")
-                      $("#"+e.target.id.replace("btn", "result")).html(content);
-                    }
-                  },
-                });
-              });
-            });
-            </script>
-            {% endblock %}
           </div>
+
+          <!-- hyperparameter -->
+          <div class="row">
+						<div class="col-md-12 col-sm-12 ">
+							<div class="x_panel">
+								<div class="x_title">
+									<h2>参数设置</h2>
+									<ul class="nav navbar-right panel_toolbox">
+										<li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+										</li>
+										<li class="dropdown">
+											<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><i class="fa fa-wrench"></i></a>
+											<ul class="dropdown-menu" role="menu">
+												<li><a class="dropdown-item" href="#">Settings 1</a>
+												</li>
+												<li><a class="dropdown-item" href="#">Settings 2</a>
+												</li>
+											</ul>
+										</li>
+										<li><a class="close-link"><i class="fa fa-close"></i></a>
+										</li>
+									</ul>
+									<div class="clearfix"></div>
+								</div>
+
+								<div class="x_content">
+									<br />
+									<form action="" method="post" enctype="multipart/form-data" id="form_hyperparameter">
+                    <div class="row">
+                      <div class="col-md-4 col-sm-4">
+                        <h6>路段参数</h6>
+                        <div class="row">
+                          <div class="item form-group">
+                            <label class="col-form-label col-md-6 col-sm-6 label-align" for="road_num" style="vertical-align:middle">Road num: </span></label>
+                            <div class="col-md-6 col-sm-6">
+                              <input type="text" id="road_num" required="required" class="form-control parameter" value="1000" style="color: gray">
+                            </div>
+                          </div>
+                        </div>
+                        <div class="row">
+                          <div class="item form-group">
+                            <label class="col-form-label col-md-6 col-sm-6 label-align" for="road_dim">Road dim: </span></label>
+                            <div class="col-md-6 col-sm-6 ">
+                              <input type="text" id="road_dim" required="required" class="form-control parameter" value="512" style="color: gray">
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-md-4 col-sm-4">
+                        <h6>结构区参数</h6>
+                        <div class="row">
+                          <div class="item form-group">
+                            <label class="col-form-label col-md-6 col-sm-6 label-align" for="region_num">Region num: </span></label>
+                            <div class="col-md-6 col-sm-6 ">
+                              <input type="text" id="region_num" required="required" class="form-control parameter" value="60" style="color: gray">
+                            </div>
+                          </div>
+                        </div>
+                        <div class="row">
+                          <div class="item form-group">
+                            <label class="col-form-label col-md-6 col-sm-6 label-align" for="region_dim">Region dim: </span></label>
+                            <div class="col-md-6 col-sm-6 ">
+                              <input type="text" id="region_dim" required="required" class="form-control parameter" value="608" style="color: gray">
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-md-4 col-sm-4">
+                        <h6>功能区参数</h6>
+                        <div class="row">
+                          <div class="item form-group">
+                            <label class="col-form-label col-md-6 col-sm-6 label-align" for="zone_num">Zone num: </span></label>
+                            <div class="col-md-6 col-sm-6 ">
+                              <input type="text" id="zone_num" required="required" class="form-control parameter" value="20" style="color: gray">
+                            </div>
+                          </div>
+                        </div>
+                        <div class="row">
+                          <div class="item form-group">
+                            <label class="col-form-label col-md-6 col-sm-6 label-align" for="zone_dim">Zone dim: </span></label>
+                            <div class="col-md-6 col-sm-6 ">
+                              <input type="text" id="zone_dim" required="required" class="form-control parameter" value="256" style="color: gray">
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <h6>训练参数</h6>
+                    <div class="row">
+                      <div class="col-md-3 col-sm-3">
+                        <div class="item form-group">
+                          <label class="col-form-label col-md-4 col-sm-4 label-align" for="epochs" style="vertical-align: middle">Epochs: </span></label>
+                          <div class="col-md-6 col-sm-6 ">
+                            <input type="text" id="epochs" required="required" class="form-control parameter" value="100" style="color: gray">
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-md-3 col-sm-3">
+                        <div class="item form-group">
+                          <label class="col-form-label col-md-4 col-sm-4 label-align" for="batch_size">Batch size: </span></label>
+                          <div class="col-md-6 col-sm-6 ">
+                            <input type="text" id="batch_size" required="required" class="form-control parameter" value="300" style="color: gray">
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-md-3 col-sm-3">
+                        <div class="item form-group">
+                          <label class="col-form-label col-md-4 col-sm-4 label-align" for="lr">Learning rate: </span></label>
+                          <div class="col-md-6 col-sm-6 ">
+                            <input type="text" id="lr" required="required" class="form-control parameter" value="1e-4" style="color: gray">
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-md-3 col-sm-3">
+                        <div class="item form-group">
+                          <label class="col-form-label col-md-4 col-sm-4 label-align" for="dropout">Dropout: </span></label>
+                          <div class="col-md-6 col-sm-6 ">
+                            <input type="text" id="dropout" required="required" class="form-control parameter" value="0.6" style="color: gray">
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+										<ul class="errorlist" id="error_hyperparameter"></ul>
+										<div class="item form-group">
+											<div class="col-md-6 col-sm-6 offset-md-3 btn-group btn-group-justified">
+												<button type="reset" class="btn btn-primary">Reset</button>
+												<button type="submit" class="btn btn-success" id="submit-btn">Submit</button>
+											</div>
+										</div>
+									</form>
+								</div>
+							</div>
+						</div>
+					</div>
         </div>
       </div>
       <!-- /page content -->
@@ -395,6 +459,9 @@
   <script src=" {% static 'assets/js/bootstrap.bundle.min.js' %} "></script>
   <!-- Dropzone.js -->
   <!-- <script src=" {% static 'assets/js/dropzone.min.js' %} "></script> -->
+  <script src=" {% static 'assets/js/jquery.cookie.js' %} "></script>
+
+  <script src=" {% static 'assets/js/poptraffic.js' %} "></script>
 
   <!-- Custom Theme Scripts -->
   <script src=" {% static 'assets/js/custom.min.js' %} "></script>
