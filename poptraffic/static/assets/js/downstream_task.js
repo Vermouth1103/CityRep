@@ -1,4 +1,72 @@
-var mymap = L.map('mapid').setView([39.0480479, 115.9075331], 13);
+var csrftoken = $.cookie('csrftoken');
+function csrfSafeMethod(method) {
+    return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+}
+
+$(document).ready(function(){
+    $('#btn1').click(function(e){
+        console.log(e);
+        e.preventDefault();
+        // 构建FormData对象
+        var form_data = new FormData();
+        form_data.append('file', $("#"+e.target.id).parent().find('#id_file')[0].files[0]);
+        console.log(form_data)
+        $.ajax({
+            url: '/pop_traffic/downstream_task/',
+            data: form_data, 
+            type: 'post',
+            processData: false,
+            contentType: false,
+            dataType: 'json',
+            traditional: true,
+            // 获取POST所需的csrftoken
+            beforeSend: function(xhr, settings) {
+            if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                xhr.setRequestHeader("X-CSRFToken", csrftoken);
+            }},
+            success: function (data) {
+                console.log(data);
+                if(data['error_msg']) {
+                    var content = '<li>'+data['error_msg']+'</li>';
+                    $("#"+e.target.id.replace("btn", "error")).html(content);
+                }
+                else{
+                    var content= '<thead><tr>' +
+                    '<th>Name and URL</th>' +
+                    '<th>Size</th>' +
+                    '<th>Data Type</th>' +
+                    '</tr></thead><tbody>';
+
+                    $.each(data, function(i, item) {
+                        console.log(i ,item)
+                        if (i==0){
+                            window.road_network_path = item
+                        }
+                        else{
+                            content = content +
+                            '<tr><td>' +
+                            "<a href= ' " +
+                            item['url'] +
+                            " '> " +
+                            item['url'] +
+                            '</a></td><td>' +
+                            item['size'] +
+                            '</td><td>' +
+                            item['type'] +
+                            '</td><tr>'
+                        }
+                    });
+                    content = content + "</tbody>";
+                    console.log($("#"+e.target.id.replace("btn", "result")).parent())
+                    $("#"+e.target.id.replace("btn", "result")).parent().css("display", "block")
+                    $("#"+e.target.id.replace("btn", "result")).html(content);
+                }
+            },
+        });
+    });
+});
+
+var mymap = L.map('mapid').setView([39.059771, 115.91589], 14);
 
 L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
@@ -29,8 +97,8 @@ $.getJSON('../../media/road_network/Road.json', function(data){
         for (var key in edge_mapping){
             fid2id[edge_mapping[key]] = key
         }
-        console.log("fid2id")
-        console.log(fid2id)
+        // console.log("fid2id")
+        // console.log(fid2id)
 
         $.getJSON(data_path, function(assign_matrix){
             console.log(assign_matrix);
@@ -91,10 +159,10 @@ $.getJSON('../../media/road_network/Road.json', function(data){
     });
 });
 
-// var mypop = L.popup();
-// mymap.on('click', function(e) {
-// var content = e.latlng.toString();
-// mypop.setLatLng(e.latlng)
-//     .setContent(content)
-//     .openOn(mymap);
-// });
+var mypop = L.popup();
+mymap.on('click', function(e) {
+var content = e.latlng.toString();
+mypop.setLatLng(e.latlng)
+    .setContent(content)
+    .openOn(mymap);
+});

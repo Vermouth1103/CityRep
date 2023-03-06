@@ -2,9 +2,8 @@ from django.shortcuts import render, redirect
 from django.views import View
 from django.http import JsonResponse
 from django.template.defaultfilters import filesizeformat
-from .forms import PopTrafficDataForm, PopTrafficHyperparameterForm
-from .models import PopTrafficData, PopTrafficHyperparameter
-import os
+from .forms import PopTrafficDataForm, PopTrafficHyperparameterForm, PopTrafficRoutePlanDataForm
+from .models import PopTrafficData, PopTrafficHyperparameter, PopTrafficRoutePlanData
 import time
 import sys
 import json
@@ -15,7 +14,7 @@ from .model.train import *
 
 
 # Create your views here.
-def handle_uploaded_file(file, _type, road_network_path):
+def handle_uploaded_file(file, _type, road_network_path=""):
 
     # print(f"file: {file}")
     # print(f"type: {_type}")
@@ -47,6 +46,8 @@ def handle_uploaded_file(file, _type, road_network_path):
         except Exception as e:
             print(e)
             return -1
+    elif _type == "route_plan":
+        pass
 
     return file_path
 
@@ -65,8 +66,9 @@ class PopTrafficDataDesView(View):
 class PopTrafficInputModelView(View):
 
     def get(self, request):
-        form = PopTrafficDataForm()       
-        return render(request, "poptraffic/poptraffic_input_model.html",  {'form': form})
+        form = PopTrafficDataForm()
+        template = "poptraffic/poptraffic_input_model.html"
+        return render(request, template,  {'form': form})
 
 # handling AJAX requests
 class PopTrafficUploadData(View):
@@ -184,7 +186,49 @@ class PopTrafficTrain(View):
             return JsonResponse(data)
 
 class PopTrafficDownstreamTask(View):
+
+    template = "poptraffic/poptraffic_downstream_task.html"
     
     def get(self, request):
-        template = "poptraffic/poptraffic_downstream_task.html"
-        return render(request, template)
+        form = PopTrafficRoutePlanDataForm()
+        return render(request, self.template, {"form": form})
+
+    def post(self, request):
+        print(f"POST data: {request.POST}")
+
+        form = PopTrafficRoutePlanDataForm(data=request.POST, files=request.FILES)
+
+        if form.is_valid():
+            # get cleaned data
+            print(form.cleaned_data)
+            raw_file = form.cleaned_data.get("file")
+            _type = "route_plan"
+            print(f"raw_file: {raw_file}, type: {_type}")
+            new_file = PopTrafficRoutePlanData()
+            check = handle_uploaded_file(raw_file, _type)
+            print(check)
+            if check == -1:
+                data = {"error_msg": _type+" file invalid."}
+                return JsonResponse(data)
+            else:
+                new_file.file = check
+                new_file.type = _type
+                new_file.save()
+            files = PopTrafficRoutePlanData.objects.all().order_by('-id')
+            data = []
+            for file in files:
+                data.append({
+                    "url": file.file.url,
+                    "size": filesizeformat(file.file.size),
+                    "type": file.type,
+                    })
+
+            form = PopTrafficRoutePlanDataForm()
+            return render(request, self.template, {"form": form, "data": data})
+        else:
+            form = PopTrafficRoutePlanDataForm()
+            data = {'error_msg': "Only json files are allowed."}
+            return render(request, self.template, {"data": data})
+
+class PopTrafficRoutePlan(View):
+    pass

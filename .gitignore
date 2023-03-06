@@ -22,3 +22,4 @@ image/
 split_fewshot/
 
 *.gitignore
+media/

@@ -10,5 +10,6 @@ urlpatterns = [
     path("input_model/",views.PopTrafficInputModelView.as_view(), name="input_model"),
     path("upload_data/", views.PopTrafficUploadData.as_view(), name="upload_data"),
     path("train/", views.PopTrafficTrain.as_view(), name="train"),
-    path("downstream_task/", views.PopTrafficDownstreamTask.as_view(), name="downstream_task")
+    path("downstream_task/", views.PopTrafficDownstreamTask.as_view(), name="downstream_task"),
+    path("route_plan/", views.PopTrafficRoutePlan.as_view(), name="route_plan")
 ]
