@@ -52,6 +52,7 @@
                     <li><a href="{% url 'pop_traffic:model_des' %}">模型介绍</a></li>
                     <li><a href="{% url 'pop_traffic:data_des' %}">数据介绍</a></li>
                     <li><a href="{% url 'pop_traffic:input_model' %}">数据输入与模型训练</a></li>
+                    <li><a href="{% url 'pop_traffic:downstream_task' %}">下游任务</a></li>
                   </ul>
                 </li>
                 <li><a><i class="fa fa-edit"></i> 个体交通场景 <span class="fa fa-chevron-down"></span></a>
@@ -61,7 +62,7 @@
                     <li><a href="indtraffic_input_model.html">数据输入与模型训练</a></li>
                   </ul>
                 </li>
-                <li><a><i class="fa fa-desktop"></i> 人口迁移场景 <span class="fa fa-chevron-down"></span></a>
+                <li><a><i class="fa fa-desktop"></i> 突发事故场景 <span class="fa fa-chevron-down"></span></a>
                   <ul class="nav child_menu">
                     <li><a href="popmove_model_des.html">模型介绍</a></li>
                     <li><a href="popmove_data_des.html">数据介绍</a></li>
@@ -246,7 +247,7 @@
             <div class="col-md-4 col-sm-4  ">
               <div class="x_panel">
                 <div class="x_title">
-                  <h2>轨迹数据（必选）</h2>
+                  <h2>轨迹数据（可选）</h2>
                   <ul class="nav navbar-right panel_toolbox">
                     <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
                     </li>
@@ -263,7 +264,7 @@
                   <div class="clearfix"></div>
                 </div>
                 <div class="x_content">
-                  <p>请上传txt格式文件，type为trajectory</p>
+                  <p>请上传json格式文件，type为trajectory</p>
                   <form action="" method="post" enctype="multipart/form-data" id="form">
                     <ul class="errorlist" id="error2"></ul>
                     {% csrf_token %}
@@ -340,6 +341,7 @@
 								<div class="x_content">
 									<br />
 									<form action="" method="post" enctype="multipart/form-data" id="form_hyperparameter">
+                    <ul class="errorlist" id="submit-error"></ul>
                     <div class="row">
                       <div class="col-md-4 col-sm-4">
                         <h6>路段参数</h6>
@@ -355,7 +357,7 @@
                           <div class="item form-group">
                             <label class="col-form-label col-md-6 col-sm-6 label-align" for="road_dim">Road dim: </span></label>
                             <div class="col-md-6 col-sm-6 ">
-                              <input type="text" id="road_dim" required="required" class="form-control parameter" value="512" style="color: gray">
+                              <input type="text" id="road_dim" required="required" class="form-control parameter" value="256" style="color: gray">
                             </div>
                           </div>
                         </div>
@@ -374,7 +376,7 @@
                           <div class="item form-group">
                             <label class="col-form-label col-md-6 col-sm-6 label-align" for="region_dim">Region dim: </span></label>
                             <div class="col-md-6 col-sm-6 ">
-                              <input type="text" id="region_dim" required="required" class="form-control parameter" value="608" style="color: gray">
+                              <input type="text" id="region_dim" required="required" class="form-control parameter" value="256" style="color: gray">
                             </div>
                           </div>
                         </div>
@@ -405,7 +407,7 @@
                         <div class="item form-group">
                           <label class="col-form-label col-md-4 col-sm-4 label-align" for="epochs" style="vertical-align: middle">Epochs: </span></label>
                           <div class="col-md-6 col-sm-6 ">
-                            <input type="text" id="epochs" required="required" class="form-control parameter" value="100" style="color: gray">
+                            <input type="text" id="epochs" required="required" class="form-control parameter" value="200" style="color: gray">
                           </div>
                         </div>
                       </div>

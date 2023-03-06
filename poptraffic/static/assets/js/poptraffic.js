@@ -3,6 +3,7 @@ function csrfSafeMethod(method) {
     return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
 }
 
+window.road_network_path = ""
 $(document).ready(function(){
     $('.upload-btn').click(function(e){
         e.preventDefault();
@@ -11,16 +12,16 @@ $(document).ready(function(){
         console.log($("#"+e.target.id).parent().find('#id_type').val())
         form_data.append('file', $("#"+e.target.id).parent().find('#id_file')[0].files[0]);
         form_data.append('type', $("#"+e.target.id).parent().find('#id_type').val());
+        form_data.append('road_network_path', window.road_network_path)
         console.log(form_data);
         $.ajax({
             url: '/pop_traffic/upload_data/',
-            data: form_data,
-            type: 'POST',
+            data: form_data, 
+            type: 'post',
+            processData:false,
+            contentType:false,
             dataType: 'json',
-            // 告诉jQuery不要去处理发送的数据, 发送对象。
-            processData : false,
-            // 告诉jQuery不要去设置Content-Type请求头
-            contentType : false,
+            traditional: true,
             // 获取POST所需的csrftoken
             beforeSend: function(xhr, settings) {
             if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
@@ -29,7 +30,7 @@ $(document).ready(function(){
             success: function (data) {
                 console.log(data);
                 if(data['error_msg']) {
-                    var content = '<li>Only json files are allowed.</li>';
+                    var content = '<li>'+data['error_msg']+'</li>';
                     $("#"+e.target.id.replace("btn", "error")).html(content);
                 }
                 else{
@@ -40,18 +41,23 @@ $(document).ready(function(){
                     '</tr></thead><tbody>';
 
                     $.each(data, function(i, item) {
-                        console.log(item)
-                        content = content +
-                        '<tr><td>' +
-                        "<a href= ' " +
-                        item['url'] +
-                        " '> " +
-                        item['url'] +
-                        '</a></td><td>' +
-                        item['size'] +
-                        '</td><td>' +
-                        item['type'] +
-                        '</td><tr>'
+                        console.log(i ,item)
+                        if (i==0){
+                            window.road_network_path = item
+                        }
+                        else{
+                            content = content +
+                            '<tr><td>' +
+                            "<a href= ' " +
+                            item['url'] +
+                            " '> " +
+                            item['url'] +
+                            '</a></td><td>' +
+                            item['size'] +
+                            '</td><td>' +
+                            item['type'] +
+                            '</td><tr>'
+                        }
                     });
                     content = content + "</tbody>";
                     console.log($("#"+e.target.id.replace("btn", "result")).parent())
@@ -137,6 +143,6 @@ $(".parameter").focus(function(){
     }}).blur(function(){
         var oldValue = $(this).val();
         if(oldValue == ""){
-            $(this).val(this.defaultValue).removeClass('focus-fon');;
+            $(this).val(this.defaultValue).removeClass('focus-fon');
         }
     });

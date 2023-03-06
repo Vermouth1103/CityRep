@@ -1,3 +1,24 @@
-*/__pycache__
 .DS_Store
 *.pyc
+*/db.sqlite3
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# output
+output/
+
+# debug
+debug/
+
+# inference
+inference/
+
+# data
+data/
+image/
+split_fewshot/
+
+*.gitignore
