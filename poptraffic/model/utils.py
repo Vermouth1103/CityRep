@@ -113,8 +113,8 @@ def load_route_plan_data(hparams):
     adj = sparse.coo_matrix(adj)
     node_features = pickle.load(open(hparams.node_features, "rb"))
 
-    struct_assign = pickle.load(open(hparams.struct_assign, "rb"))
-    fnc_assign = pickle.load(open(hparams.fnc_assign, "rb"))
+    struct_assign = pickle.load(open(hparams.struct_path, "rb"))
+    fnc_assign = pickle.load(open(hparams.function_path, "rb"))
 
     return adj, node_features, struct_assign, fnc_assign
 

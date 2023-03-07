@@ -106,27 +106,6 @@ $(document).ready(function(){
                     $("#"+e.target.id.replace("btn", "error")).html(content);
                 }
                 else{
-                    var content= '<thead><tr>' +
-                    '<th>Name and URL</th>' +
-                    '<th>Size</th>' +
-                    '<th>Data Type</th>' +
-                    '</tr></thead><tbody>';
-
-                    $.each(data, function(i, item) {
-                        console.log(item)
-                        content = content +
-                        '<tr><td>' +
-                        "<a href= ' " +
-                        item['url'] +
-                        " '> " +
-                        item['url'] +
-                        '</a></td><td>' +
-                        item['size'] +
-                        '</td><td>' +
-                        item['type'] +
-                        '</td><tr>'
-                    });
-                    content = content + "</tbody>";
                     console.log($("#"+e.target.id.replace("btn", "result")).parent())
                     $("#"+e.target.id.replace("btn", "result")).parent().css("display", "block")
                     $("#"+e.target.id.replace("btn", "result")).html(content);

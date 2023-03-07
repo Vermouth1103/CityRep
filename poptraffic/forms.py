@@ -43,3 +43,11 @@ class PopTrafficRoutePlanDataForm(forms.Form):
         if ext != 'json':
             raise forms.ValidationError("Only json files are allowed.")
         return file
+
+class PopTrafficRoutePlanHyperparameterForm(forms.Form):
+
+    # hyperparameter
+    epochs = forms.IntegerField(initial=100)
+    batch_size = forms.IntegerField(initial=300)
+    lr = forms.FloatField(initial=1e-4)
+    dropout = forms.FloatField(initial=0.6)

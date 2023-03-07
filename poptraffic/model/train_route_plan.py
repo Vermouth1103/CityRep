@@ -1,18 +1,35 @@
 import pickle
-from conf import beijing_route_hparams
-from utils import *
-from route_model import *
+from .utils import *
+from .route_model import *
 import torch
 from torch import optim
 import numpy as np
 import random
 import os
 import torch.nn.functional as F
-from metric import *
 import argparse
 from tqdm import tqdm
 
 os.environ["CUDA_VISIBLE_DEVICES"] = "0"
+
+def setup_seed(seed):
+    torch.manual_seed(seed)
+    torch.cuda.manual_seed_all(seed)
+    np.random.seed(seed)
+    random.seed(seed)
+    torch.backends.cudnn.deterministic = True
+
+def edit(str1, str2):
+    matrix = [[i+j for j in range(len(str2) + 1)] for i in range(len(str1) + 1)]
+    for i in range(1,len(str1)+1):
+        for j in range(1,len(str2)+1):
+            if str1[i-1] == str2[j-1]:
+                d = 0
+            else:
+                d = 1
+            matrix[i][j] = min(matrix[i-1][j]+1,matrix[i][j-1]+1,matrix[i-1][j-1]+d)
+
+    return matrix[len(str1)][len(str2)]
 
 def test_route_plan(model, test_loc_set, hparams):
     right = 0
@@ -76,16 +93,45 @@ def test_route_plan(model, test_loc_set, hparams):
 
     print("p/r/f:", precision, recall, f1, "edt:", ave_edt)
 
+def load_model(hparams):
+
+    adj, features, struct_assign, fnc_assign = load_route_plan_data(hparams)
+
+    adj_indices = torch.tensor(np.concatenate(
+        [adj.row[:, np.newaxis], adj.col[:, np.newaxis]], 1), dtype=torch.long).t()
+    adj_values = torch.tensor(adj.data, dtype=torch.float)
+    adj_shape = adj.shape
+    adj_tensor = torch.sparse.FloatTensor(adj_indices, adj_values, adj_shape)
+
+    features = features.astype(np.int)
+
+    length_feature = torch.tensor(
+        features[:, 0], dtype=torch.long, device=hparams.device)
+    node_feature = torch.tensor(
+        features[:, 1], dtype=torch.long, device=hparams.device)
+
+    struct_assign = torch.tensor(
+        struct_assign, dtype=torch.float, device=hparams.device)
+    fnc_assign = torch.tensor(
+        fnc_assign, dtype=torch.float, device=hparams.device)
+    lp_model = RoutePlanModel(hparams, length_feature,
+                              node_feature, adj_tensor, struct_assign, fnc_assign).to(hparams.device)
+
+    print(lp_model)
+
+    lp_model.load_state_dict(torch.load("/home/mjt/test/HRNR/beijing/model/route_plan.model"))
+    lp_model.eval()
+    return lp_model
 
 def train_route_plan(hparams):
 
-    adj, features, struct_assign, fnc_assign = load_route_plan_data(
-        hparams)
-    ce_criterion = torch.nn.CrossEntropyLoss()
-    test_loc_set = pickle.load(open(hparams.route_test_set, "rb"))
-    train_loc_set = pickle.load(open(hparams.route_train_set, "rb"))
+    setup_seed(42)
 
-    print(len(train_loc_set), len(test_loc_set))
+    adj, features, struct_assign, fnc_assign = load_route_plan_data(hparams)
+    ce_criterion = torch.nn.CrossEntropyLoss()
+    train_loc_set = pickle.load(open(hparams.route_plan_train, "rb"))
+    print(len(train_loc_set))
+    
     adj_indices = torch.tensor(np.concatenate(
         [adj.row[:, np.newaxis], adj.col[:, np.newaxis]], 1), dtype=torch.long).t()
     adj_values = torch.tensor(adj.data, dtype=torch.float)
@@ -111,7 +157,7 @@ def train_route_plan(hparams):
         lp_model.parameters(), lr=hparams.lp_learning_rate)
 
     for i in tqdm(range(hparams.epochs)):
-        print("epoch", i)
+        # print("epoch", i)
         count = 0
         for batch in train_loc_set:
             model_optimizer.zero_grad()
@@ -132,28 +178,15 @@ def train_route_plan(hparams):
             pred = lp_model(input_tra, des)
             
             loss = ce_criterion(
-                pred.reshape(-1, hparams.node_num), pred_label.reshape(-1))
+                pred.reshape(-1, hparams.road_num), pred_label.reshape(-1))
             loss.backward(retain_graph=True)
             torch.nn.utils.clip_grad_norm_(
                 lp_model.parameters(), hparams.lp_clip)
             model_optimizer.step()
-            if count % 2000 == 0:
-                print("test set size:", len(test_loc_set))
-                test_route_plan(lp_model, test_loc_set, hparams)
-                print("step ", str(count))
-                print(loss.item())
+            # if count % 2000 == 0:
+            #     print(loss.item())
             count += 1
-    torch.save(lp_model.state_dict(),
-               "/home/mjt/test/HRNR/beijing/model/route_plan.model")
-
-
-def setup_seed(seed):
-    torch.manual_seed(seed)
-    torch.cuda.manual_seed_all(seed)
-    np.random.seed(seed)
-    random.seed(seed)
-    torch.backends.cudnn.deterministic = True
-
+    torch.save(lp_model.state_dict(), hparams.route_plan_model)
 
 if __name__ == '__main__':
     setup_seed(42)

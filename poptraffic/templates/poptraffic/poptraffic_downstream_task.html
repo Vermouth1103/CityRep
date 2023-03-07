@@ -265,10 +265,12 @@
                 </ul>
                 <div class="clearfix"></div>
               </div>
+
               <div class="x_content">
                 <!-- <br /> -->
                 <form action="" method="post" enctype="multipart/form-data" id="form">
                   <ul class="errorlist" id="error1"></ul>
+                  {% csrf_token %}
                   <h6>训练参数</h6>
                   <br />
                   <div class="row">
@@ -276,7 +278,7 @@
                       <div class="item form-group">
                         <label class="col-form-label col-md-6 col-sm-6 label-align" for="epochs" style="vertical-align: middle">Epochs: </span></label>
                         <div class="col-md-6 col-sm-6 ">
-                          <input type="text" id="epochs" required="required" class="form-control parameter" value="200" style="color: gray">
+                          <input type="text" id="epochs" required="required" class="form-control parameter" value="30" style="color: gray">
                         </div>
                       </div>
                     </div>
@@ -311,7 +313,6 @@
                       <button type="submit" class="btn btn-success" id="submit-btn">Submit</button>
                     </div>
                   </div>
-                  <!-- <button class="btn btn-info form-control upload-btn" name="type" type="submit" value="road_network" id="btn1">Upload</button> -->
                 </form>
               </div>
               <div style="height:260px; width:100%; display:none; overflow-y:auto" >
@@ -326,6 +327,69 @@
         <div class="row">
           <div class="col-md-12 col-sm-12">
             <div id="mapid" style="height: 580px;"></div>
+          </div>
+        </div>
+
+        <div class="clearfix"></div>
+
+        <div class="row">
+          <div class="col-md-12 col-sm-12">
+
+            <div class="x_panel">
+              <div class="x_title">
+                <h2>路径规划</h2>
+                <ul class="nav navbar-right panel_toolbox">
+                  <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                  </li>
+                  <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-wrench"></i></a>
+                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                        <a class="dropdown-item" href="#">Settings 1</a>
+                        <a class="dropdown-item" href="#">Settings 2</a>
+                      </div>
+                  </li>
+                  <li><a class="close-link"><i class="fa fa-close"></i></a>
+                  </li>
+                </ul>
+                <div class="clearfix"></div>
+              </div>
+
+              <div class="x_content">
+                <!-- <br /> -->
+                <form action="" method="post" enctype="multipart/form-data" id="form">
+                  <ul class="errorlist" id="error1"></ul>
+                  {% csrf_token %}
+                  <div class="row">
+                    <div class="col-md-4 col-sm-4">
+                      <div class="item form-group">
+                        <label class="col-form-label col-md-6 col-sm-6 label-align" for="epochs" style="vertical-align: middle">起始路段: </span></label>
+                        <div class="col-md-6 col-sm-6 ">
+                          <input type="text" id="epochs" required="required" class="form-control parameter" value="30" style="color: gray">
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-md-4 col-sm-4">
+                      <div class="item form-group">
+                        <label class="col-form-label col-md-6 col-sm-6 label-align" for="batch_size">终止路段: </span></label>
+                        <div class="col-md-6 col-sm-6 ">
+                          <input type="text" id="batch_size" required="required" class="form-control parameter" value="300" style="color: gray">
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-md-4 col-sm-4">
+                      <div class="item form-group">
+                        <div class="col-md-6 col-sm-6 offset-md-3 btn-group btn-group-justified">
+                          <button type="submit" class="btn btn-success" id="submit-btn">Submit</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </form>
+              </div>
+              <div style="height:260px; width:100%; display:none; overflow-y:auto" >
+                <table class="table table-striped" id="result1"></table>
+              </div>
+            </div>
           </div>
         </div>
 

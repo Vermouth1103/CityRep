@@ -2,27 +2,25 @@
 import torch
 from torch.nn.parameter import Parameter
 from torch.nn.modules.module import Module
-from gcn_layers import *
+from .gcn_layers import *
 import torch.nn as nn
-from cmt_gen import get_cmt
 import torch.nn.functional as F
 import pickle
-import copy
 
 
 class GRU(nn.Module):
     def __init__(self, hparams):
         super(GRU, self).__init__()
         self.device = hparams.device
-        self.emb_size = hparams.node_dims
-        self.node_num = hparams.node_num
+        self.emb_size = hparams.road_dim
+        self.road_num = hparams.road_num
         self.hidden_size = hparams.gru_hidden_size
         self.batch_size = hparams.batch_size
         self.is_bigru = hparams.is_bigru
         self.state_num = hparams.state_num
         self.gru = nn.GRU(self.emb_size, self.hidden_size,
                           bidirectional=self.is_bigru)
-        self.out = nn.Linear(self.hidden_size, self.node_num)
+        self.out = nn.Linear(self.hidden_size, self.road_num)
 
     def forward(self, token, graph_embedding):
         token_emb = graph_embedding[token, :]
@@ -39,11 +37,11 @@ class GcnEncoder(Module):
         self.hparams = hparams
 
         self.node_emb_layer = nn.Embedding(
-            hparams.node_num, hparams.node_dims).to(self.hparams.device)
+            hparams.road_num, hparams.road_dim).to(self.hparams.device)
         self.type_emb_layer = nn.Embedding(
             hparams.type_num, hparams.type_dims).to(self.hparams.device)
         self.length_emb_layer = nn.Embedding(
-            hparams.length_num, hparams.length_dims).to(self.hparams.device)
+            hparams.length_num, hparams.length_dim).to(self.hparams.device)
         self.lane_emb_layer = nn.Embedding(
             hparams.lane_num, hparams.lane_dims).to(self.hparams.device)
 
@@ -73,11 +71,11 @@ class GatEncoder(Module):
         self.hparams = hparams
 
         self.node_emb_layer = nn.Embedding(
-            hparams.node_num, hparams.node_dims).to(self.hparams.device)
+            hparams.road_num, hparams.road_dim).to(self.hparams.device)
         self.type_emb_layer = nn.Embedding(
             hparams.type_num, hparams.type_dims).to(self.hparams.device)
         self.length_emb_layer = nn.Embedding(
-            hparams.length_num, hparams.length_dims).to(self.hparams.device)
+            hparams.length_num, hparams.length_dim).to(self.hparams.device)
         self.lane_emb_layer = nn.Embedding(
             hparams.lane_num, hparams.lane_dims).to(self.hparams.device)
 
@@ -247,7 +245,7 @@ class RoutePlanGcnModel(Module):
         self.gru = nn.GRU(hparams.hidden_dims * 1 + 100, hparams.hidden_dims)
 
         self.linear = torch.nn.Linear(
-            hparams.hidden_dims * 1, hparams.node_num)
+            hparams.hidden_dims * 1, hparams.road_num)
 
         self.linear_red_dim = torch.nn.Linear(hparams.hidden_dims, 100)
 
@@ -296,11 +294,11 @@ class RoutePlanModel(Module):
 
         self.gru = nn.GRU(hparams.hidden_dims * 2, hparams.hidden_dims)
 
-        self.linear = torch.nn.Linear(
-            hparams.hidden_dims * 1, hparams.node_num)
-
         self.linear_red_dim = torch.nn.Linear(
             hparams.hidden_dims, hparams.hidden_dims)
+        
+        self.linear = torch.nn.Linear(
+            hparams.hidden_dims * 1, hparams.road_num)
 
     def forward(self, input_bat, des):  # batch_size * length * dims
         init_hidden = torch.zeros(1, input_bat.shape[0], self.hparams.hidden_dims, device=self.hparams.device)
@@ -342,7 +340,7 @@ class LocPredModel(Module):
 
         self.gru = nn.GRU(hparams.hidden_dims * 1 + 100, hparams.hidden_dims)
 
-        self.linear = torch.nn.Linear(hparams.hidden_dims, hparams.node_num)
+        self.linear = torch.nn.Linear(hparams.hidden_dims, hparams.road_num)
 
         self.linear_red_dim = torch.nn.Linear(hparams.hidden_dims, 100)
 
@@ -373,9 +371,9 @@ class GraphEncoderTL(Module):
         self.struct_adj = struct_adj
 
         self.node_emb_layer = nn.Embedding(
-            hparams.node_num, hparams.node_dims).to(self.hparams.device)
+            hparams.road_num, hparams.road_dim-hparams.length_dim).to(self.hparams.device)
         self.length_emb_layer = nn.Embedding(
-            hparams.length_num, hparams.length_dims).to(self.hparams.device)
+            hparams.length_num, hparams.length_dim).to(self.hparams.device)
 
         self.tl_layer_1 = GraphEncoderTLCore(
             hparams, self.struct_assign, self.fnc_assign)
@@ -626,10 +624,10 @@ class GraphEncoder(Module):
     def __init__(self, hparams):
         super(GraphEncoder, self).__init__()
         self.hparams = hparams
-        self.node_num = self.hparams.node_num
+        self.road_num = self.hparams.road_num
         self.cmt_num = self.hparams.cmt_num
         self.cmt_weight = Parameter(
-            torch.FloatTensor(self.node_num, self.cmt_num))
+            torch.FloatTensor(self.road_num, self.cmt_num))
         torch.nn.init.xavier_uniform(self.cmt_weight)
 
         self.gnn_layers = hparams.gnn_layers
@@ -654,13 +652,13 @@ class PlainGCN(Module):
         self.hparams = hparams
 
 #    self.plain_conv = GraphConvolution(
-#        in_features=self.hparams.node_dims,
-#        out_features=self.hparams.node_dims,
+#        in_features=self.hparams.road_dim,
+#        out_features=self.hparams.road_dim,
 #        device=self.hparams.device).to(self.hparams.device)
 
         self.plain_conv = SPGAT(
-            in_features=self.hparams.node_dims,
-            out_features=self.hparams.node_dims,
+            in_features=self.hparams.road_dim,
+            out_features=self.hparams.road_dim,
             dropout=self.hparams.dropout,
             alpha=self.hparams.alpha,
             device=self.hparams.device).to(self.hparams.device)
@@ -681,11 +679,11 @@ class GraphAutoencoderTra(Module):
             out_features=self.hparams.fnc_cmt_num,
             device=self.hparams.device).to(self.hparams.device)
         self.node_emb_layer = nn.Embedding(
-            hparams.node_num, hparams.node_dims).to(self.hparams.device)
+            hparams.road_num, hparams.road_dim).to(self.hparams.device)
         self.type_emb_layer = nn.Embedding(
             hparams.type_num, hparams.type_dims).to(self.hparams.device)
         self.length_emb_layer = nn.Embedding(
-            hparams.length_num, hparams.length_dims).to(self.hparams.device)
+            hparams.length_num, hparams.length_dim).to(self.hparams.device)
         self.lane_emb_layer = nn.Embedding(
             hparams.lane_num, hparams.lane_dims).to(self.hparams.device)
         self.linear = torch.nn.Linear(hparams.hidden_dims * 3, 100)
@@ -740,17 +738,17 @@ class GraphAutoencoder(Module):
     def __init__(self, hparams):
         super(GraphAutoencoder, self).__init__()
         self.hparams = hparams
-        self.enc_in_dims = self.hparams.node_dims + self.hparams.lane_dims + \
-            self.hparams.type_dims + self.hparams.length_dims
+        self.enc_in_dims = self.hparams.road_dim + self.hparams.lane_dims + \
+            self.hparams.type_dims + self.hparams.length_dim
         self.enc_out_dims = self.hparams.struct_cmt_num
         self.enc_gnn = StructuralGNN(
             hparams, self.enc_in_dims, self.enc_out_dims).to(self.hparams.device)
         self.node_emb_layer = nn.Embedding(
-            hparams.node_num, hparams.node_dims).to(self.hparams.device)
+            hparams.road_num, hparams.road_dim).to(self.hparams.device)
         self.type_emb_layer = nn.Embedding(
             hparams.type_num, hparams.type_dims).to(self.hparams.device)
         self.length_emb_layer = nn.Embedding(
-            hparams.length_num, hparams.length_dims).to(self.hparams.device)
+            hparams.length_num, hparams.length_dim).to(self.hparams.device)
         self.lane_emb_layer = nn.Embedding(
             hparams.lane_num, hparams.lane_dims).to(self.hparams.device)
         self.a = nn.Parameter(torch.zeros(size=(1, 2 * self.enc_in_dims)))
@@ -758,7 +756,7 @@ class GraphAutoencoder(Module):
         self.leakyrelu = nn.LeakyReLU(hparams.alpha)
         self.sigmoid = nn.Sigmoid()
         self.dec_gnn = StructuralDecoder(
-            hparams, self.enc_in_dims, hparams.node_num).to(self.hparams.device)
+            hparams, self.enc_in_dims, hparams.road_num).to(self.hparams.device)
 
     def forward(self, main_adj, lane_feature, type_feature, length_feature, node_feature, f_edge):
         node_emb = self.node_emb_layer(node_feature)
@@ -797,11 +795,11 @@ class Graph2SeqLoc(Module):
             device=self.hparams.device).to(self.hparams.device)
 
         self.node_emb_layer = nn.Embedding(
-            hparams.node_num, hparams.node_dims).to(self.hparams.device)
+            hparams.road_num, hparams.road_dim).to(self.hparams.device)
         self.type_emb_layer = nn.Embedding(
             hparams.type_num, hparams.type_dims).to(self.hparams.device)
         self.length_emb_layer = nn.Embedding(
-            hparams.length_num, hparams.length_dims).to(self.hparams.device)
+            hparams.length_num, hparams.length_dim).to(self.hparams.device)
         self.lane_emb_layer = nn.Embedding(
             hparams.lane_num, hparams.lane_dims).to(self.hparams.device)
 
@@ -831,7 +829,7 @@ class Graph2SeqLoc(Module):
 
         self.gru = nn.GRU(hparams.hidden_dims, hparams.hidden_dims)
 
-        self.linear = torch.nn.Linear(hparams.hidden_dims, hparams.node_num)
+        self.linear = torch.nn.Linear(hparams.hidden_dims, hparams.road_num)
 
         self.linears = torch.nn.Linear(hparams.hidden_dims * 1, 50)
 
@@ -871,11 +869,11 @@ class Graph2SeqCmt(Module):
             #        alpha = self.hparams.alpha,
             device=self.hparams.device).to(self.hparams.device)
         self.node_emb_layer = nn.Embedding(
-            hparams.node_num, hparams.node_dims).to(self.hparams.device)
+            hparams.road_num, hparams.road_dim).to(self.hparams.device)
         self.type_emb_layer = nn.Embedding(
             hparams.type_num, hparams.type_dims).to(self.hparams.device)
         self.length_emb_layer = nn.Embedding(
-            hparams.length_num, hparams.length_dims).to(self.hparams.device)
+            hparams.length_num, hparams.length_dim).to(self.hparams.device)
         self.lane_emb_layer = nn.Embedding(
             hparams.lane_num, hparams.lane_dims).to(self.hparams.device)
         node_emb = self.node_emb_layer(node_feature)
@@ -940,7 +938,7 @@ class StructuralDecoder(Module):
             device=self.hparams.device).to(self.hparams.device)
         self.softmax = torch.nn.Softmax(dim=-1)
 #    self.cmt_gat_1 = GraphConvolution(
-#        in_features = self.hparams.node_dims,
+#        in_features = self.hparams.road_dim,
 #        out_features = out_dims,
 #        device = self.hparams.device).to(self.hparams.device)
 
@@ -981,7 +979,7 @@ class StructuralGNN(Module):
 
 
 #    self.cmt_gat_1 = SPGAT(
-#        in_features = self.hparams.node_dims,
+#        in_features = self.hparams.road_dim,
 #        out_features = out_dims,
 #        dropout = self.hparams.dropout,
 #        alpha = self.hparams.alpha,
@@ -1020,8 +1018,8 @@ class CommunityNodeGNN(Module):
         self.hparams = hparams
 
         self.plain_node_conv = GraphConvolution(
-            in_features=self.hparams.node_dims + self.hparams.cmt_dims,
-            out_features=self.hparams.node_dims,
+            in_features=self.hparams.road_dim + self.hparams.cmt_dims,
+            out_features=self.hparams.road_dim,
             device=self.hparams.device).to(self.hparams.device)
 
         self.plain_cmt_conv = GraphConvolution(
@@ -1040,7 +1038,7 @@ class CommunityNodeGNN(Module):
 
     def node_forward(self, inputs, adj, cmt_emb, cmt_weight_softmax, embedding_mask=None):
         #    node_cmt_emb =
-        node2cmt = torch.argmax(cmt_weight_softmax, -1)  # node_num * 1
+        node2cmt = torch.argmax(cmt_weight_softmax, -1)  # road_num * 1
         cmt_emb = cmt_emb.squeeze()
         inputs_cmt_emb = cmt_emb[node2cmt, :]
         inputs_cat = torch.cat([inputs, inputs_cmt_emb], -1)

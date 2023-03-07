@@ -43,4 +43,11 @@ class PopTrafficRoutePlanData(models.Model):
     def __str__(self):
         return self.type
 
+class PopTrafficRoutePlanHyperparameter(models.Model):
+
+    # hyperparameter
+    epochs = models.IntegerField()
+    batch_size = models.IntegerField()
+    lr = models.FloatField()
+    dropout = models.FloatField()
     

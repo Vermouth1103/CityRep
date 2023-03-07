@@ -2,52 +2,79 @@ from django.shortcuts import render, redirect
 from django.views import View
 from django.http import JsonResponse
 from django.template.defaultfilters import filesizeformat
-from .forms import PopTrafficDataForm, PopTrafficHyperparameterForm, PopTrafficRoutePlanDataForm
-from .models import PopTrafficData, PopTrafficHyperparameter, PopTrafficRoutePlanData
-import time
-import sys
-import json
+from .forms import PopTrafficDataForm, PopTrafficHyperparameterForm, PopTrafficRoutePlanDataForm, PopTrafficRoutePlanHyperparameterForm
+from .models import PopTrafficData, PopTrafficHyperparameter, PopTrafficRoutePlanData, PopTrafficRoutePlanHyperparameter
+
 from .model.preprocess.preprocess_roadnetwork import generate_graph, generate_features
-from .model.preprocess.preprocess_trajectory import generate_trajectory_adj
+from .model.preprocess.preprocess_trajectory import generate_trajectory_adj, generate_traj4rp
 from .model.preprocess.preprocess_spectral_cluster import generate_spectral_label
 from .model.train import *
-
+from .model.train_route_plan import *
 
 # Create your views here.
 def handle_uploaded_file(file, _type, road_network_path=""):
-
-    # print(f"file: {file}")
-    # print(f"type: {_type}")
-    # print(f"road network path: {road_network_path}")
-    file_name = file.name
-
-    file_path = os.path.join(_type, file_name)
-    absolute_file_path = os.path.join('media', _type, file_name)
-
-    directory = os.path.dirname(absolute_file_path)
-    if not os.path.exists(directory):
-        os.makedirs(directory)
-
-    with open(absolute_file_path, "wb+") as f:
-        for chunk in file.chunks():
-            f.write(chunk)
     
     # preprocess check
     if _type == "road_network":
         try:
+            file_name = file.name
+            file_path = os.path.join(_type, file_name)
+            absolute_file_path = os.path.join('media', _type, file_name)
+
+            directory = os.path.dirname(absolute_file_path)
+            if not os.path.exists(directory):
+                os.makedirs(directory)
+
+            with open(absolute_file_path, "wb+") as f:
+                for chunk in file.chunks():
+                    f.write(chunk)
             generate_graph(absolute_file_path, _type)
             generate_features(absolute_file_path, _type)
         except:
             print(e)
             return -1
+        
     elif _type == "trajectory":
         try:
+            file_name = file.name
+            file_path = os.path.join(_type, file_name)
+            absolute_file_path = os.path.join('media', _type, file_name)
+
+            directory = os.path.dirname(absolute_file_path)
+            if not os.path.exists(directory):
+                os.makedirs(directory)
+
+            with open(absolute_file_path, "wb+") as f:
+                for chunk in file.chunks():
+                    f.write(chunk)
             generate_trajectory_adj(absolute_file_path, _type, road_network_path)
         except Exception as e:
             print(e)
             return -1
+        
     elif _type == "route_plan":
-        pass
+        try:
+            file_name = file.name
+            file_path = os.path.join(_type, "upload", file_name)
+            absolute_file_path = os.path.join('media',file_path)
+
+            directory = os.path.dirname(absolute_file_path)
+            if not os.path.exists(directory):
+                os.makedirs(directory)
+
+            with open(absolute_file_path, "wb+") as f:
+                for chunk in file.chunks():
+                    f.write(chunk)
+            route_plan_dataset = generate_traj4rp(absolute_file_path)
+
+            save_dir = os.path.join("media", _type, "preprocessed")
+            if not os.path.exists(save_dir):
+                os.makedirs(save_dir)
+            with open(os.path.join(save_dir, "train_set.pkl"), "wb") as f:
+                pickle.dump(route_plan_dataset, f)
+        except Exception as e:
+            print(e)
+            return -1
 
     return file_path
 
@@ -231,4 +258,56 @@ class PopTrafficDownstreamTask(View):
             return render(request, self.template, {"data": data})
 
 class PopTrafficRoutePlan(View):
-    pass
+    
+    def post(self, request):
+        print(f"POST data: {request.POST}")
+
+        form = PopTrafficRoutePlanHyperparameterForm(data=request.POST)
+
+        if form.is_valid():
+            # get cleaned data
+            new_hyperparameter = PopTrafficRoutePlanHyperparameter()
+            new_hyperparameter.epochs = form.cleaned_data.get("epochs")
+            new_hyperparameter.batch_size = form.cleaned_data.get("batch_size")
+            new_hyperparameter.lr = form.cleaned_data.get("lr")
+            new_hyperparameter.dropout = form.cleaned_data.get("dropout")
+            new_hyperparameter.save()
+
+            hparams = form.cleaned_data
+            hparams = dict_to_object(hparams)
+
+            road_network_params = PopTrafficHyperparameter.objects.latest("id")
+            # print(f"road_network_params: {road_network_params}")
+            hparams.road_num = road_network_params.road_num
+            hparams.road_dim = road_network_params.road_dim
+            hparams.region_num = road_network_params.region_num
+            hparams.region_dim = road_network_params.region_dim
+            hparams.zone_num = road_network_params.zone_num
+            hparams.zone_dim = road_network_params.zone_dim
+            hparams.hidden_dims = road_network_params.road_dim
+
+            hparams.length_dim = 32
+            hparams.length_num = 2200
+            hparams.lp_learning_rate = new_hyperparameter.lr
+            hparams.lp_clip = 1.0
+
+            road_network_path = "./media/preprocessed_road_network/"
+            hparams.adj = get_newest_file(road_network_path, "graph")
+            hparams.node_features = get_newest_file(road_network_path, "features")
+
+            hparams.struct_path = "./media/assign/struct_assign.pkl"
+            hparams.function_path = "./media/assign/function_assign.pkl"
+
+            hparams.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+            hparams.route_plan_dir = "./media/route_plan/preprocessed"
+            hparams.route_plan_train = os.path.join(hparams.route_plan_dir, "train_set.pkl")
+            hparams.route_plan_model = os.path.join(hparams.route_plan_dir, "route_plan.model")
+            print(f"hparams: {hparams}")
+            
+            train_route_plan(hparams)
+
+            form = PopTrafficRoutePlanDataForm()
+            return render(request, self.template, {"form": form})
+        else:
+            data = {'error_msg': "Hyper parameter set invalid."}
+            return JsonResponse(data)
