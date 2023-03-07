@@ -46,31 +46,59 @@
             <div class="menu_section">
               <h3 style="text-align: left;  font-size:15px; color: white;">目录</h3>
               <ul class="nav side-menu">
+                <li><a><i class="fa fa-home"></i> 城市表征构建 <span class="fa fa-chevron-down"></span></a>
+                  <ul class="nav child_menu">
+                    <li><a href="{% url 'representation:representation_des' %}">表征介绍</a></li>
+                    <li><a href="{% url 'representation:model_des' %}">模型介绍</a></li>
+                    <li><a href="{% url 'representation:data_des' %}">数据介绍</a></li>
+                    <li><a href="{% url 'representation:model_train' %}">模型训练</a></li>
+                    <li><a href="{% url 'representation:model_pre' %}">结果展示</a></li>
+                  </ul>
+                </li>
                 <li><a><i class="fa fa-home"></i> 群体交通场景 <span class="fa fa-chevron-down"></span></a>
                   <ul class="nav child_menu">
-                    <li><a href="{% url 'pop_traffic:model_des' %}">模型介绍</a></li>
-                    <li><a href="{% url 'pop_traffic:data_des' %}">数据介绍</a></li>
-                    <li><a href="{% url 'pop_traffic:input_model' %}">数据输入与模型训练</a></li>
-                    <li><a href="{% url 'pop_traffic:downstream_task' %}">下游任务</a></li>
+                    <li><a><i class="fa fa-home"></i> 流量预测 <span class="fa fa-chevron-down"></span></a>
+                      <ul class="nav child_menu">
+                        <li><a href="{% url 'pop_traffic:model_des' %}">相关介绍</a></li>
+                        <li><a href="{% url 'pop_traffic:input_model' %}">预测仿真</a></li>
+                      </ul>
+                    </li>
+                    <li><a><i class="fa fa-home"></i> 速度预测 <span class="fa fa-chevron-down"></span></a>
+                      <ul class="nav child_menu">
+                        <li><a href="{% url 'pop_traffic:model_des' %}">相关介绍</a></li>
+                        <li><a href="{% url 'pop_traffic:input_model' %}">预测仿真</a></li>
+                      </ul>
+                    </li>
                   </ul>
                 </li>
                 <li><a><i class="fa fa-edit"></i> 个体交通场景 <span class="fa fa-chevron-down"></span></a>
                   <ul class="nav child_menu">
-                    <li><a href="indtraffic_model_des.html">模型介绍</a></li>
-                    <li><a href="indtraffic_data_des.html">数据介绍</a></li>
-                    <li><a href="indtraffic_input_model.html">数据输入与模型训练</a></li>
+                    <li><a><i class="fa fa-home"></i> 路径规划 <span class="fa fa-chevron-down"></span></a>
+                      <ul class="nav child_menu">
+                        <li><a href="{% url 'ind_traffic:routeplan_des' %}">相关介绍</a></li>
+                        <li><a href="{% url 'ind_traffic:routeplan_pre' %}">预测仿真</a></li>
+                      </ul>
+                    </li>
+                    <li><a><i class="fa fa-home"></i> 下一跳预测 <span class="fa fa-chevron-down"></span></a>
+                      <ul class="nav child_menu">
+                        <li><a href="{% url 'ind_traffic:nextloc_des' %}">相关介绍</a></li>
+                        <li><a href="{% url 'ind_traffic:nextloc_pre' %}">预测仿真</a></li>
+                      </ul>
+                    </li>
                   </ul>
                 </li>
                 <li><a><i class="fa fa-desktop"></i> 突发事故场景 <span class="fa fa-chevron-down"></span></a>
                   <ul class="nav child_menu">
-                    <li><a href="popmove_model_des.html">模型介绍</a></li>
-                    <li><a href="popmove_data_des.html">数据介绍</a></li>
-                    <li><a href="popmove_input_model.html">数据输入与模型训练</a></li>
+                    <li><a><i class="fa fa-home"></i> 交通事故模拟 <span class="fa fa-chevron-down"></span></a>
+                      <ul class="nav child_menu">
+                        <li><a href="{% url 'accident:accident_des' %}">相关介绍</a></li>
+                        <li><a href="{% url 'accident:accident_pre' %}">预测仿真</a></li>
+                      </ul>
+                    </li>
                   </ul>
                 </li>
               </ul>
             </div>
-
           </div>
           <!-- /sidebar menu -->
 

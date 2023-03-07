@@ -21,15 +21,15 @@ class PopTrafficHyperparameterForm(forms.Form):
     lr = forms.FloatField(initial=1e-4)
     dropout = forms.FloatField(initial=0.6)
 
-    # road
+    # road_hp
     road_num = forms.IntegerField(initial=1000)
     road_dim = forms.IntegerField(initial=512)
 
-    # region
+    # region_hp
     region_num = forms.IntegerField(initial=60)
     region_dim = forms.IntegerField(initial=608)
 
-    # zone
+    # zone_hp
     zone_num = forms.IntegerField(initial=20)
     zone_dim = forms.IntegerField(initial=256)
 

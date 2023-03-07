@@ -33,7 +33,10 @@ ALLOWED_HOSTS = ["*"]
 
 INSTALLED_APPS = [
     'main.apps.MainConfig',
+    'representation.apps.RepresentationConfig',
     'poptraffic.apps.PoptrafficConfig',
+    'indtraffic.apps.IndtrafficConfig',
+    'accident.apps.AccidentConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',

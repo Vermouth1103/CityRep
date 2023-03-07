@@ -1,13 +1,6 @@
 from django.db import models
-import os
 
 # Create your models here.
-
-def extract_direcotry_path(instance, filename):
-    print(instance)
-    ext = filename.split('.')[-1]
-    return os.path.join("road_network", filename)
-
 
 class PopTrafficData(models.Model):
     file = models.FileField(upload_to='pop_traffic', null=True)
@@ -24,15 +17,15 @@ class PopTrafficHyperparameter(models.Model):
     lr = models.FloatField()
     dropout = models.FloatField()
 
-    # road
+    # road_hp
     road_num = models.IntegerField()
     road_dim = models.IntegerField()
 
-    # region
+    # region_hp
     region_num = models.IntegerField()
     region_dim = models.IntegerField()
 
-    # zone
+    # zone_hp
     zone_num = models.IntegerField()
     zone_dim = models.IntegerField()
 

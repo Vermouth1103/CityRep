@@ -12,7 +12,7 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
-            name='PopTrafficData',
+            name='Data',
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('file', models.FileField(null=True, upload_to='pop_traffic')),
@@ -20,7 +20,7 @@ class Migration(migrations.Migration):
             ],
         ),
         migrations.CreateModel(
-            name='PopTrafficHyperparameter',
+            name='Hyperparameter',
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('epochs', models.IntegerField()),
@@ -33,24 +33,6 @@ class Migration(migrations.Migration):
                 ('region_dim', models.IntegerField()),
                 ('zone_num', models.IntegerField()),
                 ('zone_dim', models.IntegerField()),
-            ],
-        ),
-        migrations.CreateModel(
-            name='PopTrafficRoutePlanData',
-            fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('file', models.FileField(null=True, upload_to='pop_traffic')),
-                ('type', models.CharField(default='route_plan_trajectory', max_length=50, verbose_name='Data Type')),
-            ],
-        ),
-        migrations.CreateModel(
-            name='PopTrafficRoutePlanHyperparameter',
-            fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('epochs', models.IntegerField()),
-                ('batch_size', models.IntegerField()),
-                ('lr', models.FloatField()),
-                ('dropout', models.FloatField()),
             ],
         ),
     ]
