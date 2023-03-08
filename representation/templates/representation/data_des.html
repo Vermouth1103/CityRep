@@ -11,6 +11,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   <title> 演示系统 </title>
+  <link rel="icon" href="#"/>
 
   <!-- Bootstrap -->
   <link href=" {% static 'assets/css/bootstrap.min.css' %} " rel="stylesheet">
@@ -217,48 +218,47 @@
 
       <!-- page content -->
       <div class="right_col" role="main">
-        <div class="">
-          <div class="page-title">
-            <div class="title_left">
-              <h3>Plain Page</h3>
-            </div>
-
-            <div class="title_right">
-              <div class="col-md-5 col-sm-5   form-group pull-right top_search">
-                <div class="input-group">
-                  <input type="text" class="form-control" placeholder="Search for...">
-                  <span class="input-group-btn">
-                    <button class="btn btn-default" type="button">Go!</button>
-                  </span>
-                </div>
+        <div class="row">
+          <div class="col-md-12 col-sm-12">
+            <div class="x_panel">
+              <div class="x_title">
+                <p style="text-align: center; font-weight:bolder; font-size:30px;">数据介绍</p>
               </div>
-            </div>
-          </div>
-
-          <div class="clearfix"></div>
-
-          <div class="row">
-            <div class="col-md-12 col-sm-12  ">
-              <div class="x_panel">
-                <div class="x_title">
-                  <h2>Plain Page</h2>
-                  <ul class="nav navbar-right panel_toolbox">
-                    <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
-                    </li>
-                    <li class="dropdown">
-                      <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-wrench"></i></a>
-                      <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                          <a class="dropdown-item" href="#">Settings 1</a>
-                          <a class="dropdown-item" href="#">Settings 2</a>
-                        </div>
-                    </li>
-                    <li><a class="close-link"><i class="fa fa-close"></i></a>
-                    </li>
+              <div class="x_content" style="text-align: left; font-weight: normal; font-size:20px">
+                <div class="upstream_task_input col-md-12 col-sm-12">
+                  <p style="font-weight: bolder; font-size: 25px;">上游任务输入</p>
+                  <ul>
+                    <li>路网数据：包含节点数据和边数据。</li>
+                      <ul style="list-style-type:square">
+                        <li>节点数据：包含节点序号、节点坐标和节点属性，格式为：</li>
+                        <img src="../../static/assets/img/node.png">
+                        <li>边数据：包含边序号，边长度，起始节点，终止节点，经过节点坐标和边属性，格式为：</li>
+                        <img src="../../static/assets/img/edge.png">
+                      </ul>
+                    <li>车辆轨迹数据：将轨迹经纬度映射到路网上，得到节点序列，如[1, 2, 3]表示车辆从节点1经过节点2到达节点3。</li>
+                    <li>POI数据：包含经纬度和POI种类。</li>
                   </ul>
-                  <div class="clearfix"></div>
                 </div>
-                <div class="x_content">
-                    Add content to the page ...
+                <div class="upstream_task_output col-md-12 col-sm-12">
+                  <p style="font-weight: bolder; font-size: 25px;">上游任务输出</p>
+                  <ul>
+                    <li>路段到结构区的分配矩阵：包含每条路段属于每个结构区的概率值。</li>
+                    <li>结构区到功能区的分配矩阵：包含每个结构区属于每个功能区的概率值。</li>
+                  </ul>
+                </div>
+                <div class="downstream_task_input col-md-12 col-sm-12">
+                  <p style="font-weight: bolder; font-size: 25px;">下游任务输入</p>
+                  <ul>
+                    <li>路段到结构区的分配矩阵：包含每条路段属于每个结构区的概率值。</li>
+                    <li>结构区到功能区的分配矩阵：包含每个结构区属于每个功能区的概率值。</li>
+                    <li>路网流量历史数据：包含过去时间段内路网上各个路段的历史流量。</li>
+                  </ul>
+                </div>
+                <div class="downstream_task_output col-md-12 col-sm-12">
+                  <p style="font-weight: bolder; font-size: 25px;">下游任务输出</p>
+                  <ul>
+                    <li>路网流量预测输出：包含未来时间段内路网上各个路段的预测流量。</li>
+                  </ul>
                 </div>
               </div>
             </div>

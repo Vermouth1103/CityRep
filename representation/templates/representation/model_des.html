@@ -11,6 +11,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   <title> 演示系统 </title>
+  <link rel="icon" href="#"/>
 
   <!-- Bootstrap -->
   <link href=" {% static 'assets/css/bootstrap.min.css' %} " rel="stylesheet">
@@ -217,49 +218,30 @@
 
       <!-- page content -->
       <div class="right_col" role="main">
-        <div class="">
-          <div class="page-title">
-            <div class="title_left">
-              <h3>Plain Page</h3>
-            </div>
-
-            <div class="title_right">
-              <div class="col-md-5 col-sm-5   form-group pull-right top_search">
-                <div class="input-group">
-                  <input type="text" class="form-control" placeholder="Search for...">
-                  <span class="input-group-btn">
-                    <button class="btn btn-default" type="button">Go!</button>
-                  </span>
-                </div>
+        <div class="row">
+          <div class="col-md-12 col-sm-12">
+            <div class="x_panel">
+              <div class="x_title">
+                <p style="text-align: center; font-weight:bolder; font-size:30px;">模型介绍</p>
               </div>
-            </div>
-          </div>
-
-          <div class="clearfix"></div>
-
-          <div class="row">
-            <div class="col-md-12 col-sm-12  ">
-              <div class="x_panel">
-                <div class="x_title">
-                  <h2>Plain Page</h2>
-                  <ul class="nav navbar-right panel_toolbox">
-                    <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
-                    </li>
-                    <li class="dropdown">
-                      <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-wrench"></i></a>
-                      <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                          <a class="dropdown-item" href="#">Settings 1</a>
-                          <a class="dropdown-item" href="#">Settings 2</a>
-                        </div>
-                    </li>
-                    <li><a class="close-link"><i class="fa fa-close"></i></a>
-                    </li>
-                  </ul>
-                  <div class="clearfix"></div>
-                </div>
-                <div class="x_content">
-                    Add content to the page ...
-                </div>
+              <div class="x_content" style="text-align: left; font-weight: normal; font-size:20px">
+                <p style="text-indent: 2em;">
+                  本模型核心思想是建立分级图神经网络，对不同层次的路网表征进行建模。特别地，我们希望通过细粒度的路段聚合，获得高层次的交通单元。为此，我们引入了两种虚拟节点，即结构区和功能区。结构区域主要用来表征空间连通的路段，起到一定的交通作用，如立交桥、十字路口等。此外，在结构区域之上形成功能区，为出行人群提供某种功能，如购物区。除此之外，我们采用了多图机制来引导虚拟节点与现实世界的结构区域和功能区域相对应。除了道路网络的自然连通性外，我们利用道路类型属性建立结构相似性，利用城市POI信息定义道路段之间的功能相似性。使用这样的分级图神经网络，我们可以缓解与远程节点依赖相关的问题。
+                </p>
+                <p style="font-weight: bolder; font-size: 25px;">
+                  基本概念介绍
+                </p>
+                <ul>
+                  <li>路段：路网中的基础单元，通常与一些特征（如经纬度、路段类型、路段长度，车道数）相关联。</li>
+                  <li>结构区：由一组路段集合组成，通常作为一个整体起到一定的交通作用，如立交桥、十字路口等。</li>
+                  <li>功能区：由多个结构区组成，提供满足人们某些活动的交通功能，如购物区，住宅区等。</li>
+                </ul>
+                <p style="font-weight: bolder; font-size: 25px;">
+                  模型框架图
+                </p>
+                <p style="text-align: center;">
+                  <img src="../../static/assets/img/arch.png" weight="700px" height="800px">
+                </p>
               </div>
             </div>
           </div>

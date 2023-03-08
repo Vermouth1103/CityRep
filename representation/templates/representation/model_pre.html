@@ -11,6 +11,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   <title> 演示系统 </title>
+  <link rel="icon" href="#"/>
 
   <!-- Bootstrap -->
   <link href=" {% static 'assets/css/bootstrap.min.css' %} " rel="stylesheet">
@@ -18,6 +19,8 @@
   <link href=" {% static 'assets/css/font-awesome.min.css' %} " rel="stylesheet">
   <!-- Dropzone.js -->
   <!-- <link href=" {% static 'assets/css/dropzone.min.css" rel="stylesheet"> -->
+  <!-- Leaflet-->
+  <link href=" {% static 'assets/css/leaflet.css' %} " rel="stylesheet">
 
   <!-- Custom Theme Style -->
   <link href=" {% static 'assets/css/custom.min.css' %} " rel="stylesheet">
@@ -217,53 +220,85 @@
 
       <!-- page content -->
       <div class="right_col" role="main">
-        <div class="">
-          <div class="page-title">
-            <div class="title_left">
-              <h3>Plain Page</h3>
-            </div>
-
-            <div class="title_right">
-              <div class="col-md-5 col-sm-5   form-group pull-right top_search">
-                <div class="input-group">
-                  <input type="text" class="form-control" placeholder="Search for...">
-                  <span class="input-group-btn">
-                    <button class="btn btn-default" type="button">Go!</button>
-                  </span>
-                </div>
-              </div>
-            </div>
+        <div class="page-title">
+          <div class="title_left">
+            <h3>区域划分展示</h3>
           </div>
 
-          <div class="clearfix"></div>
-
-          <div class="row">
-            <div class="col-md-12 col-sm-12  ">
-              <div class="x_panel">
-                <div class="x_title">
-                  <h2>Plain Page</h2>
-                  <ul class="nav navbar-right panel_toolbox">
-                    <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
-                    </li>
-                    <li class="dropdown">
-                      <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-wrench"></i></a>
-                      <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                          <a class="dropdown-item" href="#">Settings 1</a>
-                          <a class="dropdown-item" href="#">Settings 2</a>
-                        </div>
-                    </li>
-                    <li><a class="close-link"><i class="fa fa-close"></i></a>
-                    </li>
-                  </ul>
-                  <div class="clearfix"></div>
-                </div>
-                <div class="x_content">
-                    Add content to the page ...
-                </div>
+          <div class="title_right">
+            <div class="col-md-5 col-sm-5 form-group pull-right top_search">
+              <div class="input-group">
+                <input type="text" class="form-control" placeholder="Search for...">
+                <span class="input-group-btn">
+                  <button class="btn btn-default" type="button">Go!</button>
+                </span>
               </div>
             </div>
           </div>
         </div>
+
+        <div class="row">
+          <div class="col-md-12 col-sm-12">
+            <div class="x_panel">
+              <div class="x_title">
+                <h2>结构区划分</h2>
+                <ul class="nav navbar-right panel_toolbox">
+                  <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                  </li>
+                  <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-wrench"></i></a>
+                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                        <a class="dropdown-item" href="#">Settings 1</a>
+                        <a class="dropdown-item" href="#">Settings 2</a>
+                      </div>
+                  </li>
+                  <li><a class="close-link"><i class="fa fa-close"></i></a>
+                  </li>
+                </ul>
+                <div class="clearfix"></div>
+              </div>
+              <div class="x_content">
+                <div id="struct_map" style="height: 480px;"></div>
+              </div>
+              <div style="height:260px; width:100%; display:none; overflow-y:auto" >
+                <table class="table table-striped" id="result1"></table>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-12 col-sm-12">
+            <div class="x_panel">
+              <div class="x_title">
+                <h2>功能区划分</h2>
+                <ul class="nav navbar-right panel_toolbox">
+                  <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                  </li>
+                  <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-wrench"></i></a>
+                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                        <a class="dropdown-item" href="#">Settings 1</a>
+                        <a class="dropdown-item" href="#">Settings 2</a>
+                      </div>
+                  </li>
+                  <li><a class="close-link"><i class="fa fa-close"></i></a>
+                  </li>
+                </ul>
+                <div class="clearfix"></div>
+              </div>
+              <div class="x_content">
+                <div id="function_map" style="height: 480px;"></div>
+              </div>
+              <div style="height:260px; width:100%; display:none; overflow-y:auto" >
+                <table class="table table-striped" id="result1"></table>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="clearfix"></div>
+
       </div>
       <!-- /page content -->
 
@@ -278,7 +313,10 @@
   <!-- <script src=" {% static 'assets/js/dropzone.min.js' %} "></script> -->
   <script src=" {% static 'assets/js/jquery.cookie.js' %} "></script>
 
-  <script src=" {% static 'assets/js/poptraffic.js' %} "></script>
+  <!-- Leaflet.js -->
+  <script src=" {% static 'assets/js/leaflet.js' %} "></script>
+
+  <script src=" {% static 'assets/js/model_pre.js' %} "></script>
 
   <!-- Custom Theme Scripts -->
   <script src=" {% static 'assets/js/custom.min.js' %} "></script>

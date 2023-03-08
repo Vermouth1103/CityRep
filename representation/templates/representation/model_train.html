@@ -11,6 +11,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   <title> 演示系统 </title>
+  <link rel="icon" href="#"/>
 
   <!-- Bootstrap -->
   <link href=" {% static 'assets/css/bootstrap.min.css' %} " rel="stylesheet">
@@ -220,7 +221,7 @@
         <div class="">
           <div class="page-title">
             <div class="title_left">
-              <h3>Plain Page</h3>
+              <h3>数据输入</h3>
             </div>
 
             <div class="title_right">
@@ -238,10 +239,10 @@
           <div class="clearfix"></div>
 
           <div class="row">
-            <div class="col-md-12 col-sm-12  ">
+            <div class="col-md-4 col-sm-4  ">
               <div class="x_panel">
                 <div class="x_title">
-                  <h2>Plain Page</h2>
+                  <h2>路网数据（必选）</h2>
                   <ul class="nav navbar-right panel_toolbox">
                     <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
                     </li>
@@ -258,11 +259,224 @@
                   <div class="clearfix"></div>
                 </div>
                 <div class="x_content">
-                    Add content to the page ...
+                  <p>请上传json格式文件，type为road_network</p>
+                  <form action="" method="post" enctype="multipart/form-data" id="form">
+                    <ul class="errorlist" id="error1"></ul>
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    <!-- <input type="button" class="btn btn-info form-control" name="type" value="submit" id="btn1" /> -->
+                    <button class="btn btn-info form-control upload-btn" name="type" type="submit" value="road_network" id="btn1">Upload</button>
+                  </form>
+                </div>
+                <div style="height:260px; width:100%; display:none; overflow-y:auto" >
+                  <table class="table table-striped" id="result1"></table>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-4 col-sm-4  ">
+              <div class="x_panel">
+                <div class="x_title">
+                  <h2>轨迹数据（可选）</h2>
+                  <ul class="nav navbar-right panel_toolbox">
+                    <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                    </li>
+                    <li class="dropdown">
+                      <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-wrench"></i></a>
+                      <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                          <a class="dropdown-item" href="#">Settings 1</a>
+                          <a class="dropdown-item" href="#">Settings 2</a>
+                        </div>
+                    </li>
+                    <li><a class="close-link"><i class="fa fa-close"></i></a>
+                    </li>
+                  </ul>
+                  <div class="clearfix"></div>
+                </div>
+                <div class="x_content">
+                  <p>请上传json格式文件，type为trajectory</p>
+                  <form action="" method="post" enctype="multipart/form-data" id="form">
+                    <ul class="errorlist" id="error2"></ul>
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    <!-- <input type="button" class="btn btn-info form-control" name="type" value="submit" id="btn1" /> -->
+                    <button class="btn btn-info form-control upload-btn" name="type" type="submit" value="road_network" id="btn2">Upload</button>
+                  </form>
+                </div>
+                <div style="height:260px; width:100%; display:none; overflow-y:auto" >
+                  <table class="table table-striped" id="result2"></table>
+                </div>              
+              </div>
+            </div>
+            <div class="col-md-4 col-sm-4  ">
+              <div class="x_panel">
+                <div class="x_title">
+                  <h2>POI数据（可选）</h2>
+                  <ul class="nav navbar-right panel_toolbox">
+                    <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                    </li>
+                    <li class="dropdown">
+                      <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-wrench"></i></a>
+                      <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                          <a class="dropdown-item" href="#">Settings 1</a>
+                          <a class="dropdown-item" href="#">Settings 2</a>
+                        </div>
+                    </li>
+                    <li><a class="close-link"><i class="fa fa-close"></i></a>
+                    </li>
+                  </ul>
+                  <div class="clearfix"></div>
+                </div>
+                <div class="x_content">
+                  <p>请上传csv格式文件，type为POI</p>
+                  <form action="" method="post" enctype="multipart/form-data" id="form">
+                    <ul class="errorlist" id="error3"></ul>
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    <!-- <input type="button" class="btn btn-info form-control" name="type" value="submit" id="btn1" /> -->
+                    <button class="btn btn-info form-control upload-btn" name="type" type="submit" value="road_network" id="btn3">Upload</button>
+                  </form>
+                </div>
+                <div style="height:260px; width:100%; display:none; overflow-y:auto" >
+                  <table class="table table-striped" id="result3"></table>
                 </div>
               </div>
             </div>
           </div>
+
+          <!-- hyperparameter -->
+          <div class="row">
+						<div class="col-md-12 col-sm-12 ">
+							<div class="x_panel">
+								<div class="x_title">
+									<h2>参数设置</h2>
+									<ul class="nav navbar-right panel_toolbox">
+										<li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+										</li>
+										<li class="dropdown">
+											<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><i class="fa fa-wrench"></i></a>
+											<ul class="dropdown-menu" role="menu">
+												<li><a class="dropdown-item" href="#">Settings 1</a>
+												</li>
+												<li><a class="dropdown-item" href="#">Settings 2</a>
+												</li>
+											</ul>
+										</li>
+										<li><a class="close-link"><i class="fa fa-close"></i></a>
+										</li>
+									</ul>
+									<div class="clearfix"></div>
+								</div>
+
+								<div class="x_content">
+									<br />
+									<form action="" method="post" enctype="multipart/form-data" id="form_hyperparameter">
+                    <ul class="errorlist" id="submit-error"></ul>
+                    <div class="row">
+                      <div class="col-md-4 col-sm-4">
+                        <h6>路段参数</h6>
+                        <div class="row">
+                          <div class="item form-group">
+                            <label class="col-form-label col-md-6 col-sm-6 label-align" for="road_num" style="vertical-align:middle">Road num: </span></label>
+                            <div class="col-md-6 col-sm-6">
+                              <input type="text" id="road_num" required="required" class="form-control parameter" value="1000" style="color: gray">
+                            </div>
+                          </div>
+                        </div>
+                        <div class="row">
+                          <div class="item form-group">
+                            <label class="col-form-label col-md-6 col-sm-6 label-align" for="road_dim">Road dim: </span></label>
+                            <div class="col-md-6 col-sm-6 ">
+                              <input type="text" id="road_dim" required="required" class="form-control parameter" value="256" style="color: gray">
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-md-4 col-sm-4">
+                        <h6>结构区参数</h6>
+                        <div class="row">
+                          <div class="item form-group">
+                            <label class="col-form-label col-md-6 col-sm-6 label-align" for="region_num">Region num: </span></label>
+                            <div class="col-md-6 col-sm-6 ">
+                              <input type="text" id="region_num" required="required" class="form-control parameter" value="60" style="color: gray">
+                            </div>
+                          </div>
+                        </div>
+                        <div class="row">
+                          <div class="item form-group">
+                            <label class="col-form-label col-md-6 col-sm-6 label-align" for="region_dim">Region dim: </span></label>
+                            <div class="col-md-6 col-sm-6 ">
+                              <input type="text" id="region_dim" required="required" class="form-control parameter" value="256" style="color: gray">
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-md-4 col-sm-4">
+                        <h6>功能区参数</h6>
+                        <div class="row">
+                          <div class="item form-group">
+                            <label class="col-form-label col-md-6 col-sm-6 label-align" for="zone_num">Zone num: </span></label>
+                            <div class="col-md-6 col-sm-6 ">
+                              <input type="text" id="zone_num" required="required" class="form-control parameter" value="20" style="color: gray">
+                            </div>
+                          </div>
+                        </div>
+                        <div class="row">
+                          <div class="item form-group">
+                            <label class="col-form-label col-md-6 col-sm-6 label-align" for="zone_dim">Zone dim: </span></label>
+                            <div class="col-md-6 col-sm-6 ">
+                              <input type="text" id="zone_dim" required="required" class="form-control parameter" value="256" style="color: gray">
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <h6>训练参数</h6>
+                    <div class="row">
+                      <div class="col-md-3 col-sm-3">
+                        <div class="item form-group">
+                          <label class="col-form-label col-md-4 col-sm-4 label-align" for="epochs" style="vertical-align: middle">Epochs: </span></label>
+                          <div class="col-md-6 col-sm-6 ">
+                            <input type="text" id="epochs" required="required" class="form-control parameter" value="200" style="color: gray">
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-md-3 col-sm-3">
+                        <div class="item form-group">
+                          <label class="col-form-label col-md-4 col-sm-4 label-align" for="batch_size">Batch size: </span></label>
+                          <div class="col-md-6 col-sm-6 ">
+                            <input type="text" id="batch_size" required="required" class="form-control parameter" value="300" style="color: gray">
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-md-3 col-sm-3">
+                        <div class="item form-group">
+                          <label class="col-form-label col-md-4 col-sm-4 label-align" for="lr">Learning rate: </span></label>
+                          <div class="col-md-6 col-sm-6 ">
+                            <input type="text" id="lr" required="required" class="form-control parameter" value="1e-4" style="color: gray">
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-md-3 col-sm-3">
+                        <div class="item form-group">
+                          <label class="col-form-label col-md-4 col-sm-4 label-align" for="dropout">Dropout: </span></label>
+                          <div class="col-md-6 col-sm-6 ">
+                            <input type="text" id="dropout" required="required" class="form-control parameter" value="0.6" style="color: gray">
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+										<ul class="errorlist" id="error_hyperparameter"></ul>
+										<div class="item form-group">
+											<div class="col-md-6 col-sm-6 offset-md-3 btn-group btn-group-justified">
+												<button type="reset" class="btn btn-primary">Reset</button>
+												<button type="submit" class="btn btn-success" id="submit-btn">Submit</button>
+											</div>
+										</div>
+									</form>
+								</div>
+							</div>
+						</div>
+					</div>
         </div>
       </div>
       <!-- /page content -->
@@ -278,7 +492,7 @@
   <!-- <script src=" {% static 'assets/js/dropzone.min.js' %} "></script> -->
   <script src=" {% static 'assets/js/jquery.cookie.js' %} "></script>
 
-  <script src=" {% static 'assets/js/poptraffic.js' %} "></script>
+  <script src=" {% static 'assets/js/model_train.js' %} "></script>
 
   <!-- Custom Theme Scripts -->
   <script src=" {% static 'assets/js/custom.min.js' %} "></script>
