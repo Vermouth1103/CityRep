@@ -7,5 +7,6 @@ urlpatterns = [
     path("model_des/", views.ModelDesView.as_view(), name="model_des"),
     path("data_des/", views.DataDesView.as_view(), name="data_des"),
     path("model_train/", views.ModelTrainView.as_view(), name="model_train"),
+    path("model_upload/", views.ModelUploadView.as_view(), name="model_upload"),
     path("model_pre/", views.ModelPreView.as_view(), name="model_pre")
 ]
