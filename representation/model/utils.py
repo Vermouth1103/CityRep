@@ -5,6 +5,7 @@ import random
 import copy
 from sklearn.utils import shuffle
 import json
+import os
 
 EPS = 1e-30
 
@@ -157,7 +158,7 @@ def extract_struct_assign(hparams):
         struct_assign = np.array(pickle.load(f))
 
     assign_list = np.argmax(struct_assign, axis=1)
-    print(f"struct assign list: {assign_list}, number: {len(assign_list)}")
+    # print(f"struct assign list: {assign_list}, number: {len(assign_list)}")
 
     assign_dict = {}
     for index, value in enumerate(assign_list):
@@ -165,9 +166,9 @@ def extract_struct_assign(hparams):
             assign_dict[int(value)] = [int(index)]
         else:
             assign_dict[int(value)].append(int(index))
-    print(f"struct assign dict: {assign_dict}, number:  {len(assign_dict)}")
+    # print(f"struct assign dict: {assign_dict}, number:  {len(assign_dict)}")
 
-    with open("./media/assign/struct_assign.json", "w") as f:
+    with open(os.path.join(hparams.save_dir, "struct_assign.json"), "w") as f:
         json.dump(assign_dict, f)
 
 def extract_function_assign(hparams):
@@ -177,10 +178,10 @@ def extract_function_assign(hparams):
         function_assign = np.array(pickle.load(f))
 
     node2fnc = np.dot(struct_assign, function_assign)
-    print(f"node2fnc: {node2fnc}, {node2fnc.shape}")
+    # print(f"node2fnc: {node2fnc}, {node2fnc.shape}")
 
     assign_list = np.argmax(node2fnc, axis=1)
-    print(f"function assign list: {assign_list}, number: {len(assign_list)}")
+    # print(f"function assign list: {assign_list}, number: {len(assign_list)}")
 
     assign_dict = {}
     for index, value in enumerate(assign_list):
@@ -188,7 +189,7 @@ def extract_function_assign(hparams):
             assign_dict[int(value)] = [int(index)]
         else:
             assign_dict[int(value)].append(int(index))
-    print(f"function assign dict: {assign_dict}, number:  {len(assign_dict)}")
+    # print(f"function assign dict: {assign_dict}, number:  {len(assign_dict)}")
 
-    with open("./media/assign/struct_fnc.json", "w") as f:
+    with open(os.path.join(hparams.save_dir, "function_assign.json"), "w") as f:
         json.dump(assign_dict, f)

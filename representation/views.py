@@ -7,44 +7,85 @@ from .forms import DataForm, HyperparameterForm
 
 import os
 from .model.preprocess.preprocess_roadnetwork import generate_graph, generate_features
-from .model.preprocess.preprocess_trajectory import generate_trajectory_adj, generate_traj4rp
+from .model.preprocess.preprocess_trajectory import generate_trajectory_adj
 from .model.preprocess.preprocess_spectral_cluster import generate_spectral_label
 from .model.train import *
 
-# Create your views here.
-def handle_uploaded_file(file, _type, road_network_path=""):
+def get_newest_file(dir_path, content):
+    file_list = os.listdir(dir_path)
+    file_list = [f for f in file_list if content in f ]
+    if not file_list:
+        return
+    else:
+        # 注意，这里使用lambda表达式，将文件按照最后修改时间顺序升序排列
+        # os.path.getmtime() 函数是获取文件最后修改时间
+        # os.path.getctime() 函数是获取文件最后创建时间
+        file_list = sorted(file_list, key=lambda x: os.path.getmtime(os.path.join(dir_path, x)))
+        # print(dir_list)
+        return os.path.join(dir_path, file_list[-1])
+
+def handle_uploaded_file(file, data_type):
+
+    root = "media"
+    app_name = "representation"
+
+    upload_dir = "upload"
+    preprocessed_dir = "preprocessed"
 
     file_name = file.name
-    file_path = os.path.join(_type, file_name)
-    absolute_file_path = os.path.join('media', _type, file_name)
+    upload_file_path = os.path.join(app_name, upload_dir, data_type, file_name)
+    absolute_upload_file_path = os.path.join(root, upload_file_path)
 
-    directory = os.path.dirname(absolute_file_path)
-    if not os.path.exists(directory):
-        os.makedirs(directory)
+    absolute_upload_dir_path = os.path.dirname(absolute_upload_file_path)
+    if not os.path.exists(absolute_upload_dir_path):
+        os.makedirs(absolute_upload_dir_path)
 
-    with open(absolute_file_path, "wb+") as f:
+    absolute_preprocessed_dir_path = os.path.join(root, app_name, preprocessed_dir)
+    if not os.path.exists(absolute_preprocessed_dir_path):
+        os.makedirs(absolute_preprocessed_dir_path)
+
+    with open(absolute_upload_file_path, "wb+") as f:
         for chunk in file.chunks():
             f.write(chunk)
 
     # preprocess check
-    if _type == "road_network":
+    if data_type == "road_network":
         try:
-            generate_graph(absolute_file_path, _type)
-            generate_features(absolute_file_path, _type)
-        except:
+            adj_matrix, edge_index_dict = generate_graph(absolute_upload_file_path, data_type)
+
+            print(absolute_preprocessed_dir_path)
+            road_graph_path = os.path.join(absolute_preprocessed_dir_path, "road_graph.pkl")
+            with open(road_graph_path, "wb") as f:
+                pickle.dump(adj_matrix, f)
+            
+            edge_mapping_path = os.path.join(absolute_preprocessed_dir_path, "edge_mapping.json")
+            with open(edge_mapping_path, "w") as f:
+                json.dump(edge_index_dict, f)
+
+            node_features = generate_features(absolute_upload_file_path, data_type)
+
+            node_features_path = os.path.join(absolute_preprocessed_dir_path, "road_features.pkl")
+            with open(node_features_path, "wb") as f:
+                pickle.dump(node_features, f)
+        except Exception as e:
             print(e)
             return -1
-        
-    elif _type == "trajectory":
+    elif data_type == "trajectory":
         try:
-            generate_trajectory_adj(absolute_file_path, _type, road_network_path)
+            absolute_road_network_dir_path = os.path.join(root, app_name, upload_dir, "road_network")
+            absolute_newest_road_network_path = get_newest_file(absolute_road_network_dir_path, "json")
+            tra_adj = generate_trajectory_adj(absolute_upload_file_path, data_type, absolute_newest_road_network_path)
+
+            tra_adj_path = os.path.join(absolute_preprocessed_dir_path, "trajectory_adj.pkl")
+            with open(tra_adj_path, "wb") as f:
+                pickle.dump(tra_adj, f)
         except Exception as e:
             print(e)
             return -1
 
-    return file_path
+    return upload_file_path
 
-
+# Create your views here.
 class RepresentationDesView(View):
 
     def get(self, request):
@@ -71,7 +112,6 @@ class ModelTrainView(View):
         return render(request, template, {"form": form})
     
     def post(self, request):
-        print(f"POST data: {request.POST}")
 
         form = HyperparameterForm(data=request.POST)
 
@@ -93,20 +133,23 @@ class ModelTrainView(View):
             hparams = form.cleaned_data
             hparams = dict_to_object(hparams)
 
-            road_network_path = "./media/preprocessed_road_network/"
-            trajectory_path = "./media/preprocessed_trajectory/"
-            # poi_path = "./media/preprocessed_POI/"
+            root = "media"
+            app_name = "representation"
+            preprocessed_dir = "preprocessed"
 
-            hparams.save_dir = "./media/assign"
+            absolute_preprocessed_dir_path = os.path.join(root, app_name, preprocessed_dir)
+
+            hparams.save_dir = os.path.join(root, app_name, "assign")
             if not os.path.exists(hparams.save_dir):
                 os.makedirs(hparams.save_dir)
             hparams.struct_path = os.path.join(hparams.save_dir, "struct_assign.pkl")
             hparams.function_path = os.path.join(hparams.save_dir, "function_assign.pkl")
 
-            hparams.adj = get_newest_file(road_network_path, "graph")
-            hparams.node_features = get_newest_file(road_network_path, "features")
-            hparams.trajectory = get_newest_file(trajectory_path, "")
+            hparams.adj = get_newest_file(absolute_preprocessed_dir_path, "graph")
+            hparams.node_features = get_newest_file(absolute_preprocessed_dir_path, "features")
+            hparams.trajectory = get_newest_file(absolute_preprocessed_dir_path, "trajectory")
             # hparams.poi = get_newest_file(poi_path)
+            
             print(f"adj path: {hparams.adj}")
             print(f"node features path: {hparams.node_features}")
             print(f"trajectory path: {hparams.trajectory}")
@@ -120,37 +163,36 @@ class ModelTrainView(View):
             hparams.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
             # spectral clustering
-            spectral_cluster_path = generate_spectral_label(hparams.adj, hparams.region_num)
+            spectral_label = generate_spectral_label(hparams.adj, hparams.region_num)
+            spectral_cluster_path = os.path.join(absolute_preprocessed_dir_path, "spectral_label.pkl")
+            with open(spectral_cluster_path, "wb") as f:
+                pickle.dump(spectral_label, f)
+
             hparams.spectral_label = spectral_cluster_path
 
             train_struct_cmt(hparams)  # get struct assign by autoencoder
 
             train_fnc_cmt_rst(hparams)  # get fnc assign by autoencoder -> reconstruct transition graph
 
-            template = "poptraffic/poptraffic_downstream_task.html"
-            return render(request, template)
+            return JsonResponse({})
         else:
-            data = {'error_msg': "Hyper parameter set invalid."}
+            data = {"error_msg": "Hyper parameter set invalid."}
             return JsonResponse(data)
     
 class ModelUploadView(View):
 
     def post(self, request):
-        _type = request.POST.get('type')
 
-        road_network_path = request.POST.get('road_network_path')
-        print(f"road_network_path: {road_network_path}")
-
+        data_type = request.POST.get("type")
         form = DataForm(data=request.POST, files=request.FILES)
-        print(form.errors)
         if form.is_valid():
             # get cleaned data
             raw_file = form.cleaned_data.get("file")
             new_file = Data()
-            check = handle_uploaded_file(raw_file, _type, road_network_path)
-            print(check)
+            check = handle_uploaded_file(raw_file, data_type)
+            print(f"check: {check}")
             if check == -1:
-                data = {"error_msg": _type+" file invalid."}
+                data = {"error_msg": f"{data_type} file invalid."}
                 return JsonResponse(data)
             else:
                 new_file.file = check
@@ -158,12 +200,12 @@ class ModelUploadView(View):
                 new_file.save()
 
             data = []
-            if _type == "road_network":
+            if data_type == "road_network":
                 data.append(check)
             else:
                 data.append("")
 
-            files = Data.objects.all().filter(type=_type).order_by('-id')
+            files = Data.objects.all().filter(type=data_type).order_by("-id")
             for file in files:
                 data.append({
                     "url": file.file.url,
@@ -172,14 +214,14 @@ class ModelUploadView(View):
                     })
             return JsonResponse(data, safe=False)
         else:
-            if _type == "road_network":
-                data = {'error_msg': "Only json files are allowed."}
-            elif _type == "trajectory":
-                data = {'error_msg': "Only json files are allowed."}
-            elif _type == "POI":
-                data = {'error_msg': "Only csv files are allowed."}
+            if data_type == "road_network":
+                data = {"error_msg": "Only json files are allowed."}
+            elif data_type == "trajectory":
+                data = {"error_msg": "Only json files are allowed."}
+            elif data_type == "POI":
+                data = {"error_msg": "Only csv files are allowed."}
             else:
-                data = {'error_msg': "Only json, txt, csv files are allowed."}
+                data = {"error_msg": "Only json, txt, csv files are allowed."}
             return JsonResponse(data)
 
 class ModelPreView(View):

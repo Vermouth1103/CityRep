@@ -25,7 +25,6 @@ def generate_graph(absolute_file_path, _type):
         edge_index_dict[index] = road["properties"]["FID_1"]
 
     assert len(edge_index_dict) == len(set(list(edge_index_dict.values())))
-    # print(len(edge_index_dict))
 
     source_nodes = np.array(source_node_list)
     end_nodes = np.array(end_node_list)
@@ -37,23 +36,9 @@ def generate_graph(absolute_file_path, _type):
         for j in (end_links+source_links): 
             adj_matrix[i][j] = 1
 
-    # print(adj_matrix)
-    # print(np.sum(adj_matrix))
+    return adj_matrix, edge_index_dict
 
-    print(f"absolute file path: {absolute_file_path}")
-    preprocessed_data_path = os.path.join('media', "preprocessed_"+_type, "road_graph.pkl")
-    directory = os.path.dirname(preprocessed_data_path)
-    if not os.path.exists(directory):
-        os.makedirs(directory)
-
-    with open(preprocessed_data_path, "wb") as f:
-        pickle.dump(adj_matrix, f)
-    
-    edge_mapping_path = os.path.join('media', "preprocessed_"+_type, "edge_mapping.json")
-    with open(edge_mapping_path, "w") as f:
-        json.dump(edge_index_dict, f)
-
-def generate_features(absolute_file_path, _type):
+def generate_features(absolute_file_path, data_type):
     with open(absolute_file_path, "r") as f:
         road_network = json.load(f)
 
@@ -66,15 +51,7 @@ def generate_features(absolute_file_path, _type):
     node_features = np.array(node_features)
     node_features = node_features.astype(np.int)
 
-    preprocessed_data_path = os.path.join('media', "preprocessed_"+_type, "road_features.pkl")
-    # print(preprocessed_data_path)
-    directory = os.path.dirname(preprocessed_data_path)
-    if not os.path.exists(directory):
-        os.makedirs(directory)
-
-    with open(preprocessed_data_path, "wb") as f:
-        pickle.dump(node_features, f)
-
+    return node_features
 
 if __name__=="__main__":
     path = './media/road_network/1652963341_Road.json'

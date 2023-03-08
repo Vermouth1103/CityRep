@@ -3,19 +3,16 @@ function csrfSafeMethod(method) {
     return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
 }
 
-window.road_network_path = ""
 $(document).ready(function(){
     $('.upload-btn').click(function(e){
         e.preventDefault();
         // 构建FormData对象
         var form_data = new FormData();
-        console.log($("#"+e.target.id).parent().find('#id_type').val())
         form_data.append('file', $("#"+e.target.id).parent().find('#id_file')[0].files[0]);
         form_data.append('type', $("#"+e.target.id).parent().find('#id_type').val());
-        form_data.append('road_network_path', window.road_network_path)
-        console.log(form_data);
+        
         $.ajax({
-            url: '/pop_traffic/upload_data/',
+            url: '/representation/model_upload/',
             data: form_data, 
             type: 'post',
             processData:false,
@@ -60,16 +57,13 @@ $(document).ready(function(){
                         }
                     });
                     content = content + "</tbody>";
-                    console.log($("#"+e.target.id.replace("btn", "result")).parent())
-                    $("#"+e.target.id.replace("btn", "result")).parent().css("display", "block")
+                    // $("#"+e.target.id.replace("btn", "result")).parent().css("display", "block")
                     $("#"+e.target.id.replace("btn", "result")).html(content);
                 }
             },
         });
     });
-});
 
-$(document).ready(function(){
     $('#submit-btn').click(function(e){
         e.preventDefault()
         var form_data = new FormData();
@@ -84,9 +78,8 @@ $(document).ready(function(){
         form_data.append('batch_size', form.find('#batch_size').val());
         form_data.append('lr', form.find('#lr').val());
         form_data.append('dropout', form.find('#dropout').val());
-        console.log(form_data);
         $.ajax({
-            url: '/pop_traffic/train/',
+            url: '/representation/model_train/',
             data: form_data,
             type: 'POST',
             dataType: 'json',
@@ -114,6 +107,7 @@ $(document).ready(function(){
         });
     });
 });
+
 
 $(".parameter").focus(function(){
     var oldValue = $(this).val();

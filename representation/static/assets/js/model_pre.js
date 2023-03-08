@@ -9,13 +9,13 @@ L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
 }).addTo(struct_map);
 
-$.getJSON('../../media/road_network/Road.json', function(data){
+$.getJSON('../../media/representation/upload/road_network/Road.json', function(data){
     console.log(data);
     var beijing_roadmap = data;
 
-    var data_path = '../../media/assign/struct_assign.json';
+    var data_path = '../../media/representation/assign/struct_assign.json';
 
-    var edge_mapping_path = "../../media/preprocessed_road_network/edge_mapping.json"
+    var edge_mapping_path = "../../media/representation/preprocessed/edge_mapping.json"
 
     $.getJSON(edge_mapping_path, function(edge_mapping){
         
@@ -91,13 +91,13 @@ L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
 }).addTo(function_map);
 
-$.getJSON('../../media/road_network/Road.json', function(data){
+$.getJSON('../../media/representation/upload/road_network/Road.json', function(data){
     console.log(data);
     var beijing_roadmap = data;
 
-    var data_path = '../../media/assign/struct_fnc.json';
+    var data_path = '../../media/representation/assign/function_assign.json';
 
-    var edge_mapping_path = "../../media/preprocessed_road_network/edge_mapping.json"
+    var edge_mapping_path = "../../media/representation/preprocessed/edge_mapping.json"
 
     $.getJSON(edge_mapping_path, function(edge_mapping){
         

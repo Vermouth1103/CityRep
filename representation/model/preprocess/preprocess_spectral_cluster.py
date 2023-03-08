@@ -22,16 +22,7 @@ def generate_spectral_label(road_network_path, region_num, _type="road_network")
         spectral_label.append(a)
     spectral_label = np.array(spectral_label)
 
-    preprocessed_data_path = os.path.join('media', "preprocessed_"+_type, "spectral_label.pkl")
-    directory = os.path.dirname(preprocessed_data_path)
-    if not os.path.exists(directory):
-        os.makedirs(directory)
-
-    with open(preprocessed_data_path, "wb") as f:
-        pickle.dump(spectral_label, f)
-
-    return preprocessed_data_path
-
+    return spectral_label
 
 if __name__=="__main__":
     pass

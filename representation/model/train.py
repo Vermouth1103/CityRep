@@ -39,6 +39,7 @@ def train_fnc_cmt_rst(hparams):  # train fnc by reconstruction
         struct_assign, dtype=torch.float, device=hparams.device)
 
     g2t_model = GraphAutoencoderTra(hparams).to(hparams.device)
+    print(g2t_model)
 
     model_optimizer = optim.Adam(
         g2t_model.parameters(), lr=hparams.lr)
