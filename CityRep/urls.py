@@ -22,7 +22,7 @@ urlpatterns = [
     path("main/", include("main.urls")),
     path("admin/", admin.site.urls),
     path("representation/", include("representation.urls")),
-    path("pop_traffic/", include("poptraffic.urls")),
-    path("ind_traffic/", include("indtraffic.urls")),
+    path("poptraffic/", include("poptraffic.urls")),
+    path("indtraffic/", include("indtraffic.urls")),
     path("accident/", include("accident.urls"))
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -15,7 +15,7 @@ $(document).ready(function(){
         form_data.append('road_network_path', window.road_network_path)
         console.log(form_data);
         $.ajax({
-            url: '/pop_traffic/upload_data/',
+            url: '/poptraffic/upload_data/',
             data: form_data, 
             type: 'post',
             processData:false,
@@ -86,7 +86,7 @@ $(document).ready(function(){
         form_data.append('dropout', form.find('#dropout').val());
         console.log(form_data);
         $.ajax({
-            url: '/pop_traffic/train/',
+            url: '/poptraffic/train/',
             data: form_data,
             type: 'POST',
             dataType: 'json',

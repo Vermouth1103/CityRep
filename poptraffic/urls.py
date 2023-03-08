@@ -1,7 +1,7 @@
 from django.urls import path
 from . import views
 
-app_name = "pop_traffic"
+app_name = "poptraffic"
 urlpatterns = [
     path("speedprediction_des", views.SpeedPredictionDes.as_view(), name="speedprediction_des"),
     path("speedprediction_pre", views.SpeedPredictionPre.as_view(), name="speedprediction_pre"),

@@ -15,7 +15,7 @@ class Migration(migrations.Migration):
             name='NextLocData',
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('file', models.FileField(null=True, upload_to='ind_traffic')),
+                ('file', models.FileField(null=True, upload_to='indtraffic')),
                 ('type', models.CharField(default='route_plan_trajectory', max_length=50, verbose_name='Data Type')),
             ],
         ),
@@ -33,7 +33,7 @@ class Migration(migrations.Migration):
             name='RoutePlanData',
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('file', models.FileField(null=True, upload_to='ind_traffic')),
+                ('file', models.FileField(null=True, upload_to='indtraffic')),
                 ('type', models.CharField(default='route_plan_trajectory', max_length=50, verbose_name='Data Type')),
             ],
         ),

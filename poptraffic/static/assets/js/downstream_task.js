@@ -12,7 +12,7 @@ $(document).ready(function(){
         form_data.append('file', $("#"+e.target.id).parent().find('#id_file')[0].files[0]);
         console.log(form_data)
         $.ajax({
-            url: '/pop_traffic/downstream_task/',
+            url: '/poptraffic/downstream_task/',
             data: form_data, 
             type: 'post',
             processData: false,
@@ -75,7 +75,7 @@ $(document).ready(function(){
         form_data.append('dropout', form.find('#dropout').val());
         console.log(form_data);
         $.ajax({
-            url: "/pop_traffic/route_plan/",
+            url: "/poptraffic/route_plan/",
             data: form_data,
             type: "POST",
             dataType: "json",

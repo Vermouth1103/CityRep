@@ -53,7 +53,6 @@ def handle_uploaded_file(file, data_type):
         try:
             adj_matrix, edge_index_dict = generate_graph(absolute_upload_file_path, data_type)
 
-            print(absolute_preprocessed_dir_path)
             road_graph_path = os.path.join(absolute_preprocessed_dir_path, "road_graph.pkl")
             with open(road_graph_path, "wb") as f:
                 pickle.dump(adj_matrix, f)
@@ -200,11 +199,6 @@ class ModelUploadView(View):
                 new_file.save()
 
             data = []
-            if data_type == "road_network":
-                data.append(check)
-            else:
-                data.append("")
-
             files = Data.objects.all().filter(type=data_type).order_by("-id")
             for file in files:
                 data.append({

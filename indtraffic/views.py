@@ -10,34 +10,50 @@ from .model.preprocess.preprocess_trajectory import generate_traj4rp
 from .model.train_route_plan import *
 from .model.utils import *
 
-def handle_uploaded_file(file, _type):
+def handle_uploaded_file(file, data_type):
+
+    root = "media"
+    app_name = "indtraffic"
+
+    upload_dir = "upload"
+    preprocessed_dir = "preprocessed"
 
     file_name = file.name
-    file_path = os.path.join(_type, file_name)
-    absolute_file_path = os.path.join('media', _type, file_name)
+    upload_file_path = os.path.join(app_name, upload_dir, data_type, file_name)
+    absolute_upload_file_path = os.path.join(root, upload_file_path)
 
-    directory = os.path.dirname(absolute_file_path)
-    if not os.path.exists(directory):
-        os.makedirs(directory)
+    absolute_upload_dir_path = os.path.dirname(absolute_upload_file_path)
+    if not os.path.exists(absolute_upload_dir_path):
+        os.makedirs(absolute_upload_dir_path)
 
-    with open(absolute_file_path, "wb+") as f:
+    absolute_preprocessed_dir_path = os.path.join(root, app_name, preprocessed_dir, data_type)
+    if not os.path.exists(absolute_preprocessed_dir_path):
+        os.makedirs(absolute_preprocessed_dir_path)
+
+    with open(absolute_upload_file_path, "wb+") as f:
         for chunk in file.chunks():
             f.write(chunk)
 
-    if _type == "route_plan":
-        route_plan_dataset = generate_traj4rp(absolute_file_path)
-        save_path = os.path.join("media", "indtraffic", "route_plan")
-        with open(save_path, "wb") as f:
+    try:
+        route_plan_dataset = generate_traj4rp(absolute_upload_file_path)
+
+        route_plan_dataset_path = os.path.join(absolute_preprocessed_dir_path, "train_set.pkl")
+        with open(route_plan_dataset_path, "wb") as f:
             pickle.dump(route_plan_dataset, f)
+    except Exception as e:
+        print(e)
+        return -1
+
+    return upload_file_path
 
 # Create your views here.
-class RoutePlanDes(View):
+class RoutePlanDesView(View):
     
     def get(self, request):
         template = "indtraffic/routeplan_des.html"
         return render(request, template)
 
-class RoutePlanPre(View):
+class RoutePlanPreView(View):
 
     template = "indtraffic/routeplan_pre.html"
 
@@ -77,15 +93,15 @@ class RoutePlanPre(View):
             hparams.lp_learning_rate = new_hyperparameter.lr
             hparams.lp_clip = 1.0
 
-            road_network_path = "./media/preprocessed_road_network/"
+            road_network_path = "media/representation/preprocessed"
             hparams.adj = get_newest_file(road_network_path, "graph")
             hparams.node_features = get_newest_file(road_network_path, "features")
 
-            hparams.struct_path = "./media/assign/struct_assign.pkl"
-            hparams.function_path = "./media/assign/function_assign.pkl"
+            hparams.struct_path = "media/representation/assign/struct_assign.pkl"
+            hparams.function_path = "media/representation/assign/function_assign.pkl"
 
             hparams.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-            hparams.route_plan_dir = "./media/route_plan/preprocessed"
+            hparams.route_plan_dir = "media/indtraffic/preprocessed/route_plan"
             hparams.route_plan_train = os.path.join(hparams.route_plan_dir, "train_set.pkl")
             hparams.route_plan_model = os.path.join(hparams.route_plan_dir, "route_plan.model")
             print(f"hparams: {hparams}")
@@ -95,34 +111,32 @@ class RoutePlanPre(View):
             form = RoutePlanDataForm()
             return render(request, self.template, {"form": form})
         else:
-            data = {'error_msg': "Hyper parameter set invalid."}
+            data = {"error_msg": "Hyper parameter set invalid."}
             return JsonResponse(data)
         
-class RoutePlanUpload(View):
+class RoutePlanUploadView(View):
 
     def post(self, request):
-        print(f"POST data: {request.POST}")
 
         form = RoutePlanDataForm(data=request.POST, files=request.FILES)
 
         if form.is_valid():
             # get cleaned data
-            print(form.cleaned_data)
             raw_file = form.cleaned_data.get("file")
-            _type = "route_plan"
-            print(f"raw_file: {raw_file}, type: {_type}")
+            data_type = "route_plan"
             new_file = RoutePlanData()
-            check = handle_uploaded_file(raw_file, _type)
+            check = handle_uploaded_file(raw_file, data_type)
             print(check)
             if check == -1:
-                data = {"error_msg": _type+" file invalid."}
+                data = {"error_msg": data_type+" file invalid."}
                 return JsonResponse(data)
             else:
                 new_file.file = check
-                new_file.type = _type
+                new_file.type = data_type
                 new_file.save()
-            files = RoutePlanData.objects.all().order_by('-id')
+            
             data = []
+            files = RoutePlanData.objects.all().order_by("-id")
             for file in files:
                 data.append({
                     "url": file.file.url,
@@ -130,20 +144,18 @@ class RoutePlanUpload(View):
                     "type": file.type,
                     })
 
-            form = RoutePlanDataForm()
-            return render(request, self.template, {"form": form, "data": data})
+            return JsonResponse({"data": data})
         else:
-            form = RoutePlanDataForm()
-            data = {'error_msg': "Only json files are allowed."}
-            return render(request, self.template, {"data": data})
-
-class NextLocDes(View):
+            data = {"error_msg": "Only json files are allowed."}
+            return JsonResponse({"data": data})
+        
+class NextLocDesView(View):
 
     def get(self, request):
         template = "indtraffic/nextloc_des.html"
         return render(request, template)
 
-class NextLocPre(View):
+class NextLocPreView(View):
 
     template = "indtraffic/nextloc_pre.html"
 

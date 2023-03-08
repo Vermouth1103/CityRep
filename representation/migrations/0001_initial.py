@@ -15,7 +15,7 @@ class Migration(migrations.Migration):
             name='Data',
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('file', models.FileField(null=True, upload_to='pop_traffic')),
+                ('file', models.FileField(null=True, upload_to='poptraffic')),
                 ('type', models.CharField(max_length=50, verbose_name='Data Type')),
             ],
         ),

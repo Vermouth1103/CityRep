@@ -62,14 +62,14 @@
                   <ul class="nav child_menu">
                     <li><a><i class="fa fa-home"></i> 速度预测 <span class="fa fa-chevron-down"></span></a>
                       <ul class="nav child_menu">
-                        <li><a href="{% url 'pop_traffic:speedprediction_des' %}">相关介绍</a></li>
-                        <li><a href="{% url 'pop_traffic:speedprediction_pre' %}">预测仿真</a></li>
+                        <li><a href="{% url 'poptraffic:speedprediction_des' %}">相关介绍</a></li>
+                        <li><a href="{% url 'poptraffic:speedprediction_pre' %}">预测仿真</a></li>
                       </ul>
                     </li>
                     <li><a><i class="fa fa-home"></i> 流量预测 <span class="fa fa-chevron-down"></span></a>
                       <ul class="nav child_menu">
-                        <li><a href="{% url 'pop_traffic:flowprediction_des' %}">相关介绍</a></li>
-                        <li><a href="{% url 'pop_traffic:flowprediction_pre' %}">预测仿真</a></li>
+                        <li><a href="{% url 'poptraffic:flowprediction_des' %}">相关介绍</a></li>
+                        <li><a href="{% url 'poptraffic:flowprediction_pre' %}">预测仿真</a></li>
                       </ul>
                     </li>
                   </ul>
@@ -78,14 +78,14 @@
                   <ul class="nav child_menu">
                     <li><a><i class="fa fa-home"></i> 路径规划 <span class="fa fa-chevron-down"></span></a>
                       <ul class="nav child_menu">
-                        <li><a href="{% url 'ind_traffic:routeplan_des' %}">相关介绍</a></li>
-                        <li><a href="{% url 'ind_traffic:routeplan_pre' %}">预测仿真</a></li>
+                        <li><a href="{% url 'indtraffic:routeplan_des' %}">相关介绍</a></li>
+                        <li><a href="{% url 'indtraffic:routeplan_pre' %}">预测仿真</a></li>
                       </ul>
                     </li>
                     <li><a><i class="fa fa-home"></i> 下一跳预测 <span class="fa fa-chevron-down"></span></a>
                       <ul class="nav child_menu">
-                        <li><a href="{% url 'ind_traffic:nextloc_des' %}">相关介绍</a></li>
-                        <li><a href="{% url 'ind_traffic:nextloc_pre' %}">预测仿真</a></li>
+                        <li><a href="{% url 'indtraffic:nextloc_des' %}">相关介绍</a></li>
+                        <li><a href="{% url 'indtraffic:nextloc_pre' %}">预测仿真</a></li>
                       </ul>
                     </li>
                   </ul>
@@ -261,15 +261,15 @@
               <div class="x_content">
                 <p>请上传json格式文件</p>
                 <form action="" method="post" enctype="multipart/form-data" id="form">
-                  <ul class="errorlist" id="error1"></ul>
+                  <ul class="errorlist" id="error"></ul>
                   {% csrf_token %}
                   {{ form.as_p }}
                   <!-- <input type="button" class="btn btn-info form-control" name="type" value="submit" id="btn1" /> -->
-                  <button class="btn btn-info form-control upload-btn" name="type" type="submit" value="road_network" id="btn1">Upload</button>
+                  <button class="btn btn-info form-control upload-btn" name="type" type="submit" id="upload">Upload</button>
                 </form>
               </div>
               <div style="height:260px; width:100%; display:none; overflow-y:auto" >
-                <table class="table table-striped" id="result1"></table>
+                <table class="table table-striped" id="result"></table>
               </div>
             </div>
           </div>

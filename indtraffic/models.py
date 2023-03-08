@@ -2,7 +2,7 @@ from django.db import models
 
 # Create your models here.
 class RoutePlanData(models.Model):
-    file = models.FileField(upload_to="ind_traffic", null=True)
+    file = models.FileField(upload_to="indtraffic", null=True)
     type = models.CharField(max_length=50, verbose_name="Data Type", default="route_plan_trajectory")
 
     def __str__(self):
@@ -17,7 +17,7 @@ class RoutePlanHyperparameter(models.Model):
     dropout = models.FloatField()
 
 class NextLocData(models.Model):
-    file = models.FileField(upload_to="ind_traffic", null=True)
+    file = models.FileField(upload_to="indtraffic", null=True)
     type = models.CharField(max_length=50, verbose_name="Data Type", default="route_plan_trajectory")
 
     def __str__(self):
