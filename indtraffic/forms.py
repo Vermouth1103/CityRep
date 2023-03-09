@@ -19,6 +19,11 @@ class RoutePlanHyperparameterForm(forms.Form):
     lr = forms.FloatField(initial=1e-4)
     dropout = forms.FloatField(initial=0.6)
 
+class RoutePlanPredForm(forms.Form):
+
+    start = forms.IntegerField(initial=1)
+    end = forms.IntegerField(initial=2)
+
 class NextLocDataForm(forms.Form):
 
     file = forms.FileField(widget=forms.ClearableFileInput(attrs={'class': 'form-control'}))

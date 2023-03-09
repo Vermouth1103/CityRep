@@ -86,7 +86,7 @@ def test_route_plan(model, test_loc_set, hparams):
     if recall_sum == 0:
         recall_sum += 1
     print("pred_right:", pred_right, "recall_right:", recall_right,
-          "pred_sum:", pred_sum, "recall_sum:", recall_sum)
+        "pred_sum:", pred_sum, "recall_sum:", recall_sum)
     precision = float(pred_right) / pred_sum
     recall = float(recall_right) / recall_sum
     f1 = (2 * precision * recall) / (precision + recall + 1e-9)
@@ -115,7 +115,7 @@ def load_model(hparams):
     fnc_assign = torch.tensor(
         fnc_assign, dtype=torch.float, device=hparams.device)
     lp_model = RoutePlanModel(hparams, length_feature,
-                              node_feature, adj_tensor, struct_assign, fnc_assign).to(hparams.device)
+                            node_feature, adj_tensor, struct_assign, fnc_assign).to(hparams.device)
 
     print(lp_model)
 

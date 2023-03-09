@@ -1,7 +1,6 @@
 import pickle
-from conf import beijing_route_hparams
-from utils import *
-from route_model import *
+from .utils import *
+from .route_model import *
 import torch
 from torch import optim
 import numpy as np
@@ -9,14 +8,11 @@ import random
 import os
 import torch.nn.functional as F
 import argparse
+import networkx as nx
 
-
-def load_model(hparams, gpu_id):
-    os.environ["CUDA_VISIBLE_DEVICES"] = str(gpu_id)
-    hparams.device = torch.device(
-        "cuda" if torch.cuda.is_available() else "cpu")
-    adj, features, struct_assign, fnc_assign, train_loc_set = load_loc_pred_data(
-        hparams)
+def load_model(hparams):
+    
+    adj, features, struct_assign, fnc_assign = load_route_plan_data(hparams)
 
     adj_indices = torch.tensor(np.concatenate(
         [adj.row[:, np.newaxis], adj.col[:, np.newaxis]], 1), dtype=torch.long).t()
@@ -26,29 +22,33 @@ def load_model(hparams, gpu_id):
 
     features = features.astype(int)
 
-    lane_feature = torch.tensor(
-        features[:, 0], dtype=torch.long, device=hparams.device)
-    type_feature = torch.tensor(
-        features[:, 1], dtype=torch.long, device=hparams.device)
     length_feature = torch.tensor(
-        features[:, 2], dtype=torch.long, device=hparams.device)
+        features[:, 0], dtype=torch.long, device=hparams.device)
     node_feature = torch.tensor(
-        features[:, 3], dtype=torch.long, device=hparams.device)
+        features[:, 1], dtype=torch.long, device=hparams.device)
 
     struct_assign = torch.tensor(
         struct_assign, dtype=torch.float, device=hparams.device)
     fnc_assign = torch.tensor(
         fnc_assign, dtype=torch.float, device=hparams.device)
-    lp_model = RoutePlanModel(hparams, lane_feature, type_feature, length_feature,
-                              node_feature, adj_tensor, struct_assign, fnc_assign).to(hparams.device)
+    lp_model = RoutePlanModel(hparams, length_feature,
+                            node_feature, adj_tensor, struct_assign, fnc_assign).to(hparams.device)
 
     print('model:', lp_model)
 
-    lp_model.load_state_dict(torch.load(
-        "/home/mjt/test/HRNR/beijing/model/route_plan.model"))
+    lp_model.load_state_dict(torch.load(hparams.route_plan_model))
     lp_model.eval()
     return lp_model
 
+def route_plan_pred(hparams):
+    
+    # model = load_model(hparams)
+    adj = pickle.load(open(hparams.adj, "rb"))
+    G = nx.from_numpy_matrix(adj)
+
+    shortest_path = nx.shortest_path(G, source=int(hparams.start), target=int(hparams.end))
+    print(shortest_path)
+    return shortest_path
 
 def predict(model, steps=1):
 

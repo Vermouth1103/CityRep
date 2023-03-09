@@ -3,11 +3,12 @@ from django.views import View
 from django.http import JsonResponse
 from django.template.defaultfilters import filesizeformat
 from .models import RoutePlanData, RoutePlanHyperparameter, NextLocData, NextLocHyperparameter
-from .forms import RoutePlanDataForm, RoutePlanHyperparameterForm, NextLocDataForm, NextLocHyperparameterForm
+from .forms import RoutePlanDataForm, RoutePlanHyperparameterForm, RoutePlanPredForm, NextLocDataForm, NextLocHyperparameterForm
 from representation.models import Hyperparameter
 
 from .model.preprocess.preprocess_trajectory import generate_traj4rp
 from .model.train_route_plan import *
+from .model.load_route_plan_model import *
 from .model.utils import *
 
 def handle_uploaded_file(file, data_type):
@@ -64,6 +65,88 @@ class RoutePlanPreView(View):
     def post(self, request):
         print(f"POST data: {request.POST}")
 
+        
+        form = RoutePlanPredForm(data=request.POST)
+
+        if form.is_valid():
+            print(123)
+            hparams = form.cleaned_data
+            hparams = dict_to_object(hparams)
+
+            road_network_params = Hyperparameter.objects.latest("id")
+            # print(f"road_network_params: {road_network_params}")
+            hparams.road_num = road_network_params.road_num
+            hparams.road_dim = road_network_params.road_dim
+            hparams.region_num = road_network_params.region_num
+            hparams.region_dim = road_network_params.region_dim
+            hparams.zone_num = road_network_params.zone_num
+            hparams.zone_dim = road_network_params.zone_dim
+            hparams.hidden_dims = road_network_params.road_dim
+
+            hparams.length_dim = 32
+            hparams.length_num = 2200
+        
+            road_network_path = "media/representation/preprocessed"
+            hparams.adj = get_newest_file(road_network_path, "graph")
+            hparams.node_features = get_newest_file(road_network_path, "features")
+
+            hparams.struct_path = "media/representation/assign/struct_assign.pkl"
+            hparams.function_path = "media/representation/assign/function_assign.pkl"
+
+            hparams.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+            hparams.route_plan_dir = "media/indtraffic/preprocessed/route_plan"
+            hparams.route_plan_model = os.path.join(hparams.route_plan_dir, "route_plan.model")
+            print(f"hparams: {hparams}")
+
+            shortest_path = route_plan_pred(hparams)
+            data = {"sp": shortest_path}
+            return JsonResponse(data)
+        else:
+            print(234)
+            data = {"error_msg": "Hyper parameter set invalid."}
+            return JsonResponse(data)
+
+
+class RoutePlanUploadView(View):
+
+    def post(self, request):
+
+        form = RoutePlanDataForm(data=request.POST, files=request.FILES)
+
+        if form.is_valid():
+            # get cleaned data
+            raw_file = form.cleaned_data.get("file")
+            data_type = "route_plan"
+            new_file = RoutePlanData()
+            check = handle_uploaded_file(raw_file, data_type)
+            print(check)
+            if check == -1:
+                data = {"error_msg": data_type+" file invalid."}
+                return JsonResponse(data)
+            else:
+                new_file.file = check
+                new_file.type = data_type
+                new_file.save()
+            
+            data = []
+            files = RoutePlanData.objects.all().order_by("-id")
+            for file in files:
+                data.append({
+                    "url": file.file.url,
+                    "size": filesizeformat(file.file.size),
+                    "type": file.type,
+                    })
+
+            return JsonResponse({"data": data})
+        else:
+            data = {"error_msg": "Only json files are allowed."}
+            return JsonResponse({"data": data})
+        
+class RoutePlanTrainView(View):
+
+    def post(self, request):
+        print(f"POST data: {request.POST}")
+
         form = RoutePlanHyperparameterForm(data=request.POST)
 
         if form.is_valid():
@@ -113,42 +196,7 @@ class RoutePlanPreView(View):
         else:
             data = {"error_msg": "Hyper parameter set invalid."}
             return JsonResponse(data)
-        
-class RoutePlanUploadView(View):
 
-    def post(self, request):
-
-        form = RoutePlanDataForm(data=request.POST, files=request.FILES)
-
-        if form.is_valid():
-            # get cleaned data
-            raw_file = form.cleaned_data.get("file")
-            data_type = "route_plan"
-            new_file = RoutePlanData()
-            check = handle_uploaded_file(raw_file, data_type)
-            print(check)
-            if check == -1:
-                data = {"error_msg": data_type+" file invalid."}
-                return JsonResponse(data)
-            else:
-                new_file.file = check
-                new_file.type = data_type
-                new_file.save()
-            
-            data = []
-            files = RoutePlanData.objects.all().order_by("-id")
-            for file in files:
-                data.append({
-                    "url": file.file.url,
-                    "size": filesizeformat(file.file.size),
-                    "type": file.type,
-                    })
-
-            return JsonResponse({"data": data})
-        else:
-            data = {"error_msg": "Only json files are allowed."}
-            return JsonResponse({"data": data})
-        
 class NextLocDesView(View):
 
     def get(self, request):

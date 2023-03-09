@@ -3,6 +3,22 @@ function csrfSafeMethod(method) {
     return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
 }
 
+let sp_layer = "";
+let start_marker = "";
+let end_marker = ""
+
+var startIcon = L.icon({
+    iconUrl: "/static/assets/img/start_marker.png",
+    iconSize: [40, 40], // size of the icon
+    iconAnchor: [20, 40]
+});
+
+var endIcon = L.icon({
+    iconUrl: "/static/assets/img/end_marker.png",
+    iconSize: [40, 40], // size of the icon
+    iconAnchor: [20, 40]
+});
+
 $(document).ready(function(){
     $('#upload').click(function(e){
         console.log(e);
@@ -74,7 +90,7 @@ $(document).ready(function(){
         form_data.append('dropout', form.find('#dropout').val());
         console.log(form_data);
         $.ajax({
-            url: "/indtraffic/routeplan_pre/",
+            url: "/indtraffic/routeplan_train/",
             data: form_data,
             type: "POST",
             dataType: "json",
@@ -101,6 +117,75 @@ $(document).ready(function(){
             },
         })
     });
+
+    $("#pred-btn").click(function(e){
+        e.preventDefault();
+        var form_data = new FormData();
+        form = $("#"+e.target.id).parent().parent().parent().parent();
+        form_data.append("start", form.find("#start").val());
+        form_data.append("end", form.find("#end").val());
+        $.ajax({
+            url: "/indtraffic/routeplan_pre/",
+            data: form_data,
+            type: "POST",
+            dataType: "json",
+            processData: false,
+            contentType: false,
+            beforeSend: function(xhr, settings) {
+            if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                xhr.setRequestHeader("X-CSRFToken", csrftoken);
+            }},
+            success: function (data) {
+                console.log(data);
+                if(data['error_msg']) {
+                    var content = '<li>Only json files are allowed.</li>';
+                    $("#"+e.target.id.replace("btn", "error")).html(content);
+                }
+                else{
+                    console.log(data["sp"])
+                    if(sp_layer!=""){
+                        mymap.removeLayer(sp_layer)
+                        mymap.removeLayer(start_marker)
+                        mymap.removeLayer(end_marker)
+                    }
+                    sp_layer = L.geoJSON(roadmap, {
+                        onEachFeature: function(feature, layer) {
+                            layer.bindPopup(fid2id[feature.properties.FID_1].toString());
+                        },
+                        
+                        filter: function (feature){
+                            if(data["sp"].indexOf(parseInt(fid2id[feature.properties.FID_1]))!=-1){
+                                return true;
+                            }
+                            else{
+                                return false;
+                            }
+                        },
+                        style: function(feature){     
+                            var color = "gray";
+                            var weight = 1;
+                            if(data["sp"].indexOf(parseInt(fid2id[feature.properties.FID_1]))!=-1){
+                                if(data["sp"].indexOf(parseInt(fid2id[feature.properties.FID_1]))==0){
+                                    start_cor = [feature.geometry.coordinates[0][1], feature.geometry.coordinates[0][0]]
+                                    start_marker = L.marker(start_cor, {icon: startIcon})
+                                }
+                                if(data["sp"].indexOf(parseInt(fid2id[feature.properties.FID_1]))==data["sp"].length-1){
+                                    end_cor = [feature.geometry.coordinates[feature.geometry.coordinates.length-1][1], feature.geometry.coordinates[feature.geometry.coordinates.length-1][0]]
+                                    end_marker = L.marker(end_cor, {icon: endIcon})
+                                }
+                                color = "red";
+                                weight = 3
+                            }
+                            return {"color": color, "weight": weight};             
+                        }
+                    })
+                    sp_layer.addTo(mymap);
+                    // start_marker.addTo(mymap);
+                    // end_marker.addTo(mymap);
+                }
+            },
+        })
+    })
 });
 
 
@@ -115,10 +200,11 @@ var color_list = ["#C0392B", "#E74C3C", "#9B59B6", "#8E44AD", "#2980B9", "#3498D
 
 var count = 0;
 var color_map = {};
+let roadmap;
 
 $.getJSON('../../media/representation/upload/road_network/Road.json', function(data){
 
-    var roadmap = data;
+    roadmap = data;
 
     var edge_mapping_path = "../../media/representation/preprocessed/edge_mapping.json"
 
