@@ -42,3 +42,9 @@ class NextLocHyperparameterForm(forms.Form):
     batch_size = forms.IntegerField(initial=300)
     lr = forms.FloatField(initial=1e-4)
     dropout = forms.FloatField(initial=0.6)
+
+class NextLocPredForm(forms.Form):
+
+    traj_seq = forms.CharField(label="Traj Seq", max_length=50,
+                                        widget=forms.TextInput(attrs={'class': 'form-control'}))
+    steps = forms.IntegerField(initial=1)

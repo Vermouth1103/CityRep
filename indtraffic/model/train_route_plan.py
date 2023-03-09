@@ -151,7 +151,7 @@ def train_route_plan(hparams):
         fnc_assign, dtype=torch.float, device=hparams.device)
     
     lp_model = RoutePlanModel(hparams, length_feature,
-                              node_feature, adj_tensor, struct_assign, fnc_assign).to(hparams.device)
+                            node_feature, adj_tensor, struct_assign, fnc_assign).to(hparams.device)
 
     model_optimizer = optim.Adam(
         lp_model.parameters(), lr=hparams.lp_learning_rate)

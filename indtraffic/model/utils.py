@@ -119,6 +119,18 @@ def load_route_plan_data(hparams):
 
     return adj, node_features, struct_assign, fnc_assign
 
+def load_loc_pred_data(hparams):
+    adj = pickle.load(open(hparams.adj, "rb"))
+    self_loop = np.eye(len(adj))
+    adj = np.array(adj) + self_loop
+    adj = sparse.coo_matrix(adj)
+    node_features = pickle.load(open(hparams.node_features, "rb"))
+
+    struct_assign = pickle.load(open(hparams.struct_path, "rb"))
+    fnc_assign = pickle.load(open(hparams.function_path, "rb"))
+
+    return adj, node_features, struct_assign, fnc_assign
+
 def load_data(hparams):
 
     train_loc_set = pickle.load(open(hparams.train_loc_set, "rb"))

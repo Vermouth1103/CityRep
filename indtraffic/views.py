@@ -3,12 +3,14 @@ from django.views import View
 from django.http import JsonResponse
 from django.template.defaultfilters import filesizeformat
 from .models import RoutePlanData, RoutePlanHyperparameter, NextLocData, NextLocHyperparameter
-from .forms import RoutePlanDataForm, RoutePlanHyperparameterForm, RoutePlanPredForm, NextLocDataForm, NextLocHyperparameterForm
+from .forms import RoutePlanDataForm, RoutePlanHyperparameterForm, RoutePlanPredForm, NextLocDataForm, NextLocHyperparameterForm, NextLocPredForm
 from representation.models import Hyperparameter
 
-from .model.preprocess.preprocess_trajectory import generate_traj4rp
+from .model.preprocess.preprocess_trajectory import generate_traj4rp, generate_traj4nlp
 from .model.train_route_plan import *
 from .model.load_route_plan_model import *
+from .model.train_loc_pred import *
+from .model.load_loc_pred_model import *
 from .model.utils import *
 
 def handle_uploaded_file(file, data_type):
@@ -35,15 +37,26 @@ def handle_uploaded_file(file, data_type):
         for chunk in file.chunks():
             f.write(chunk)
 
-    try:
-        route_plan_dataset = generate_traj4rp(absolute_upload_file_path)
+    if data_type == "route_plan":
+        try:
+            route_plan_dataset = generate_traj4rp(absolute_upload_file_path)
 
-        route_plan_dataset_path = os.path.join(absolute_preprocessed_dir_path, "train_set.pkl")
-        with open(route_plan_dataset_path, "wb") as f:
-            pickle.dump(route_plan_dataset, f)
-    except Exception as e:
-        print(e)
-        return -1
+            route_plan_dataset_path = os.path.join(absolute_preprocessed_dir_path, "train_set.pkl")
+            with open(route_plan_dataset_path, "wb") as f:
+                pickle.dump(route_plan_dataset, f)
+        except Exception as e:
+            print(e)
+            return -1
+    elif data_type == "next_loc":
+        try:
+            next_loc_dataset = generate_traj4nlp(absolute_upload_file_path)
+
+            next_loc_dataset_path = os.path.join(absolute_preprocessed_dir_path, "train_set.pkl")
+            with open(next_loc_dataset_path, "wb") as f:
+                pickle.dump(next_loc_dataset, f)
+        except Exception as e:
+            print(e)
+            return -1
 
     return upload_file_path
 
@@ -65,11 +78,9 @@ class RoutePlanPreView(View):
     def post(self, request):
         print(f"POST data: {request.POST}")
 
-        
         form = RoutePlanPredForm(data=request.POST)
 
         if form.is_valid():
-            print(123)
             hparams = form.cleaned_data
             hparams = dict_to_object(hparams)
 
@@ -102,10 +113,8 @@ class RoutePlanPreView(View):
             data = {"sp": shortest_path}
             return JsonResponse(data)
         else:
-            print(234)
             data = {"error_msg": "Hyper parameter set invalid."}
             return JsonResponse(data)
-
 
 class RoutePlanUploadView(View):
 
@@ -212,4 +221,132 @@ class NextLocPreView(View):
         return render(request, self.template, {"form": form})
     
     def post(self, request):
-        pass
+        print(f"POST data: {request.POST}")
+
+        form = NextLocPredForm(data=request.POST)
+
+        if form.is_valid():
+            hparams = form.cleaned_data
+            hparams = dict_to_object(hparams)
+            print(hparams)
+
+            road_network_params = Hyperparameter.objects.latest("id")
+            # print(f"road_network_params: {road_network_params}")
+            hparams.road_num = road_network_params.road_num
+            hparams.road_dim = road_network_params.road_dim
+            hparams.region_num = road_network_params.region_num
+            hparams.region_dim = road_network_params.region_dim
+            hparams.zone_num = road_network_params.zone_num
+            hparams.zone_dim = road_network_params.zone_dim
+            hparams.hidden_dims = road_network_params.road_dim
+
+            hparams.length_dim = 32
+            hparams.length_num = 2200
+        
+            road_network_path = "media/representation/preprocessed"
+            hparams.adj = get_newest_file(road_network_path, "graph")
+            hparams.node_features = get_newest_file(road_network_path, "features")
+
+            hparams.struct_path = "media/representation/assign/struct_assign.pkl"
+            hparams.function_path = "media/representation/assign/function_assign.pkl"
+
+            hparams.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+            hparams.next_loc_dir = "media/indtraffic/preprocessed/next_loc"
+            hparams.next_loc_model = os.path.join(hparams.next_loc_dir, "next_loc.model")
+            print(f"hparams: {hparams}")
+
+            next_loc = next_loc_pred(hparams)
+            data = {"next_loc": next_loc}
+            return JsonResponse(data)
+        else:
+            data = {"error_msg": "Hyper parameter set invalid."}
+            return JsonResponse(data)
+
+class NextLocUploadView(View):
+
+    def post(self, request):
+
+        form = NextLocDataForm(data=request.POST, files=request.FILES)
+
+        if form.is_valid():
+            # get cleaned data
+            raw_file = form.cleaned_data.get("file")
+            data_type = "next_loc"
+            new_file = NextLocData()
+            check = handle_uploaded_file(raw_file, data_type)
+            print(check)
+            if check == -1:
+                data = {"error_msg": data_type+" file invalid."}
+                return JsonResponse(data)
+            else:
+                new_file.file = check
+                new_file.type = data_type
+                new_file.save()
+            
+            data = []
+            files = NextLocData.objects.all().order_by("-id")
+            for file in files:
+                data.append({
+                    "url": file.file.url,
+                    "size": filesizeformat(file.file.size),
+                    "type": file.type,
+                    })
+
+            return JsonResponse({"data": data})
+        else:
+            data = {"error_msg": "Only json files are allowed."}
+            return JsonResponse({"data": data})
+
+class NextLocTrainView(View):
+
+    def post(self, request):
+        print(f"POST data: {request.POST}")
+
+        form = NextLocHyperparameterForm(data=request.POST)
+
+        if form.is_valid():
+            # get cleaned data
+            new_hyperparameter = NextLocHyperparameter()
+            new_hyperparameter.epochs = form.cleaned_data.get("epochs")
+            new_hyperparameter.batch_size = form.cleaned_data.get("batch_size")
+            new_hyperparameter.lr = form.cleaned_data.get("lr")
+            new_hyperparameter.dropout = form.cleaned_data.get("dropout")
+            new_hyperparameter.save()
+
+            hparams = form.cleaned_data
+            hparams = dict_to_object(hparams)
+
+            road_network_params = Hyperparameter.objects.latest("id")
+            # print(f"road_network_params: {road_network_params}")
+            hparams.road_num = road_network_params.road_num
+            hparams.road_dim = road_network_params.road_dim
+            hparams.region_num = road_network_params.region_num
+            hparams.region_dim = road_network_params.region_dim
+            hparams.zone_num = road_network_params.zone_num
+            hparams.zone_dim = road_network_params.zone_dim
+            hparams.hidden_dims = road_network_params.road_dim
+
+            hparams.length_dim = 32
+            hparams.length_num = 2200
+            hparams.lp_learning_rate = new_hyperparameter.lr
+            hparams.lp_clip = 1.0
+
+            road_network_path = "media/representation/preprocessed"
+            hparams.adj = get_newest_file(road_network_path, "graph")
+            hparams.node_features = get_newest_file(road_network_path, "features")
+
+            hparams.struct_path = "media/representation/assign/struct_assign.pkl"
+            hparams.function_path = "media/representation/assign/function_assign.pkl"
+
+            hparams.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+            hparams.next_loc_dir = "media/indtraffic/preprocessed/next_loc"
+            hparams.next_loc_train = os.path.join(hparams.next_loc_dir, "train_set.pkl")
+            hparams.next_loc_model = os.path.join(hparams.next_loc_dir, "next_loc.model")
+            print(f"hparams: {hparams}")
+            
+            train_loc_pred(hparams)
+
+            return JsonResponse({})
+        else:
+            data = {"error_msg": "Hyper parameter set invalid."}
+            return JsonResponse(data)

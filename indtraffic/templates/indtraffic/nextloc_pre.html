@@ -221,53 +221,205 @@
 
       <!-- page content -->
       <div class="right_col" role="main">
-        <div class="">
-          <div class="page-title">
-            <div class="title_left">
-              <h3>Plain Page</h3>
-            </div>
-
-            <div class="title_right">
-              <div class="col-md-5 col-sm-5   form-group pull-right top_search">
-                <div class="input-group">
-                  <input type="text" class="form-control" placeholder="Search for...">
-                  <span class="input-group-btn">
-                    <button class="btn btn-default" type="button">Go!</button>
-                  </span>
-                </div>
-              </div>
-            </div>
+        <div class="page-title">
+          <div class="title_left">
+            <h3>下一跳预测任务</h3>
           </div>
 
-          <div class="clearfix"></div>
-
-          <div class="row">
-            <div class="col-md-12 col-sm-12  ">
-              <div class="x_panel">
-                <div class="x_title">
-                  <h2>Plain Page</h2>
-                  <ul class="nav navbar-right panel_toolbox">
-                    <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
-                    </li>
-                    <li class="dropdown">
-                      <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-wrench"></i></a>
-                      <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                          <a class="dropdown-item" href="#">Settings 1</a>
-                          <a class="dropdown-item" href="#">Settings 2</a>
-                        </div>
-                    </li>
-                    <li><a class="close-link"><i class="fa fa-close"></i></a>
-                    </li>
-                  </ul>
-                  <div class="clearfix"></div>
-                </div>
-                <div class="x_content">
-                    Add content to the page ...
-                </div>
+          <div class="title_right">
+            <div class="col-md-5 col-sm-5 form-group pull-right top_search">
+              <div class="input-group">
+                <input type="text" class="form-control" placeholder="Search for...">
+                <span class="input-group-btn">
+                  <button class="btn btn-default" type="button">Go!</button>
+                </span>
               </div>
             </div>
           </div>
         </div>
+
+        <div class="row">
+          <div class="col-md-4 col-sm-4">
+            <div class="x_panel">
+              <div class="x_title">
+                <h2>历史轨迹数据</h2>
+                <ul class="nav navbar-right panel_toolbox">
+                  <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                  </li>
+                  <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-wrench"></i></a>
+                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                        <a class="dropdown-item" href="#">Settings 1</a>
+                        <a class="dropdown-item" href="#">Settings 2</a>
+                      </div>
+                  </li>
+                  <li><a class="close-link"><i class="fa fa-close"></i></a>
+                  </li>
+                </ul>
+                <div class="clearfix"></div>
+              </div>
+              <div class="x_content">
+                <p>请上传json格式文件</p>
+                <form action="" method="post" enctype="multipart/form-data" id="form">
+                  <ul class="errorlist" id="error"></ul>
+                  {% csrf_token %}
+                  {{ form.as_p }}
+                  <!-- <input type="button" class="btn btn-info form-control" name="type" value="submit" id="btn1" /> -->
+                  <button class="btn btn-info form-control upload-btn" name="type" type="submit" id="upload">Upload</button>
+                </form>
+              </div>
+              <div style="height:260px; width:100%; display:none; overflow-y:auto" >
+                <table class="table table-striped" id="result"></table>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-8 col-sm-8">
+            <div class="x_panel">
+              <div class="x_title">
+                <h2>参数设置</h2>
+                <ul class="nav navbar-right panel_toolbox">
+                  <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                  </li>
+                  <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-wrench"></i></a>
+                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                        <a class="dropdown-item" href="#">Settings 1</a>
+                        <a class="dropdown-item" href="#">Settings 2</a>
+                      </div>
+                  </li>
+                  <li><a class="close-link"><i class="fa fa-close"></i></a>
+                  </li>
+                </ul>
+                <div class="clearfix"></div>
+              </div>
+
+              <div class="x_content">
+                <!-- <br /> -->
+                <form action="" method="post" enctype="multipart/form-data" id="form">
+                  <ul class="errorlist" id="error1"></ul>
+                  {% csrf_token %}
+                  <h6>训练参数</h6>
+                  <br />
+                  <div class="row">
+                    <div class="col-md-3 col-sm-3">
+                      <div class="item form-group">
+                        <label class="col-form-label col-md-6 col-sm-6 label-align" for="epochs" style="vertical-align: middle">Epochs: </span></label>
+                        <div class="col-md-6 col-sm-6 ">
+                          <input type="text" id="epochs" required="required" class="form-control parameter" value="30" style="color: gray">
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-md-3 col-sm-3">
+                      <div class="item form-group">
+                        <label class="col-form-label col-md-6 col-sm-6 label-align" for="batch_size">Batch size: </span></label>
+                        <div class="col-md-6 col-sm-6 ">
+                          <input type="text" id="batch_size" required="required" class="form-control parameter" value="300" style="color: gray">
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-md-3 col-sm-3">
+                      <div class="item form-group">
+                        <label class="col-form-label col-md-6 col-sm-6 label-align" for="lr">Learning rate: </span></label>
+                        <div class="col-md-6 col-sm-6 ">
+                          <input type="text" id="lr" required="required" class="form-control parameter" value="1e-4" style="color: gray">
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-md-3 col-sm-3">
+                      <div class="item form-group">
+                        <label class="col-form-label col-md-6 col-sm-6 label-align" for="dropout">Dropout: </span></label>
+                        <div class="col-md-6 col-sm-6 ">
+                          <input type="text" id="dropout" required="required" class="form-control parameter" value="0.6" style="color: gray">
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="item form-group">
+                    <div class="col-md-6 col-sm-6 offset-md-3 btn-group btn-group-justified">
+                      <button type="reset" class="btn btn-primary">Reset</button>
+                      <button type="submit" class="btn btn-success" id="submit">Submit</button>
+                    </div>
+                  </div>
+                </form>
+              </div>
+              <div style="height:260px; width:100%; display:none; overflow-y:auto" >
+                <table class="table table-striped" id="result1"></table>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="clearfix"></div>
+
+        <div class="row">
+          <div class="col-md-12 col-sm-12">
+
+            <div class="x_panel">
+              <div class="x_title">
+                <h2>下一跳预测</h2>
+                <ul class="nav navbar-right panel_toolbox">
+                  <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                  </li>
+                  <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-wrench"></i></a>
+                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                        <a class="dropdown-item" href="#">Settings 1</a>
+                        <a class="dropdown-item" href="#">Settings 2</a>
+                      </div>
+                  </li>
+                  <li><a class="close-link"><i class="fa fa-close"></i></a>
+                  </li>
+                </ul>
+                <div class="clearfix"></div>
+              </div>
+
+              <div class="x_content">
+                <form action="" method="post" enctype="multipart/form-data" id="form">
+                  <ul class="errorlist" id="error1"></ul>
+                  {% csrf_token %}
+                  <div class="row">
+                    <div class="col-md-4 col-sm-4">
+                      <div class="item form-group">
+                        <label class="col-form-label col-md-6 col-sm-6 label-align" for="epochs" style="vertical-align: middle">轨迹序列: </span></label>
+                        <div class="col-md-6 col-sm-6 ">
+                          <input type="text" id="traj_seq" required="required" class="form-control parameter" value="343,346,341" style="color: gray">
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-md-4 col-sm-4">
+                      <div class="item form-group">
+                        <label class="col-form-label col-md-6 col-sm-6 label-align" for="epochs" style="vertical-align: middle">步数: </span></label>
+                        <div class="col-md-6 col-sm-6 ">
+                          <input type="text" id="steps" required="required" class="form-control parameter" value="1" style="color: gray">
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-md-4 col-sm-4">
+                      <div class="item form-group">
+                        <div class="col-md-6 col-sm-6 offset-md-3 btn-group btn-group-justified">
+                          <button type="submit" class="btn btn-success" id="pred">Submit</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </form>
+                <br />
+                <div class="row">
+                  <div class="col-md-12 col-sm-12">
+                    <div id="mapid" style="height: 580px;"></div>
+                  </div>
+                </div>
+              </div>
+              <div style="height:260px; width:100%; display:none; overflow-y:auto" >
+                <table class="table table-striped" id="result1"></table>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="clearfix"></div>
+
       </div>
       <!-- /page content -->
 
@@ -281,7 +433,7 @@
   <script src=" {% static 'assets/js/bootstrap.bundle.min.js' %} "></script>
   <script src=" {% static 'assets/js/jquery.cookie.js' %} "></script>
 
-  <script src=" {% static 'assets/js/downstream_task.js' %} "></script>
+  <script src=" {% static 'assets/js/nextloc.js' %} "></script>
 
   <!-- Custom Theme Scripts -->
   <script src=" {% static 'assets/js/custom.min.js' %} "></script>

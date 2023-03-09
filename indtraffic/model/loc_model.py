@@ -8,6 +8,57 @@ import torch.nn.functional as F
 import pickle
 
 
+class ETAModelMLP(Module):
+    def __init__(self, hparams):
+        super(ETAModelMLP, self).__init__()
+        self.hparams = hparams
+        self.BiGRU = GRU(self.hparams).to(self.hparams.device)
+
+        self.linear = torch.nn.Linear(hparams.road_dim * 2, 1)
+
+        self.embedding_size = hparams.road_dim
+        self.vocab_size = hparams.vocab_size
+        self.embedding = Parameter(torch.FloatTensor(
+            hparams.road_num, hparams.road_dim))
+        torch.nn.init.xavier_uniform(self.embedding)
+        self.graph_encoder = GraphEncoder(hparams).to(self.hparams.device)
+
+    def forward(self, token, adj):
+        self.graph_embedding = self.graph_encoder(self.embedding, adj)
+        start_emb = self.graph_embedding[token[:, 0]]
+        end_emb = self.graph_embedding[token[:, -1]]
+        cat_emb = torch.cat([start_emb, end_emb], 1)
+        pred = self.linear(cat_emb)
+        return pred
+
+
+class ETAModel(Module):
+    def __init__(self, hparams):
+        super(ETAModel, self).__init__()
+        self.hparams = hparams
+        self.BiGRU = GRU(self.hparams).to(self.hparams.device)
+
+        self.linear = torch.nn.Linear(hparams.gru_hidden_size * 2, 1)
+
+        self.embedding_size = hparams.road_dim
+        self.vocab_size = hparams.vocab_size
+        self.embedding = Parameter(torch.FloatTensor(
+            hparams.road_num, hparams.road_dim))
+        torch.nn.init.xavier_uniform(self.embedding)
+        self.graph_encoder = GraphEncoder(hparams).to(self.hparams.device)
+
+    def forward(self, token, adj):
+        self.graph_embedding = self.graph_encoder(self.embedding, adj)
+        # batch_size * max_len * hidden_dims
+        output, _ = self.BiGRU(token, self.graph_embedding)
+        output = output.view(-1, self.hparams.batch_size,
+                             2, self.hparams.gru_hidden_size)
+        output = torch.cat([output[:, :, 0, :], output[:, :, 1, :]], 2)
+        max_out, _ = torch.max(output, 0)  # batch_size * hidden_dims
+        pred = self.linear(max_out)
+        return pred
+
+
 class GRU(nn.Module):
     def __init__(self, hparams):
         super(GRU, self).__init__()
@@ -19,7 +70,7 @@ class GRU(nn.Module):
         self.is_bigru = hparams.is_bigru
         self.state_num = hparams.state_num
         self.gru = nn.GRU(self.emb_size, self.hidden_size,
-                        bidirectional=self.is_bigru)
+                          bidirectional=self.is_bigru)
         self.out = nn.Linear(self.hidden_size, self.road_num)
 
     def forward(self, token, graph_embedding):
@@ -29,6 +80,121 @@ class GRU(nn.Module):
 
     def initHidden(self):
         return torch.zeros(self.state_num, self.batch_size, self.hidden_size, device=self.device)
+
+
+class LocPredGruModel(Module):
+    def __init__(self, hparams, lane_feature, type_feature, length_feature, node_feature):
+        super(LocPredGruModel, self).__init__()
+        self.hparams = hparams
+
+        self.node_emb_layer = nn.Embedding(
+            hparams.road_num, hparams.road_dim).to(self.hparams.device)
+        self.type_emb_layer = nn.Embedding(
+            hparams.type_num, hparams.type_dims).to(self.hparams.device)
+        self.length_emb_layer = nn.Embedding(
+            hparams.length_num, hparams.length_dim).to(self.hparams.device)
+        self.lane_emb_layer = nn.Embedding(
+            hparams.lane_num, hparams.lane_dims).to(self.hparams.device)
+        node_emb = self.node_emb_layer(node_feature)
+        type_emb = self.type_emb_layer(type_feature)
+        length_emb = self.length_emb_layer(length_feature)
+        lane_emb = self.lane_emb_layer(lane_feature)
+        self.raw_feat = torch.cat(
+            [lane_emb, type_emb, length_emb, node_emb], 1)
+
+        self.gru = nn.GRU(hparams.hidden_dims, hparams.hidden_dims)
+        self.linear = torch.nn.Linear(hparams.hidden_dims, hparams.road_num)
+
+    def forward(self, input_bat):  # batch_size * length * dims
+        init_hidden = torch.zeros(
+            1, input_bat.shape[0], self.hparams.hidden_dims, device=self.hparams.device)
+        # input_emb = self.init_emb[input_bat]
+        input_emb = self.raw_feat[input_bat]  # self.gru_embedding(input_bat)
+
+        output_state, _ = self.gru(input_emb.view(
+            input_emb.shape[1], input_emb.shape[0], input_emb.shape[2]), init_hidden)
+
+        pred_tra = self.linear(output_state)
+
+        return pred_tra
+
+
+class LocPredGcnModel(Module):
+    def __init__(self, hparams, lane_feature, type_feature, length_feature, node_feature, adj):
+        super(LocPredGcnModel, self).__init__()
+        self.hparams = hparams
+        self.special_spmm = SpecialSpmm()
+
+        self.graph_enc = GcnEncoder(hparams)
+        self.lane_feature = lane_feature
+        self.type_feature = type_feature
+        self.length_feature = length_feature
+        self.node_feature = node_feature
+        self.adj = adj
+        self.gru = nn.GRU(hparams.hidden_dims * 1, hparams.hidden_dims)
+        self.linear = torch.nn.Linear(
+            hparams.hidden_dims * 2, hparams.road_num)
+        self.linear_red_dim = torch.nn.Linear(hparams.hidden_dims, 50)
+
+    def forward(self, input_bat):  # batch_size * length * dims
+        init_hidden = torch.zeros(
+            1, input_bat.shape[0], self.hparams.hidden_dims, device=self.hparams.device)
+        self.node_emb = self.graph_enc(
+            self.node_feature, self.type_feature, self.length_feature, self.lane_feature, self.adj)
+        input_emb = self.graph_enc.init_feat[input_bat]
+        gcn_emb = self.node_emb[input_bat]  # self.gru_embedding(input_bat)
+        # input_emb = input_emb + gcn_emb
+        # self.init_emb = self.graph_enc.init_feat
+        # self.out_node_emb = self.linear_red_dim(self.node_emb)
+        # input_emb = self.init_emb[input_bat]
+        # input_emb = torch.cat((self.out_node_emb[input_bat], self.init_emb[input_bat]), 2)  # self.gru_embedding(input_bat)
+
+        output_state, _ = self.gru(input_emb.view(
+            input_emb.shape[1], input_emb.shape[0], input_emb.shape[2]), init_hidden)
+
+        output_state = torch.cat((output_state, gcn_emb.view(
+            gcn_emb.shape[1], gcn_emb.shape[0], gcn_emb.shape[2])), 2)
+
+        pred_tra = self.linear(output_state)
+
+        return pred_tra
+
+
+class LocPredGatModel(Module):
+    def __init__(self, hparams, lane_feature, type_feature, length_feature, node_feature, adj):
+        super(LocPredGatModel, self).__init__()
+        self.hparams = hparams
+        self.special_spmm = SpecialSpmm()
+
+        self.graph_enc = GatEncoder(hparams)
+
+        self.node_emb = self.graph_enc(
+            node_feature, type_feature, length_feature, lane_feature, adj)
+        self.gru = nn.GRU(hparams.hidden_dims * 1, hparams.hidden_dims)
+        self.linear = torch.nn.Linear(
+            hparams.hidden_dims * 2, hparams.road_num)
+        self.linear_red_dim = torch.nn.Linear(hparams.hidden_dims, 100)
+
+    def forward(self, input_bat):  # batch_size * length * dims
+        init_hidden = torch.zeros(
+            1, input_bat.shape[0], self.hparams.hidden_dims, device=self.hparams.device)
+        input_emb = self.graph_enc.init_feat[input_bat]
+        gat_emb = self.node_emb[input_bat]  # self.gru_embedding(input_bat)
+
+        # self.init_emb = self.graph_enc.init_feat
+        # self.out_node_emb = self.linear_red_dim(self.node_emb)
+        # input_emb = self.init_emb[input_bat]
+        # input_emb = torch.cat((self.out_node_emb[input_bat], self.init_emb[input_bat]), 2)  # self.gru_embedding(input_bat)
+
+        output_state, _ = self.gru(input_emb.view(
+            input_emb.shape[1], input_emb.shape[0], input_emb.shape[2]), init_hidden)
+
+        output_state = torch.cat((output_state, gat_emb.view(
+            gat_emb.shape[1], gat_emb.shape[0], gat_emb.shape[2])), 2)
+
+        pred_tra = self.linear(output_state)
+
+        return pred_tra
 
 
 class GcnEncoder(Module):
@@ -127,9 +293,9 @@ class LabelPredGatModel(Module):
 
     def forward(self, input_bat):  # batch_size * length * dims
         self.init_emb = self.graph_enc.init_feat
-#    input_emb = self.init_emb[input_bat]
+        # input_emb = self.init_emb[input_bat]
 
-#    input_emb = torch.cat((self.out_node_emb[input_bat], self.init_emb[input_bat]), 2)  # self.gru_embedding(input_bat)
+        # input_emb = torch.cat((self.out_node_emb[input_bat], self.init_emb[input_bat]), 2)  # self.gru_embedding(input_bat)
 
         output_state = self.node_emb[input_bat]
         pred_tra = self.linear(output_state)
@@ -163,13 +329,13 @@ class LabelPredGcnModel(Module):
 
     def forward(self, input_bat):  # batch_size * length * dims
         self.init_emb = self.graph_enc.init_feat
-#    input_emb = self.init_emb[input_bat]
+        # input_emb = self.init_emb[input_bat]
 
-#    input_emb = torch.cat((self.out_node_emb[input_bat], self.init_emb[input_bat]), 2)  # self.gru_embedding(input_bat)
+        # input_emb = torch.cat((self.out_node_emb[input_bat], self.init_emb[input_bat]), 2)  # self.gru_embedding(input_bat)
         output_state = torch.cat(
             (self.node_emb[input_bat], self.init_emb[input_bat]), 1)
 
-#    output_state = self.node_emb[input_bat]
+        # output_state = self.node_emb[input_bat]
 
         pred_tra = self.linear(output_state)
 
@@ -203,124 +369,23 @@ class LabelPredModel(Module):
 
     def forward(self, input_bat):  # batch_size * length * dims
         self.init_emb = self.graph_enc.init_feat
-#    input_emb = self.init_emb[input_bat]
+        # input_emb = self.init_emb[input_bat]
 
-#    input_emb = torch.cat((self.out_node_emb[input_bat], self.init_emb[input_bat]), 2)  # self.gru_embedding(input_bat)
+        # input_emb = torch.cat((self.out_node_emb[input_bat], self.init_emb[input_bat]), 2)  # self.gru_embedding(input_bat)
 
         output_state = torch.cat(
             (self.node_emb[input_bat], self.init_emb[input_bat]), 1)
-#    output_state = self.node_emb[input_bat]
-#    output_state = self.node_emb[input_bat]
-#    output_state = self.init_emb[input_bat]
-        pred_tra = self.linear(output_state)
-
-        return pred_tra
-
-
-class RoutePlanGcnModel(Module):
-    def __init__(self, hparams, lane_feature, type_feature, length_feature, node_feature, adj, struct_assign, fnc_assign):
-        super(RoutePlanGcnModel, self).__init__()
-        self.hparams = hparams
-        self.special_spmm = SpecialSpmm()
-
-        edge = adj._indices().to(self.hparams.device)
-        edge_e = torch.ones(edge.shape[1], dtype=torch.float).to(
-            self.hparams.device)
-        struct_inter = self.special_spmm(edge, edge_e, torch.Size(
-            [adj.shape[0], adj.shape[1]]), struct_assign)  # N*N   N*C
-        struct_adj = torch.mm(
-            struct_assign.t(), struct_inter)  # get struct_adj
-
-        self.graph_enc = GcnEncoder(hparams)
-
-        self.node_feature = node_feature
-        self.type_feature = type_feature
-        self.length_feature = length_feature
-        self.lane_feature = lane_feature
-        self.adj = adj
-
-
-#    GraphEncoderTL(hparams, struct_assign, fnc_assign, struct_adj)
-
-        self.gru = nn.GRU(hparams.hidden_dims * 1 + 100, hparams.hidden_dims)
-
-        self.linear = torch.nn.Linear(
-            hparams.hidden_dims * 1, hparams.road_num)
-
-        self.linear_red_dim = torch.nn.Linear(hparams.hidden_dims, 100)
-
-    def forward(self, input_bat, des):  # batch_size * length * dims
-        init_hidden = torch.zeros(
-            1, input_bat.shape[0], self.hparams.hidden_dims, device=self.hparams.device)
-        self.node_emb = self.graph_enc(
-            self.node_feature, self.type_feature, self.length_feature, self.lane_feature, self.adj)
-        self.init_emb = self.graph_enc.init_feat
-#    input_emb = self.init_emb[input_bat]
-        input_emb = self.node_emb[input_bat]
-        des_emb = self.node_emb[des]
-        self.output_node_emb = self.linear_red_dim(self.node_emb)
-        # self.gru_embedding(input_bat)
-        input_emb = torch.cat(
-            (self.output_node_emb[input_bat], self.init_emb[input_bat]), 2)
-
-        output_state, _ = self.gru(input_emb.view(
-            input_emb.shape[1], input_emb.shape[0], input_emb.shape[2]), init_hidden)
-#    output_state = torch.cat((output_state, des_emb.expand(output_state.shape[0], des_emb.shape[0], des_emb.shape[1])), -1)
-
+        # output_state = self.node_emb[input_bat]
+        # output_state = self.node_emb[input_bat]
+        # output_state = self.init_emb[input_bat]
         pred_tra = self.linear(output_state)
 
         return pred_tra
 
 
 class RoutePlanModel(Module):
-    def __init__(self, hparams, length_feature, node_feature, adj, struct_assign, fnc_assign):
-        super(RoutePlanModel, self).__init__()
-        self.hparams = hparams
-        self.special_spmm = SpecialSpmm()
-
-        edge = adj._indices().to(self.hparams.device)
-        edge_e = torch.ones(edge.shape[1], dtype=torch.float).to(
-            self.hparams.device)
-        struct_inter = self.special_spmm(edge, edge_e, torch.Size(
-            [adj.shape[0], adj.shape[1]]), struct_assign)  # N*N   N*C
-        struct_adj = torch.mm(
-            struct_assign.t(), struct_inter)  # get struct_adj
-
-        self.graph_enc = GraphEncoderTL(
-            hparams, struct_assign, fnc_assign, struct_adj)
-        self.node_feature = node_feature
-        self.length_feature = length_feature
-        self.adj = adj
-
-        self.gru = nn.GRU(hparams.hidden_dims * 2, hparams.hidden_dims)
-
-        self.linear_red_dim = torch.nn.Linear(
-            hparams.hidden_dims, hparams.hidden_dims)
-        
-        self.linear = torch.nn.Linear(
-            hparams.hidden_dims * 1, hparams.road_num)
-
-    def forward(self, input_bat, des):  # batch_size * length * dims
-        init_hidden = torch.zeros(1, input_bat.shape[0], self.hparams.hidden_dims, device=self.hparams.device)
-        self.node_emb = self.graph_enc(self.node_feature, self.length_feature, self.adj)
-        self.init_emb = self.graph_enc.init_feat
-        # input_emb = self.init_emb[input_bat]
-        input_emb = self.node_emb[input_bat]
-        des_emb = self.node_emb[des]
-        self.output_node_emb = self.linear_red_dim(self.node_emb)
-        # self.gru_embedding(input_bat)
-        input_emb = torch.cat((self.output_node_emb[input_bat], self.init_emb[input_bat]), 2)
-
-        output_state, _ = self.gru(input_emb.view(input_emb.shape[1], input_emb.shape[0], input_emb.shape[2]), init_hidden)
-        # output_state = torch.cat((output_state, des_emb.expand(output_state.shape[0], des_emb.shape[0], des_emb.shape[1])), -1)
-        pred_tra = self.linear(output_state)
-
-        return pred_tra
-
-
-class LocPredModel(Module):
     def __init__(self, hparams, lane_feature, type_feature, length_feature, node_feature, adj, struct_assign, fnc_assign):
-        super(LocPredModel, self).__init__()
+        super(RoutePlanModel, self).__init__()
         self.hparams = hparams
         self.special_spmm = SpecialSpmm()
 
@@ -338,25 +403,68 @@ class LocPredModel(Module):
         self.node_emb = self.graph_enc(
             node_feature, type_feature, length_feature, lane_feature, adj)
 
-        self.gru = nn.GRU(hparams.hidden_dims * 1 + 100, hparams.hidden_dims)
+        self.gru = nn.GRU(hparams.hidden_dims * 1, hparams.hidden_dims)
 
         self.linear = torch.nn.Linear(hparams.hidden_dims, hparams.road_num)
+
+        self.linear_red_dim = torch.nn.Linear(hparams.hidden_dims, 100)
+
+    def forward(self, input_bat, des):  # batch_size * length * dims
+        init_hidden = torch.zeros(
+            1, input_bat.shape[0], self.hparams.hidden_dims, device=self.hparams.device)
+        self.init_emb = self.graph_enc.init_feat
+        # input_emb = self.init_emb[input_bat]
+        input_emb = self.node_emb[input_bat]
+        des_emb = self.node_emb[des]
+        output_state, _ = self.gru(input_emb.view(
+            input_emb.shape[1], input_emb.shape[0], input_emb.shape[2]), init_hidden)
+        output_state = output_state + des_emb
+        pred_tra = self.linear(output_state)
+
+        return pred_tra
+
+
+class LocPredModel(Module):
+    def __init__(self, hparams, length_feature, node_feature, adj, struct_assign, fnc_assign):
+        super(LocPredModel, self).__init__()
+        self.hparams = hparams
+        self.special_spmm = SpecialSpmm()
+        self.node_feature = node_feature
+        self.length_feature = length_feature
+        self.adj = adj
+
+        edge = adj._indices().to(self.hparams.device)
+        edge_e = torch.ones(edge.shape[1], dtype=torch.float).to(
+            self.hparams.device)
+        struct_inter = self.special_spmm(edge, edge_e, torch.Size(
+            [adj.shape[0], adj.shape[1]]), struct_assign)  # N*N   N*C
+        struct_adj = torch.mm(
+            struct_assign.t(), struct_inter)  # get struct_adj
+
+        self.graph_enc = GraphEncoderTL(
+            hparams, struct_assign, fnc_assign, struct_adj)
+
+        self.gru = nn.GRU(hparams.hidden_dims * 2, hparams.hidden_dims)
+
+        self.linear = torch.nn.Linear(
+            hparams.hidden_dims * 1, hparams.road_num)
 
         self.linear_red_dim = torch.nn.Linear(hparams.hidden_dims, 100)
 
     def forward(self, input_bat):  # batch_size * length * dims
         init_hidden = torch.zeros(
             1, input_bat.shape[0], self.hparams.hidden_dims, device=self.hparams.device)
+        self.node_emb = self.graph_enc(
+            self.node_feature, self.length_feature, self.adj)
         self.init_emb = self.graph_enc.init_feat
-        self.out_node_emb = self.linear_red_dim(self.node_emb)
-#    input_emb = self.init_emb[input_bat]
-        # self.gru_embedding(input_bat)
-        input_emb = torch.cat(
-            (self.out_node_emb[input_bat], self.init_emb[input_bat]), 2)
+        # input_emb = self.init_emb[input_bat]
+        input_emb = self.init_emb[input_bat]
+        input_emb = torch.cat((self.node_emb[input_bat], self.init_emb[input_bat]), 2)  # self.gru_embedding(input_bat)
 
-        output_state, _ = self.gru(input_emb.view(
+        output_state, _ = self.gru(input_emb.reshape(
             input_emb.shape[1], input_emb.shape[0], input_emb.shape[2]), init_hidden)
-
+        # pred_tra = self.linear(torch.cat((output_state, self.node_emb[input_bat].reshape(
+        #     self.node_emb[input_bat].shape[1], self.node_emb[input_bat].shape[0], self.node_emb[input_bat].shape[2])), 2))
         pred_tra = self.linear(output_state)
 
         return pred_tra
@@ -379,12 +487,10 @@ class GraphEncoderTL(Module):
             hparams, self.struct_assign, self.fnc_assign)
         self.tl_layer_2 = GraphEncoderTLCore(
             hparams, self.struct_assign, self.fnc_assign)
-
         self.tl_layer_3 = GraphEncoderTLCore(
             hparams, self.struct_assign, self.fnc_assign)
-
         self.tl_layer_4 = GraphEncoderTLCore(
-            hparams, self.struct_assign, self.fnc_assign)
+            hparams, self.struct_assign, self.fnc_assign)    
 
         self.init_feat = None
 
@@ -394,7 +500,15 @@ class GraphEncoderTL(Module):
         raw_feat = torch.cat([length_emb, node_emb], 1)
         self.init_feat = raw_feat
 
-        return self.tl_layer_1(self.struct_adj, raw_feat, adj)
+        # for i in range(self.hparams.loc_pred_gnn_layer):
+        #     raw_feat = self.tl_layer(self.struct_adj, raw_feat, adj)
+        raw_feat = self.tl_layer_1(self.struct_adj, raw_feat, adj)
+        # raw_feat = self.tl_layer_2(self.struct_adj, raw_feat, adj)
+        # raw_feat = self.tl_layer_3(self.struct_adj, raw_feat, adj)
+        # raw_feat = self.tl_layer_4(self.struct_adj, raw_feat, adj)
+
+
+        return raw_feat
 
 
 class GraphEncoderGcnCore(Module):
@@ -441,7 +555,7 @@ class GraphEncoderGcnCore(Module):
         self.struct_assign = self.n2s_gcn(raw_feat, raw_adj)
         self.struct_assign = F.softmax(self.struct_assign, 0)
 
-# forward
+        # forward
         self.raw_struct_assign = self.struct_assign
         self.raw_fnc_assign = self.fnc_assign
 
@@ -450,17 +564,16 @@ class GraphEncoderGcnCore(Module):
 
         self.struct_emb = torch.mm(self.struct_assign.t(), raw_feat)
         self.fnc_emb = torch.mm(self.fnc_assign.t(), self.struct_emb)
-# backward
-# F2F
+        # backward
+        # F2F
         self.fnc_adj = torch.sigmoid(
             torch.mm(self.fnc_emb, self.fnc_emb.t()))  # n_f * n_f
         self.fnc_adj = self.fnc_adj + \
             torch.eye(self.fnc_adj.shape[0]).to(self.hparams.device) * 1.0
         self.fnc_emb = self.fnc_gcn(self.fnc_emb.unsqueeze(
             0), self.fnc_adj.unsqueeze(0)).squeeze()
-        self.norm1 = torch.nn.LayerNorm(self.fnc_emb.shape[-1])
-        self.fnc_emb = self.norm1(self.fnc_emb)
-# F2C
+
+        # F2C
         fnc_message = torch.div(torch.mm(self.raw_fnc_assign, self.fnc_emb), (F.relu(
             torch.sum(self.fnc_assign, 1) - 1.0) + 1.0).unsqueeze(1))
 
@@ -468,26 +581,22 @@ class GraphEncoderGcnCore(Module):
             self.l_c(torch.cat((self.struct_emb, fnc_message), 1)))
         self.struct_emb = self.struct_emb + 0.0 * fnc_message  # magic number: 0.15
 
-# C2C
+        # C2C
         struct_adj = F.relu(struct_adj - torch.eye(struct_adj.shape[1]).to(
             self.hparams.device) * 10000.0) + torch.eye(struct_adj.shape[1]).to(self.hparams.device) * 1.0
         self.struct_emb = self.struct_gcn(
             self.struct_emb.unsqueeze(0), struct_adj.unsqueeze(0)).squeeze()
-        self.norm2 = torch.nn.LayerNorm(self.struct_emb.shape[-1])
-        self.struct_emb = self.norm2(self.struct_emb)
 
-# C2N
+        # C2N
         struct_message = torch.mm(self.raw_struct_assign, self.struct_emb)
         self.r_s = self.sigmoid(
             self.l_s(torch.cat((raw_feat, struct_message), 1)))
         raw_feat = raw_feat + struct_message
 
-#    struct_message = torch.mm(self.raw_struct_assign, self.struct_emb)
-#    raw_feat = raw_feat + 0.0 * struct_message
-# N2N
+        # struct_message = torch.mm(self.raw_struct_assign, self.struct_emb)
+        # raw_feat = raw_feat + 0.0 * struct_message
+        # N2N
         raw_feat = self.node_gat(raw_feat, raw_adj)
-        self.norm3 = torch.nn.LayerNorm(raw_feat.shape[-1])
-        raw_feat = self.norm3(raw_feat)
 
         return raw_feat
 
@@ -496,16 +605,8 @@ class GraphEncoderTLCore(Module):
     def __init__(self, hparams, struct_assign, fnc_assign):
         super(GraphEncoderTLCore, self).__init__()
         self.hparams = hparams
-
-        # / (F.relu(torch.sum(struct_assign, 0) - 1.0) + 1.0)
         self.raw_struct_assign = struct_assign
-        # / (F.relu(torch.sum(fnc_assign, 0) - 1.0) + 1.0)
         self.raw_fnc_assign = fnc_assign
-#    print("struct_assign:", self.struct_assign)
-#    print("fnc_assign:", self.fnc_assign)
-
-#    self.struct_assign = torch.nn.Parameter(self.struct_assign.data).cuda()
-#    self.fnc_assign = torch.nn.Parameter(self.fnc_assign.data).cuda()
 
         self.fnc_gcn = GraphConvolution(
             in_features=self.hparams.hidden_dims,
@@ -517,11 +618,9 @@ class GraphEncoderTLCore(Module):
             out_features=self.hparams.hidden_dims,
             device=self.hparams.device).to(self.hparams.device)
 
-        self.node_gat = SPGCN(
+        self.node_gcn = SPGCN(
             in_features=self.hparams.hidden_dims,
             out_features=self.hparams.hidden_dims,
-            #        dropout = self.hparams.dropout,
-            #        alpha = self.hparams.alpha,
             device=self.hparams.device).to(self.hparams.device)
 
         self.l_c = torch.nn.Linear(
@@ -535,88 +634,40 @@ class GraphEncoderTLCore(Module):
 
         self.sigmoid = nn.Sigmoid()
 
-        self.batch_norm_1 = nn.BatchNorm1d(hparams.hidden_dims, eps=1e-12)
-        self.batch_norm_2 = nn.BatchNorm1d(hparams.hidden_dims, eps=1e-12)
+        self.batch_norm_1 = nn.BatchNorm1d(
+            hparams.hidden_dims, eps=1e-12).cuda()
+        self.batch_norm_2 = nn.BatchNorm1d(
+            hparams.hidden_dims, eps=1e-12).cuda()
 
     def forward(self, struct_adj, raw_feat, raw_adj):
-        #
-        # forward
-        #    self.raw_struct_assign = copy.deepcopy(self.struct_assign)
-        #    self.raw_fnc_assign = copy.deepcopy(self.fnc_assign)
-        #    print("raw:", self.raw_struct_assign)
-        self.struct_assign = self.raw_struct_assign / \
-            (F.relu(torch.sum(self.raw_struct_assign, 0) - 1.0) + 1.0)
-        self.fnc_assign = self.raw_fnc_assign / \
-            (F.relu(torch.sum(self.raw_fnc_assign, 0) - 1.0) + 1.0)
+        self.struct_assign = self.raw_struct_assign / (F.relu(torch.sum(self.raw_struct_assign, 0) - 1.0) + 1.0)
+        self.fnc_assign = self.raw_fnc_assign / (F.relu(torch.sum(self.raw_fnc_assign, 0) - 1.0) + 1.0)
         self.struct_emb = torch.mm(self.struct_assign.t(), raw_feat)
         self.fnc_emb = torch.mm(self.fnc_assign.t(), self.struct_emb)
-# backward
-# F2F
+
         self.fnc_emb_adj = self.batch_norm_1(self.fnc_emb)
         self.fnc_adj = torch.sigmoid(
             torch.mm(self.fnc_emb_adj, self.fnc_emb_adj.t()))  # n_f * n_f
-        # + torch.eye(self.fnc_adj.shape[0]).to(self.hparams.device) * 1.0
         self.fnc_adj = self.fnc_adj
-#    print(self.fnc_adj)
-#    print("before sigmoid:", torch.mm(self.fnc_emb, self.fnc_emb.t()))
-#    print("adj:", self.fnc_adj)
-#    print("before:", self.fnc_emb)
         self.fnc_emb = self.fnc_gcn(self.fnc_emb.unsqueeze(
             0), self.fnc_adj.unsqueeze(0)).squeeze()
-#    print("after:", self.fnc_emb)
-#    self.norm1 = torch.nn.LayerNorm(self.fnc_emb.shape[-1]).cuda()
-#    self.fnc_emb = self.norm1(self.fnc_emb)
-# F2C
+
         fnc_message = torch.div(torch.mm(self.fnc_assign, self.fnc_emb), (F.relu(
             torch.sum(self.fnc_assign, 1) - 1.0) + 1.0).unsqueeze(1) * 50.0)
-#    print("struct_emb:", self.struct_emb)
-#    print("fnc_emb:", self.fnc_emb)
-#    print("raw_fnc_assign:", self.raw_fnc_assign)
-#    print("fnc_assign:", self.fnc_assign, torch.sum(self.fnc_assign, 0), torch.sum(self.fnc_assign, 1))
-#    fnc_message = torch.mm(self.fnc_assign, self.fnc_emb)
-#    print("fnc_message:", fnc_message)
-#    fnc_message = torch.mm(self.fnc_assign, self.fnc_emb)
-#    print("fnc_assign_sum:", self.fnc_assign.shape, torch.sum(self.fnc_assign, -1), torch.sum(self.fnc_assign, 0))
-#    print("raw_fnc_assign:", self.raw_fnc_assign)
-#    print("fnc_assign:", self.fnc_assign)
+
         self.r_f = self.sigmoid(
             self.l_c(torch.cat((self.struct_emb, fnc_message), 1)))
-        self.struct_emb = self.struct_emb + self.r_f * fnc_message  # magic number: 0.15
+        self.struct_emb = self.struct_emb + 0.22 * self.r_f * fnc_message
 
-#
-# C2C
         struct_adj = F.relu(struct_adj - torch.eye(struct_adj.shape[1]).to(
             self.hparams.device) * 10000.0) + torch.eye(struct_adj.shape[1]).to(self.hparams.device) * 1.0
-     #   print("before:", self.struct_emb, torch.sum(torch.sum(self.struct_emb, 0), 0))
         self.struct_emb = self.struct_gcn(
             self.struct_emb.unsqueeze(0), struct_adj.unsqueeze(0)).squeeze()
-#    print("after:", self.struct_emb, torch.sum(torch.sum(self.struct_emb, 0), 0))
-
-#    self.norm2 = torch.nn.LayerNorm(self.struct_emb.shape[-1]).cuda()
-#    self.struct_emb = self.norm2(self.struct_emb)
-#
-# C2N
         struct_message = torch.mm(self.raw_struct_assign, self.struct_emb)
-#    struct_message = torch.mm(self.struct_assign, self.struct_emb)
-#    print(self.struct_emb)
-#    print(struct_message)
-#    print(self.raw_struct_assign, torch.sum(self.raw_struct_assign, -1), self.raw_struct_assign.shape)
-
         self.r_s = self.sigmoid(
-            self.l_s(torch.cat((raw_feat, struct_message), 1)))  # * 10
-#    raw_feat = raw_feat + 0.1 *  struct_message
-#    raw_feat = raw_feat + self.r_s * 1.25 * struct_message
-
-# N2N
-#    before_raw_feat = raw_feat
-        raw_feat = self.node_gat(raw_feat, raw_adj)
-
-#    raw_feat = before_raw_feat + raw_feat
-#    self.norm3 = torch.nn.LayerNorm(raw_feat.shape[-1]).cuda()
-#    raw_feat = self.norm3(raw_feat)
-#
-
-        raw_feat = raw_feat + self.r_s * 1.25 * struct_message
+            self.l_s(torch.cat((raw_feat, struct_message), 1)))
+        # raw_feat = raw_feat + 0.5 * self.r_s * struct_message
+        raw_feat = self.node_gcn(raw_feat, raw_adj)
         return raw_feat
 
 
@@ -651,10 +702,10 @@ class PlainGCN(Module):
         super(PlainGCN, self).__init__()
         self.hparams = hparams
 
-#    self.plain_conv = GraphConvolution(
-#        in_features=self.hparams.road_dim,
-#        out_features=self.hparams.road_dim,
-#        device=self.hparams.device).to(self.hparams.device)
+        # self.plain_conv = GraphConvolution(
+        #     in_features=self.hparams.road_dim,
+        #     out_features=self.hparams.road_dim,
+        #     device=self.hparams.device).to(self.hparams.device)
 
         self.plain_conv = SPGAT(
             in_features=self.hparams.road_dim,
@@ -697,7 +748,7 @@ class GraphAutoencoderTra(Module):
             [lane_emb, type_emb, length_emb, node_emb], 1)
         self.struct_assign = struct_assign / \
             (F.relu(torch.sum(struct_assign, 0) - 1.0) + 1.0)
-#    self.struct_assign = F.softmax(struct_assign, 0)
+        # self.struct_assign = F.softmax(struct_assign, 0)
 
         self.struct_emb = torch.mm(self.struct_assign.t(), self.raw_feat)
         edge = raw_adj._indices()  # .to(self.hparams.device)
@@ -706,18 +757,18 @@ class GraphAutoencoderTra(Module):
         struct_inter = self.special_spmm(edge, edge_e, torch.Size(
             [raw_adj.shape[0], raw_adj.shape[1]]), self.struct_assign)  # N*N   N*C
 
-#    print("struct_inter:", struct_inter)
+        # print("struct_inter:", struct_inter)
         temp = torch.sparse_coo_tensor(edge, edge_e, torch.Size(
             [raw_adj.shape[0], raw_adj.shape[1]]))
-#    print("temp:", temp)
-#    print("struct_assign", stuct_assign)
-#    print("struct_inter dense:", torch.mm(torch.sparse_coo_tensor(edge, edge_e, torch.Size([raw_adj.shape[0], raw_adj.shape[1]])).to_dense(), self.struct_assign))
-#    print(torch.sparse_coo_tensor(edge, edge_e, torch.Size([raw_adj.shape[0], raw_adj.shape[1]])).to_dense()[0, :], self.struct_assign[:, 0])
+        # print("temp:", temp)
+        # print("struct_assign", stuct_assign)
+        # print("struct_inter dense:", torch.mm(torch.sparse_coo_tensor(edge, edge_e, torch.Size([raw_adj.shape[0], raw_adj.shape[1]])).to_dense(), self.struct_assign))
+        # print(torch.sparse_coo_tensor(edge, edge_e, torch.Size([raw_adj.shape[0], raw_adj.shape[1]])).to_dense()[0, :], self.struct_assign[:, 0])
         struct_adj = torch.mm(self.struct_assign.t(), struct_inter)
-        #print("struct_assign:", struct_assign[0, :], struct_assign[10, :], struct_assign[100, :])
+        # print("struct_assign:", struct_assign[0, :], struct_assign[10, :], struct_assign[100, :])
         self.fnc_assign = self.fnc_cmt_gat(
             self.struct_emb.unsqueeze(0), struct_adj.unsqueeze(0)).squeeze()
-#    print(self.fnc_assign[:20, :])
+        # print(self.fnc_assign[:20, :])
         self.fnc_assign = F.softmax(self.fnc_assign, 0)
         self.fnc_emb = torch.mm(self.fnc_assign.t(), self.struct_emb)
 
@@ -727,7 +778,7 @@ class GraphAutoencoderTra(Module):
         X = torch.cat([self.raw_feat, N_C, N_F], 1)
         X = self.linear(X)
 
-#    pred_edge = self.linear(torch.cat([X[s_edge[0, :], :], X[s_edge[1, :]], 1))
+        # pred_edge = self.linear(torch.cat([X[s_edge[0, :], :], X[s_edge[1, :]], 1))
         pred_edge = torch.einsum(
             'ij,ij->i', X[s_edge[0, :], :], X[s_edge[1, :], :])
 
@@ -765,15 +816,15 @@ class GraphAutoencoder(Module):
         lane_emb = self.lane_emb_layer(lane_feature)
         main_feat = torch.cat([lane_emb, type_emb, length_emb, node_emb], 1)
         struct_emb, struct_adj, main_assign = self.enc_gnn(main_feat, main_adj)
-#    print("struct_emb:", struct_emb.shape, struct_emb)
+        # print("struct_emb:", struct_emb.shape, struct_emb)
         res_emb = self.dec_gnn(struct_emb, struct_adj)
-#    print("res_emb:", res_emb.shape, res_emb, torch.sum(res_emb, 1))
+        # print("res_emb:", res_emb.shape, res_emb, torch.sum(res_emb, 1))
         t_edge = main_adj._indices().to(self.hparams.device)
         edge = torch.cat([t_edge, f_edge], 1)
         edge_h = torch.cat(
             (res_emb[edge[0, :], :], res_emb[edge[1, :], :]), dim=1).t()
-#    print("eeedge h:", edge_h.shape, edge_h, self.a.mm(edge_h).shape, self.a.mm(edge_h))
-#    edge_e = self.sigmoid(self.leakyrelu(self.a.mm(edge_h).squeeze()))
+        # print("eeedge h:", edge_h.shape, edge_h, self.a.mm(edge_h).shape, self.a.mm(edge_h))
+        # edge_e = self.sigmoid(self.leakyrelu(self.a.mm(edge_h).squeeze()))
         edge_e = self.sigmoid(torch.einsum(
             'ij,ij->i', res_emb[edge[0, :], :], res_emb[edge[1, :], :]))
         edge_label = torch.cat([torch.ones(t_edge.shape[1], dtype=torch.float), torch.zeros(
@@ -845,11 +896,11 @@ class Graph2SeqLoc(Module):
         fnc_emb = torch.einsum("ijk,kl->ijl", torch.einsum("ijk,kl->ijl",
                                self.struct_assign[input_bat], self.fnc_assign), self.fnc_emb)
 
-#    input_emb = torch.cat((input_emb, self.linears(struct_emb), self.linearf(fnc_emb)), 2)
+        # input_emb = torch.cat((input_emb, self.linears(struct_emb), self.linearf(fnc_emb)), 2)
         output_state, _ = self.gru(input_emb.view(
             input_emb.shape[1], input_emb.shape[0], input_emb.shape[2]), init_hidden)
 
-#    output_state = torch.cat((output_state.permute(1, 0, 2), self.linears(struct_emb), self.linearf(fnc_emb)), 2)
+        # output_state = torch.cat((output_state.permute(1, 0, 2), self.linears(struct_emb), self.linearf(fnc_emb)), 2)
 
         pred_tra = self.linear(output_state)
 
@@ -918,11 +969,11 @@ class Graph2SeqCmt(Module):
         # cmt_num * cmt_dims  len * batch_size * dims    ->  len * batch_size * cmt_num
         attn_weight = torch.einsum("ijk,lk->ijl", input_state, self.fnc_emb)
 
-#    out_state = torch.cat((input_state, torch.einsum("ijk,kl->ijl", attn_weight, self.fnc_emb)), 2)
-#    pred_tra = self.linear(out_state)
+        # out_state = torch.cat((input_state, torch.einsum("ijk,kl->ijl", attn_weight, self.fnc_emb)), 2)
+        # pred_tra = self.linear(out_state)
         pred_tra = self.linear(input_state)
 
-#    pred_tra = F.softmax(pred_tra, 2)
+        # pred_tra = F.softmax(pred_tra, 2)
 
         return pred_tra
 
@@ -937,30 +988,30 @@ class StructuralDecoder(Module):
             out_features=out_dims,
             device=self.hparams.device).to(self.hparams.device)
         self.softmax = torch.nn.Softmax(dim=-1)
-#    self.cmt_gat_1 = GraphConvolution(
-#        in_features = self.hparams.road_dim,
-#        out_features = out_dims,
-#        device = self.hparams.device).to(self.hparams.device)
+        # self.cmt_gat_1 = GraphConvolution(
+        #     in_features = self.hparams.road_dim,
+        #     out_features = out_dims,
+        #     device = self.hparams.device).to(self.hparams.device)
 
     def forward(self, main_feat, main_adj):
         main_assign = self.cmt_gat_0(
             main_feat.unsqueeze(0), main_adj.unsqueeze(0))
-#    print("line 199:", main_inter.shape, main_adj.shape)
-#    main_assign = self.cmt_gat_1(main_inter, main_adj.unsqueeze(0))
-#    zero_pad_1 = torch.zeros(main_assign.shape[0], brh_assign.shape[1])
-#    zero_pad_2 = torch.zeros(brh_assign.shape[0], main_assign.shape[1])
-#    top_assign = torch.cat([main_assign, zero_pad_1], 1)
-#    buttom_assign = torch.cat([zero_pad_2, brh_assign], 1)
+        # print("line 199:", main_inter.shape, main_adj.shape)
+        # main_assign = self.cmt_gat_1(main_inter, main_adj.unsqueeze(0))
+        # zero_pad_1 = torch.zeros(main_assign.shape[0], brh_assign.shape[1])
+        # zero_pad_2 = torch.zeros(brh_assign.shape[0], main_assign.shape[1])
+        # top_assign = torch.cat([main_assign, zero_pad_1], 1)
+        # buttom_assign = torch.cat([zero_pad_2, brh_assign], 1)
 
-#    struct_assign = torch.cat([top_assign, buttom_assign], 0)
+        # struct_assign = torch.cat([top_assign, buttom_assign], 0)
 
-#    all_feat = torch.cat([main_feat, brh_feat], 0)
+        # all_feat = torch.cat([main_feat, brh_feat], 0)
 
         main_assign = main_assign.to(self.hparams.device)
         main_assign = main_assign.squeeze()
-#    print("main assign:", main_assign.shape, main_assign)
+        # print("main assign:", main_assign.shape, main_assign)
         main_assign = F.softmax(main_assign, 0)
-#    pickle.dump(main_assign.tolist(), open("struct_assign", "wb"))
+        # pickle.dump(main_assign.tolist(), open("struct_assign", "wb"))
         raw_emb = torch.mm(main_assign.t(), main_feat)
         return raw_emb
 
@@ -977,30 +1028,28 @@ class StructuralGNN(Module):
             alpha=self.hparams.alpha,
             device=self.hparams.device).to(self.hparams.device)
 
-
-#    self.cmt_gat_1 = SPGAT(
-#        in_features = self.hparams.road_dim,
-#        out_features = out_dims,
-#        dropout = self.hparams.dropout,
-#        alpha = self.hparams.alpha,
-#        device = self.hparams.device).to(self.hparams.device)
-
+        # self.cmt_gat_1 = SPGAT(
+        #     in_features = self.hparams.road_dim,
+        #     out_features = out_dims,
+        #     dropout = self.hparams.dropout,
+        #     alpha = self.hparams.alpha,
+        #     device = self.hparams.device).to(self.hparams.device)
 
     def forward(self, main_feat, main_adj):
         main_assign = self.cmt_gat_0(main_feat, main_adj)
-#    main_assign = self.cmt_gat_1(main_inter, main_adj)
-#    zero_pad_1 = torch.zeros(main_assign.shape[0], brh_assign.shape[1])
-#    zero_pad_2 = torch.zeros(brh_assign.shape[0], main_assign.shape[1])
-#    top_assign = torch.cat([main_assign, zero_pad_1], 1)
-#    buttom_assign = torch.cat([zero_pad_2, brh_assign], 1)
+        # main_assign = self.cmt_gat_1(main_inter, main_adj)
+        # zero_pad_1 = torch.zeros(main_assign.shape[0], brh_assign.shape[1])
+        # zero_pad_2 = torch.zeros(brh_assign.shape[0], main_assign.shape[1])
+        # top_assign = torch.cat([main_assign, zero_pad_1], 1)
+        # buttom_assign = torch.cat([zero_pad_2, brh_assign], 1)
 
-#    struct_assign = torch.cat([top_assign, buttom_assign], 0)
+        # struct_assign = torch.cat([top_assign, buttom_assign], 0)
 
-#    all_feat = torch.cat([main_feat, brh_feat], 0)
+        # all_feat = torch.cat([main_feat, brh_feat], 0)
 
         main_assign = main_assign.to(self.hparams.device)
         main_assign = F.softmax(main_assign, 0)
-#    pickle.dump(main_assign.tolist(), open("struct_assign", "wb"))
+        # pickle.dump(main_assign.tolist(), open("struct_assign", "wb"))
         struct_emb = torch.mm(main_assign.t(), main_feat)
         edge = main_adj._indices().to(self.hparams.device)
         edge_e = torch.ones(edge.shape[1], dtype=torch.float).to(
@@ -1037,7 +1086,6 @@ class CommunityNodeGNN(Module):
         return inputs
 
     def node_forward(self, inputs, adj, cmt_emb, cmt_weight_softmax, embedding_mask=None):
-        #    node_cmt_emb =
         node2cmt = torch.argmax(cmt_weight_softmax, -1)  # road_num * 1
         cmt_emb = cmt_emb.squeeze()
         inputs_cmt_emb = cmt_emb[node2cmt, :]
