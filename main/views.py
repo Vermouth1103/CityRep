@@ -9,4 +9,4 @@ class IndexView(View):
     
     def get(self, request):
         template = "main/index.html"
-        return render(request, template, {})
+        return render(request, template)

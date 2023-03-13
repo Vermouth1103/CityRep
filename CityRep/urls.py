@@ -19,8 +19,8 @@ from django.conf import settings
 from django.conf.urls.static import static
 
 urlpatterns = [
-    path("main/", include("main.urls")),
     path("admin/", admin.site.urls),
+    path("main/", include("main.urls")),
     path("representation/", include("representation.urls")),
     path("poptraffic/", include("poptraffic.urls")),
     path("indtraffic/", include("indtraffic.urls")),

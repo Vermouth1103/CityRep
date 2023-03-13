@@ -48,9 +48,9 @@
             <div class="menu_section">
               <h3 style="text-align: left;  font-size:15px; color: white;">目录</h3>
               <ul class="nav side-menu">
-                <li><a><i class="fa fa-home"></i> 城市表征构建 <span class="fa fa-chevron-down"></span></a>
+                <li><a><i class="fa fa-home"></i> 城市体征构建 <span class="fa fa-chevron-down"></span></a>
                   <ul class="nav child_menu">
-                    <li><a href="{% url 'representation:representation_des' %}">表征介绍</a></li>
+                    <li><a href="{% url 'representation:representation_des' %}">体征介绍</a></li>
                     <li><a href="{% url 'representation:model_des' %}">模型介绍</a></li>
                     <li><a href="{% url 'representation:data_des' %}">数据介绍</a></li>
                     <li><a href="{% url 'representation:model_train' %}">模型训练</a></li>
@@ -226,7 +226,7 @@
               </div>
               <div class="x_content" style="text-align: left; font-weight: normal; font-size:20px">
                 <p style="text-indent: 2em;">
-                  本模型核心思想是建立分级图神经网络，对不同层次的路网表征进行建模。特别地，我们希望通过细粒度的路段聚合，获得高层次的交通单元。为此，我们引入了两种虚拟节点，即结构区和功能区。结构区域主要用来表征空间连通的路段，起到一定的交通作用，如立交桥、十字路口等。此外，在结构区域之上形成功能区，为出行人群提供某种功能，如购物区。除此之外，我们采用了多图机制来引导虚拟节点与现实世界的结构区域和功能区域相对应。除了道路网络的自然连通性外，我们利用道路类型属性建立结构相似性，利用城市POI信息定义道路段之间的功能相似性。使用这样的分级图神经网络，我们可以缓解与远程节点依赖相关的问题。
+                  本模型核心思想是建立分级图神经网络，对不同层次的路网体征进行建模。特别地，我们希望通过细粒度的路段聚合，获得高层次的交通单元。为此，我们引入了两种虚拟节点，即结构区和功能区。结构区域主要用来体征空间连通的路段，起到一定的交通作用，如立交桥、十字路口等。此外，在结构区域之上形成功能区，为出行人群提供某种功能，如购物区。除此之外，我们采用了多图机制来引导虚拟节点与现实世界的结构区域和功能区域相对应。除了道路网络的自然连通性外，我们利用道路类型属性建立结构相似性，利用城市POI信息定义道路段之间的功能相似性。使用这样的分级图神经网络，我们可以缓解与远程节点依赖相关的问题。
                 </p>
                 <p style="font-weight: bolder; font-size: 25px;">
                   基本概念介绍

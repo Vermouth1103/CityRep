@@ -42,9 +42,9 @@
             <div class="menu_section">
               <h3 style="text-align: left;  font-size:15px; color: white;">目录</h3>
               <ul class="nav side-menu">
-                <li><a><i class="fa fa-home"></i> 城市表征构建 <span class="fa fa-chevron-down"></span></a>
+                <li><a><i class="fa fa-home"></i> 城市体征构建 <span class="fa fa-chevron-down"></span></a>
                   <ul class="nav child_menu">
-                    <li><a href="{% url 'representation:representation_des' %}">表征介绍</a></li>
+                    <li><a href="{% url 'representation:representation_des' %}">体征介绍</a></li>
                     <li><a href="{% url 'representation:model_des' %}">模型介绍</a></li>
                     <li><a href="{% url 'representation:data_des' %}">数据介绍</a></li>
                     <li><a href="{% url 'representation:model_train' %}">模型训练</a></li>
@@ -214,48 +214,35 @@
 
       <!-- page content -->
       <div class="right_col" role="main">
-        <div class="">
-          <div class="page-title">
-            <div class="title_left">
-              <h3>Plain Page</h3>
-            </div>
-
-            <div class="title_right">
-              <div class="col-md-5 col-sm-5   form-group pull-right top_search">
-                <div class="input-group">
-                  <input type="text" class="form-control" placeholder="Search for...">
-                  <span class="input-group-btn">
-                    <button class="btn btn-default" type="button">Go!</button>
-                  </span>
-                </div>
+        <div class="row">
+          <div class="col-md-12 col-sm-12">
+            <div class="x_panel">
+              <div class="x_title">
+                <p style="text-align: center; font-weight:bolder; font-size:30px;">相关介绍</p>
               </div>
-            </div>
-          </div>
-
-          <div class="clearfix"></div>
-
-          <div class="row">
-            <div class="col-md-12 col-sm-12  ">
-              <div class="x_panel">
-                <div class="x_title">
-                  <h2>Plain Page</h2>
-                  <ul class="nav navbar-right panel_toolbox">
-                    <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
-                    </li>
-                    <li class="dropdown">
-                      <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-wrench"></i></a>
-                      <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                          <a class="dropdown-item" href="#">Settings 1</a>
-                          <a class="dropdown-item" href="#">Settings 2</a>
-                        </div>
-                    </li>
-                    <li><a class="close-link"><i class="fa fa-close"></i></a>
-                    </li>
-                  </ul>
-                  <div class="clearfix"></div>
+              <div class="x_content" style="text-align: left; font-weight: normal; font-size:20px">
+                <div class="downstream_task_input col-md-12 col-sm-12">
+                  <p style="font-weight: bolder; font-size: 25px;">任务描述</p>
+                  <p style="text-indent: 2em;">
+                    基于表征模型训练得到的结果，给定历史轨迹数据训练下一跳预测模型，用户可自行设置一系列超参数。待下一跳预测模型训练结束后，给定路网中的起始轨迹序列和预测步数n，模型将给出在轨迹序列后面n跳的预测路段。
+                  </p>
                 </div>
-                <div class="x_content">
-                    Add content to the page ...
+                <div class="downstream_task_input col-md-12 col-sm-12">
+                  <p style="font-weight: bolder; font-size: 25px;">训练输入</p>
+                  <ul>
+                    <li>（已有）路段到结构区的分配矩阵：包含每条路段属于每个结构区的概率值。</li>
+                    <li>（已有）结构区到功能区的分配矩阵：包含每个结构区属于每个功能区的概率值。</li>
+                    <li>（新增）路网历史轨迹：包含过去时间段内路网上各个路段的历史流量，格式如下：</li>
+                    <p style="text-align: left;">
+                      <img src="../../static/assets/img/trajectory.png" weight="200px" height="80px"></img>
+                    </p>
+                  </ul>
+                </div>
+                <div class="downstream_task_output col-md-12 col-sm-12">
+                  <p style="font-weight: bolder; font-size: 25px;">任务应用</p>
+                  <ul>
+                    <li>给定路网中的起始轨迹序列（鼠标点击地图上目标路段，可以得到该路段ID）和预测步数n，点击预测按钮即可得到后续n跳预测路段。</li>
+                  </ul>
                 </div>
               </div>
             </div>

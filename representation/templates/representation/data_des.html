@@ -48,9 +48,9 @@
             <div class="menu_section">
               <h3 style="text-align: left;  font-size:15px; color: white;">目录</h3>
               <ul class="nav side-menu">
-                <li><a><i class="fa fa-home"></i> 城市表征构建 <span class="fa fa-chevron-down"></span></a>
+                <li><a><i class="fa fa-home"></i> 城市体征构建 <span class="fa fa-chevron-down"></span></a>
                   <ul class="nav child_menu">
-                    <li><a href="{% url 'representation:representation_des' %}">表征介绍</a></li>
+                    <li><a href="{% url 'representation:representation_des' %}">体征介绍</a></li>
                     <li><a href="{% url 'representation:model_des' %}">模型介绍</a></li>
                     <li><a href="{% url 'representation:data_des' %}">数据介绍</a></li>
                     <li><a href="{% url 'representation:model_train' %}">模型训练</a></li>
@@ -226,7 +226,7 @@
               </div>
               <div class="x_content" style="text-align: left; font-weight: normal; font-size:20px">
                 <div class="upstream_task_input col-md-12 col-sm-12">
-                  <p style="font-weight: bolder; font-size: 25px;">上游任务输入</p>
+                  <p style="font-weight: bolder; font-size: 25px;">表征模型输入</p>
                   <ul>
                     <li>路网数据：包含节点数据和边数据。</li>
                       <ul style="list-style-type:square">
@@ -240,24 +240,11 @@
                   </ul>
                 </div>
                 <div class="upstream_task_output col-md-12 col-sm-12">
-                  <p style="font-weight: bolder; font-size: 25px;">上游任务输出</p>
+                  <p style="font-weight: bolder; font-size: 25px;">表征模型输出</p>
                   <ul>
                     <li>路段到结构区的分配矩阵：包含每条路段属于每个结构区的概率值。</li>
                     <li>结构区到功能区的分配矩阵：包含每个结构区属于每个功能区的概率值。</li>
-                  </ul>
-                </div>
-                <div class="downstream_task_input col-md-12 col-sm-12">
-                  <p style="font-weight: bolder; font-size: 25px;">下游任务输入</p>
-                  <ul>
-                    <li>路段到结构区的分配矩阵：包含每条路段属于每个结构区的概率值。</li>
-                    <li>结构区到功能区的分配矩阵：包含每个结构区属于每个功能区的概率值。</li>
-                    <li>路网流量历史数据：包含过去时间段内路网上各个路段的历史流量。</li>
-                  </ul>
-                </div>
-                <div class="downstream_task_output col-md-12 col-sm-12">
-                  <p style="font-weight: bolder; font-size: 25px;">下游任务输出</p>
-                  <ul>
-                    <li>路网流量预测输出：包含未来时间段内路网上各个路段的预测流量。</li>
+                    <li>路段表征矩阵：包含每条路段的特征。</li>
                   </ul>
                 </div>
               </div>
