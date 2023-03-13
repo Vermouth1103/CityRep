@@ -536,7 +536,7 @@ class GraphAutoencoderTra(Module):
         pred_edge = torch.einsum(
             'ij,ij->i', X[s_edge[0, :], :], X[s_edge[1, :], :])
 
-        return pred_edge
+        return pred_edge, X
 
 
 class GraphAutoencoder(Module):

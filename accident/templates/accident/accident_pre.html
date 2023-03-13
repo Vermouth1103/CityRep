@@ -221,53 +221,118 @@
 
       <!-- page content -->
       <div class="right_col" role="main">
-        <div class="">
-          <div class="page-title">
-            <div class="title_left">
-              <h3>Plain Page</h3>
-            </div>
-
-            <div class="title_right">
-              <div class="col-md-5 col-sm-5   form-group pull-right top_search">
-                <div class="input-group">
-                  <input type="text" class="form-control" placeholder="Search for...">
-                  <span class="input-group-btn">
-                    <button class="btn btn-default" type="button">Go!</button>
-                  </span>
-                </div>
-              </div>
-            </div>
+        <div class="page-title">
+          <div class="title_left">
+            <h3>交通事故推演</h3>
           </div>
 
-          <div class="clearfix"></div>
-
-          <div class="row">
-            <div class="col-md-12 col-sm-12  ">
-              <div class="x_panel">
-                <div class="x_title">
-                  <h2>Plain Page</h2>
-                  <ul class="nav navbar-right panel_toolbox">
-                    <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
-                    </li>
-                    <li class="dropdown">
-                      <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-wrench"></i></a>
-                      <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                          <a class="dropdown-item" href="#">Settings 1</a>
-                          <a class="dropdown-item" href="#">Settings 2</a>
-                        </div>
-                    </li>
-                    <li><a class="close-link"><i class="fa fa-close"></i></a>
-                    </li>
-                  </ul>
-                  <div class="clearfix"></div>
-                </div>
-                <div class="x_content">
-                    Add content to the page ...
-                </div>
+          <div class="title_right">
+            <div class="col-md-5 col-sm-5 form-group pull-right top_search">
+              <div class="input-group">
+                <input type="text" class="form-control" placeholder="Search for...">
+                <span class="input-group-btn">
+                  <button class="btn btn-default" type="button">Go!</button>
+                </span>
               </div>
             </div>
           </div>
         </div>
+
+        <div class="row">
+          <div class="col-md-12 col-sm-12">
+            <div class="x_panel">
+              <div class="x_title">
+                <h2>交通事故推演</h2>
+                <ul class="nav navbar-right panel_toolbox">
+                  <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                  </li>
+                  <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-wrench"></i></a>
+                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                        <a class="dropdown-item" href="#">Settings 1</a>
+                        <a class="dropdown-item" href="#">Settings 2</a>
+                      </div>
+                  </li>
+                  <li><a class="close-link"><i class="fa fa-close"></i></a>
+                  </li>
+                </ul>
+                <div class="clearfix"></div>
+              </div>
+
+              <div class="x_content">
+                <div class="row">
+                  <div class="col-md-5 col-sm-5">
+                    <form action="" method="post" enctype="multipart/form-data" id="upload_form">
+                      <ul class="errorlist" id="error1"></ul>
+                      {% csrf_token %}
+                      <div class="row">
+                        <div class="col-md-10 col-sm-10">
+                          <div class="item form-group">
+                            <label class="col-form-label col-md-4 col-sm-4 label-align" for="epochs" style="vertical-align: middle">历史流量: </span></label>
+                            <div class="col-md-8 col-sm-8 ">
+                              <input type="file" id="history_flow" required="required" class="form-control parameter" style="color: gray">
+                            </div>
+                          </div>
+                        </div>
+                        <div class="col-md-2 col-sm-2">
+                          <div class="item form-group">
+                            <div class="col-md-6 col-sm-6 offset-md-3 btn-group btn-group-justified">
+                              <button type="submit" class="btn btn-success" id="upload">Upload</button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </form>
+                  </div>
+
+                  <div class="col-md-7 col-sm-7">
+                    <form action="" method="post" enctype="multipart/form-data" id="pred_form">
+                      <ul class="errorlist" id="error1"></ul>
+                      {% csrf_token %}
+                      <div class="row">
+                        <div class="col-md-4 col-sm-4">
+                          <div class="item form-group">
+                            <label class="col-form-label col-md-6 col-sm-6 label-align" for="epochs" style="vertical-align: middle">事故路段: </span></label>
+                            <div class="col-md-6 col-sm-6 ">
+                              <input type="text" id="road" required="required" class="form-control parameter" value="370" style="color: gray">
+                            </div>
+                          </div>
+                        </div>
+                        <div class="col-md-4 col-sm-4">
+                          <div class="item form-group">
+                            <label class="col-form-label col-md-6 col-sm-6 label-align" for="epochs" style="vertical-align: middle">推演时间: </span></label>
+                            <div class="col-md-6 col-sm-6 ">
+                              <input type="text" id="time" required="required" class="form-control parameter" value="10" style="color: gray">
+                            </div>
+                          </div>
+                        </div>
+                        <div class="col-md-4 col-sm-4">
+                          <div class="item form-group">
+                            <div class="col-md-6 col-sm-6 offset-md-3 btn-group btn-group-justified">
+                              <button type="submit" class="btn btn-success" id="pred">Submit</button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+                
+                <br />
+
+                <div class="row">
+                  <div class="col-md-12 col-sm-12">
+                    <div id="mapid" style="height: 580px;"></div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="clearfix"></div>
+
       </div>
       <!-- /page content -->
 
@@ -281,7 +346,7 @@
   <script src=" {% static 'assets/js/bootstrap.bundle.min.js' %} "></script>
   <script src=" {% static 'assets/js/jquery.cookie.js' %} "></script>
 
-  <script src=" {% static 'assets/js/downstream_task.js' %} "></script>
+  <script src=" {% static 'assets/js/accident.js' %} "></script>
 
   <!-- Custom Theme Scripts -->
   <script src=" {% static 'assets/js/custom.min.js' %} "></script>

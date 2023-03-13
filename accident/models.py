@@ -1,7 +1,7 @@
 from django.db import models
 
 # Create your models here.
-class AccidentnData(models.Model):
+class AccidentData(models.Model):
     file = models.FileField(upload_to="poptraffic", null=True)
     type = models.CharField(max_length=50, verbose_name="Data Type", default="route_plan_trajectory")
 

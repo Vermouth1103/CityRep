@@ -143,6 +143,7 @@ class ModelTrainView(View):
                 os.makedirs(hparams.save_dir)
             hparams.struct_path = os.path.join(hparams.save_dir, "struct_assign.pkl")
             hparams.function_path = os.path.join(hparams.save_dir, "function_assign.pkl")
+            hparams.road_embedding_path = os.path.join(hparams.save_dir, "road_embedding.pkl")
 
             hparams.adj = get_newest_file(absolute_preprocessed_dir_path, "graph")
             hparams.node_features = get_newest_file(absolute_preprocessed_dir_path, "features")

@@ -50,7 +50,7 @@ def train_fnc_cmt_rst(hparams):  # train fnc by reconstruction
         label = torch.tensor(label, dtype=torch.float, device=hparams.device)
         input_edge = torch.tensor(
             input_edge, dtype=torch.long, device=hparams.device)
-        pred = g2t_model(length_feature, node_feature, adj_tensor, struct_assign, input_edge)
+        pred, road_embedding = g2t_model(length_feature, node_feature, adj_tensor, struct_assign, input_edge)
         count = 0
 
         loss = ce_criterion(pred, label)
@@ -64,6 +64,10 @@ def train_fnc_cmt_rst(hparams):  # train fnc by reconstruction
             count += 1
 
     extract_function_assign(hparams)
+
+    road_embedding = road_embedding.data.detach().cpu().numpy()
+    print(f"road embedding: {road_embedding.shape}")
+    pickle.dump(road_embedding.tolist(), open(hparams.road_embedding_path, "wb"))
 
 
 def train_struct_cmt(hparams):
