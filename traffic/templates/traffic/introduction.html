@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+
+{% load static %}
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <!-- Meta, title, CSS, favicons, etc. -->
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title> 演示系统 </title>
+  <link rel="icon" href="#"/>
+
+  <!-- Bootstrap -->
+  <link href=" {% static 'assets/css/bootstrap.min.css' %} " rel="stylesheet">
+  <!-- Font Awesome -->
+  <link href=" {% static 'assets/css/font-awesome.min.css' %} " rel="stylesheet">
+  <!-- Dropzone.js -->
+  <!-- <link href=" {% static 'assets/css/dropzone.min.css" rel="stylesheet"> -->
+
+  <!-- Custom Theme Style -->
+  <link href=" {% static 'assets/css/custom.min.css' %} " rel="stylesheet">
+</head>
+
+<body class="nav-md">
+  <div class="container body">
+    <div class="main_container">
+      <div class="col-md-3 left_col">
+        <div class="left_col scroll-view">
+          <div class="navbar nav_title" style="border: 0;">
+            <a href="{% url 'main:index' %}" class="site_title"><i class="fa fa-home"></i><span
+              style="font-weight:bolder; font-size:22px;">CityRep System</span></a>            
+          </div>
+          <div class="clearfix"></div>
+
+          <!-- menu profile quick info -->
+          <div class="profile clearfix">
+            <p style="text-align: center; font-weight:bolder; font-size:20px; color: white;"> 城市体征构建与认知系统 </p>
+          </div>
+          <!-- /menu profile quick info -->
+
+          <br />
+
+          <!-- sidebar menu -->
+          <div id="sidebar-menu" class="main_menu_side hidden-print main_menu">
+            <div class="menu_section">
+              <h3 style="text-align: left;  font-size:15px; color: white;">目录</h3>
+              <ul class="nav side-menu">
+                <li><a><i class="fa fa-car"></i> 城市交通体征 <span class="fa fa-chevron-down"></span></a>
+                  <ul class="nav child_menu">
+                    <li><a href="{% url 'traffic:introduction' %}">相关介绍</a></li>
+                    <li><a href="{% url 'traffic:representation_train' %}">表征建模</a></li>
+                    <li><a href="{% url 'traffic:representation_pre' %}">表征展示</a></li>
+                    <li><a href="{% url 'traffic:speed_prediction' %}">速度预测</a></li>
+                    <li><a href="{% url 'traffic:flow_prediction' %}">流量预测</a></li>
+                    <li><a href="{% url 'traffic:route_plan' %}">路径规划</a></li>
+                    <li><a href="{% url 'traffic:next_loc_prediction' %}">下一跳预测</a></li>
+                    <li><a href="{% url 'traffic:accident' %}">事故推演</a></li>
+                    </li>
+                  </ul>
+                </li>
+                <li><a><i class="fa fa-male"></i> 城市人口体征 <span class="fa fa-chevron-down"></span></a>
+                  <ul class="nav child_menu">
+                    <li><a href="{% url 'population:introduction' %}">相关介绍</a></li>
+                    <li><a href="{% url 'population:representation_train' %}">流动建模</a></li>
+                    <li><a href="{% url 'population:representation_pre' %}">体征应用</a></li>
+                  </ul>
+                </li>
+                <li><a><i class="fa fa-line-chart"></i> 城市经济体征 <span class="fa fa-chevron-down"></span></a>
+                  <ul class="nav child_menu">
+                    <li><a href="{% url 'economy:introduction' %}">相关介绍</a></li>
+                    <li><a href="{% url 'economy:representation_train' %}">指标分析</a></li>
+                    <li><a href="{% url 'economy:representation_pre' %}">体征应用</a></li>
+                  </ul>
+                </li>
+              </ul>
+            </div>
+          </div>
+          <!-- /sidebar menu -->
+
+          <!-- /menu footer buttons -->
+          <div class="sidebar-footer hidden-small">
+            <a data-toggle="tooltip" data-placement="top" title="Settings">
+              <span class="glyphicon glyphicon-cog" aria-hidden="true"></span>
+            </a>
+            <a data-toggle="tooltip" data-placement="top" title="FullScreen">
+              <span class="glyphicon glyphicon-fullscreen" aria-hidden="true"></span>
+            </a>
+            <a data-toggle="tooltip" data-placement="top" title="Lock">
+              <span class="glyphicon glyphicon-eye-close" aria-hidden="true"></span>
+            </a>
+            <a data-toggle="tooltip" data-placement="top" title="Logout" href="login.html">
+              <span class="glyphicon glyphicon-off" aria-hidden="true"></span>
+            </a>
+          </div>
+          <!-- /menu footer buttons -->
+        </div>
+      </div>
+
+      <!-- top navigation -->
+      <div class="top_nav">
+          <div class="nav_menu">
+              <div class="nav toggle">
+                <a id="menu_toggle"><i class="fa fa-bars"></i></a>
+              </div>
+              <nav class="nav navbar-nav">
+              <ul class=" navbar-right">
+                <li class="nav-item dropdown open" style="padding-left: 15px;">
+                  <a href="javascript:;" class="user-profile dropdown-toggle" aria-haspopup="true" id="navbarDropdown" data-toggle="dropdown" aria-expanded="false">
+                    <img src="../../static/assets/img/face.jpg" alt="">John Doe
+                  </a>
+                  <div class="dropdown-menu dropdown-usermenu pull-right" aria-labelledby="navbarDropdown">
+                    <a class="dropdown-item"  href="javascript:;"> Profile</a>
+                      <a class="dropdown-item"  href="javascript:;">
+                        <span class="badge bg-red pull-right">50%</span>
+                        <span>Settings</span>
+                      </a>
+                  <a class="dropdown-item"  href="javascript:;">Help</a>
+                    <a class="dropdown-item"  href="login.html"><i class="fa fa-sign-out pull-right"></i> Log Out</a>
+                  </div>
+                </li>
+
+                <li role="presentation" class="nav-item dropdown open">
+                  <a href="javascript:;" class="dropdown-toggle info-number" id="navbarDropdown1" data-toggle="dropdown" aria-expanded="false">
+                    <i class="fa fa-envelope-o"></i>
+                    <span class="badge bg-green">6</span>
+                  </a>
+                  <ul class="dropdown-menu list-unstyled msg_list" role="menu" aria-labelledby="navbarDropdown1">
+                    <li class="nav-item">
+                      <a class="dropdown-item">
+                        <span class="image"><img src="../../static/assets/img/face.jpg" alt="Profile Image" /></span>
+                        <span>
+                          <span>John Smith</span>
+                          <span class="time">3 mins ago</span>
+                        </span>
+                        <span class="message">
+                          Film festivals used to be do-or-die moments for movie makers. They were where...
+                        </span>
+                      </a>
+                    </li>
+                    <li class="nav-item">
+                      <a class="dropdown-item">
+                        <span class="image"><img src="../../static/assets/img/face.jpg" alt="Profile Image" /></span>
+                        <span>
+                          <span>John Smith</span>
+                          <span class="time">3 mins ago</span>
+                        </span>
+                        <span class="message">
+                          Film festivals used to be do-or-die moments for movie makers. They were where...
+                        </span>
+                      </a>
+                    </li>
+                    <li class="nav-item">
+                      <a class="dropdown-item">
+                        <span class="image"><img src="../../static/assets/img/face.jpg" alt="Profile Image" /></span>
+                        <span>
+                          <span>John Smith</span>
+                          <span class="time">3 mins ago</span>
+                        </span>
+                        <span class="message">
+                          Film festivals used to be do-or-die moments for movie makers. They were where...
+                        </span>
+                      </a>
+                    </li>
+                    <li class="nav-item">
+                      <a class="dropdown-item">
+                        <span class="image"><img src="../../static/assets/img/face.jpg" alt="Profile Image" /></span>
+                        <span>
+                          <span>John Smith</span>
+                          <span class="time">3 mins ago</span>
+                        </span>
+                        <span class="message">
+                          Film festivals used to be do-or-die moments for movie makers. They were where...
+                        </span>
+                      </a>
+                    </li>
+                    <li class="nav-item">
+                      <div class="text-center">
+                        <a class="dropdown-item">
+                          <strong>See All Alerts</strong>
+                          <i class="fa fa-angle-right"></i>
+                        </a>
+                      </div>
+                    </li>
+                  </ul>
+                </li>
+              </ul>
+            </nav>
+          </div>
+        </div>
+      <!-- /top navigation -->
+
+      <!-- page content -->
+      <div class="right_col" role="main">
+        <div class="row">
+          <div class="col-md-12 col-sm-12">
+            <div class="x_panel">
+              <div class="x_title">
+                <ul class="nav navbar-right panel_toolbox">
+                  <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a></li>
+                  <li><a class="close-link"><i class="fa fa-close"></i></a>
+                  </li>
+                </ul>
+                <p style="text-align: center; font-weight:bolder; font-size:30px;">体征介绍</p>                
+              </div>
+              <div class="x_content" style="text-align: left; font-weight: normal; font-size:20px">
+                <p style="text-indent: 2em;">
+                  体征在医学上通常被用来描述人体具有诊断意义的指标，反映人体的运行状态和健康程度，如生命体征，包括体温、脉搏、呼吸等。而城市是一个更加复杂的巨型“生命体”，类比于人体体征，城市体征指的是反映复杂城市系统运行状态的指标，如交通体征，包括通行流量、通行速度等；环境体征，包括气温、湿度、空气质量等。
+                  城市体征往往是由城市大数据反馈得到。城市大数据是指在城市运转过程中产生或获得的数据，以及与信息采集、处理、利用、交流能力有关的活动要素构成的有机系统。城市数据一般可以分为静态和动态两种类型，静态数据多是城市短期内基本维持不变的低频数据，如路网、建筑等；动态数据则指的是城市中高频变化的数据，如交通流量、人口密度、空气质量等。
+                </p>
+                <p style="text-indent: 2em;">
+                  如何利用海量数据挖掘、建立城市体征是一个长期以来一直在探索的问题。起初只是利用一些统计信息来刻画城市在某一领域的状态，这些统计信息只能从宏观角度给予城市个别描述，无法深入挖掘城市数据内部规律，建立不同指标之间的内在联系。后来，基于传统机器学习的数据特征学习算法被广泛提出，研究人员需要利用手动特征工程等技术从原始数据的领域知识出发建立城市特征，然后再部署相关的机器学习算法。虽然手动特征工程对于应用机器学习算法效果不错，但它同时也非常昂贵和耗时，并且依赖于强大的专业知识。随着深度学习的发展，表示学习开始被用于建立城市深度特征，它通过将实体或关系数据投影到低维向量空间，能够实现对实体和关系的语义信息的表示，从而高效地计算实体、关系及其之间的复杂语义关联。与显式体征相比，表示学习所得到的隐式体征更能够捕捉实体之间的关联性，更能有效描述城市这一复杂系统的动态变化；与特征工程相比，表示学习所得到的深度特征是从数据中自动抽取学习得到的，消除了对专业知识的依赖，并且得到的体征表现性能更强。
+                </p>
+                <p style="text-indent: 2em;">
+                  因此，本系统利用表征学习方法将蕴藏在海量城市大数据中的知识抽象为高阶特征，并在下游三个场景任务中，即群体交通场景、个体交通场景和突发事故场景，提供有效指导，从而实现对城市运行管理和决策的辅助与建议。
+                </p>
+                <p style="font-weight: bolder; font-size: 25px;">
+                  系统框架图
+                </p>
+                <p style="text-align: center;">
+                  <img src="../../static/assets/img/framework.png" weight="700px" height="600px"></img>
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-12 col-sm-12">
+            <div class="x_panel">
+              <div class="x_title">
+                <ul class="nav navbar-right panel_toolbox">
+                  <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a></li>
+                  <li><a class="close-link"><i class="fa fa-close"></i></a>
+                  </li>
+                </ul>
+                <p style="text-align: center; font-weight:bolder; font-size:30px;">模型介绍</p>
+              </div>
+              <div class="x_content" style="text-align: left; font-weight: normal; font-size:20px">
+                <p style="text-indent: 2em;">
+                  本模型核心思想是建立分级图神经网络，对不同层次的路网体征进行建模。特别地，我们希望通过细粒度的路段聚合，获得高层次的交通单元。为此，我们引入了两种虚拟节点，即结构区和功能区。结构区域主要用来体征空间连通的路段，起到一定的交通作用，如立交桥、十字路口等。此外，在结构区域之上形成功能区，为出行人群提供某种功能，如购物区。除此之外，我们采用了多图机制来引导虚拟节点与现实世界的结构区域和功能区域相对应。除了道路网络的自然连通性外，我们利用道路类型属性建立结构相似性，利用城市POI信息定义道路段之间的功能相似性。使用这样的分级图神经网络，我们可以缓解与远程节点依赖相关的问题。
+                </p>
+                <p style="font-weight: bolder; font-size: 25px;">
+                  基本概念介绍
+                </p>
+                <ul>
+                  <li>路段：路网中的基础单元，通常与一些特征（如经纬度、路段类型、路段长度，车道数）相关联。</li>
+                  <li>结构区：由一组路段集合组成，通常作为一个整体起到一定的交通作用，如立交桥、十字路口等。</li>
+                  <li>功能区：由多个结构区组成，提供满足人们某些活动的交通功能，如购物区，住宅区等。</li>
+                </ul>
+                <p style="font-weight: bolder; font-size: 25px;">
+                  模型框架图
+                </p>
+                <p style="text-align: center;">
+                  <img src="../../static/assets/img/arch.png" weight="700px" height="800px">
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-12 col-sm-12">
+            <div class="x_panel">
+              <div class="x_title">
+                <ul class="nav navbar-right panel_toolbox">
+                  <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a></li>
+                  <li><a class="close-link"><i class="fa fa-close"></i></a>
+                  </li>
+                </ul>
+                <p style="text-align: center; font-weight:bolder; font-size:30px;">数据介绍</p>
+              </div>
+              <div class="x_content" style="text-align: left; font-weight: normal; font-size:20px">
+                <div class="upstream_task_input col-md-12 col-sm-12">
+                  <p style="font-weight: bolder; font-size: 25px;">表征模型输入</p>
+                  <ul>
+                    <li>路网数据：包含节点数据和边数据。</li>
+                      <ul style="list-style-type:square">
+                        <li>节点数据：包含节点序号、节点坐标和节点属性，格式为：</li>
+                        <img src="../../static/assets/img/node.png">
+                        <li>边数据：包含边序号，边长度，起始节点，终止节点，经过节点坐标和边属性，格式为：</li>
+                        <img src="../../static/assets/img/edge.png">
+                      </ul>
+                    <li>车辆轨迹数据：将轨迹经纬度映射到路网上，得到节点序列，如[1, 2, 3]表示车辆从节点1经过节点2到达节点3。</li>
+                    <li>POI数据：包含经纬度和POI种类。</li>
+                  </ul>
+                </div>
+                <div class="upstream_task_output col-md-12 col-sm-12">
+                  <p style="font-weight: bolder; font-size: 25px;">表征模型输出</p>
+                  <ul>
+                    <li>路段到结构区的分配矩阵：包含每条路段属于每个结构区的概率值。</li>
+                    <li>结构区到功能区的分配矩阵：包含每个结构区属于每个功能区的概率值。</li>
+                    <li>路段表征矩阵：包含每条路段的特征。</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- /page content -->
+
+    </div>
+  </div>
+
+  <!-- jQuery -->
+  <script src=" {% static 'assets/js/jquery.min.js' %} "></script>
+  <!-- Bootstrap -->
+  <script src=" {% static 'assets/js/bootstrap.bundle.min.js' %} "></script>
+  <!-- Dropzone.js -->
+  <!-- <script src=" {% static 'assets/js/dropzone.min.js' %} "></script> -->
+  <script src=" {% static 'assets/js/jquery.cookie.js' %} "></script>
+
+  <!-- Custom Theme Scripts -->
+  <script src=" {% static 'assets/js/custom.min.js' %} "></script>
+
+</body>
+</html>

@@ -34,10 +34,9 @@ ALLOWED_HOSTS = ["*"]
 INSTALLED_APPS = [
     'login.apps.LoginConfig',
     'main.apps.MainConfig',
-    'representation.apps.RepresentationConfig',
-    'poptraffic.apps.PoptrafficConfig',
-    'indtraffic.apps.IndtrafficConfig',
-    'accident.apps.AccidentConfig',
+    'traffic.apps.TrafficConfig',
+    'population.apps.PopulationConfig',
+    'economy.apps.EconomyConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
