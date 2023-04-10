@@ -635,9 +635,9 @@ class GraphEncoderTLCore(Module):
         self.sigmoid = nn.Sigmoid()
 
         self.batch_norm_1 = nn.BatchNorm1d(
-            hparams.hidden_dims, eps=1e-12).cuda()
+            hparams.hidden_dims, eps=1e-12).to(self.hparams.device)
         self.batch_norm_2 = nn.BatchNorm1d(
-            hparams.hidden_dims, eps=1e-12).cuda()
+            hparams.hidden_dims, eps=1e-12).to(self.hparams.device)
 
     def forward(self, struct_adj, raw_feat, raw_adj):
         self.struct_assign = self.raw_struct_assign / (F.relu(torch.sum(self.raw_struct_assign, 0) - 1.0) + 1.0)

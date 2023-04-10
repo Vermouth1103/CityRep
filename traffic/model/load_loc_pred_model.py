@@ -37,7 +37,7 @@ def load_model(hparams):
                             node_feature, adj_tensor, struct_assign, fnc_assign).to(hparams.device)
     # print('model:', lp_model)
 
-    lp_model.load_state_dict(torch.load(hparams.next_loc_model))
+    lp_model.load_state_dict(torch.load(hparams.next_loc_model, map_location=hparams.device))
     lp_model.eval()
     return lp_model
 
