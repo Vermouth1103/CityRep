@@ -236,6 +236,8 @@ class SpeedPredicitonView(View):
             os.chdir('./traffic/model/prediction')
             predict()
             os.chdir('../../../')
+            print(os.getcwd())
+
             output_path = os.path.join(os.getcwd(), "traffic/model/prediction/output.csv")
             df = pd.read_csv(output_path)
             with open(os.path.join(os.getcwd(), "traffic/model/prediction/entity_mapping.json"), "r") as f:
@@ -269,20 +271,13 @@ class SpeedPredictionUploadView(View):
                 new_file.type = data_type
                 new_file.save()
 
+            print(os.getcwd())
             os.chdir('./traffic/model/prediction')
             train()
             os.chdir('../../../')
-            
-            data = []
-            files = SpeedPredictionData.objects.all().order_by("-id")
-            for file in files:
-                data.append({
-                    "url": file.file.url,
-                    "size": filesizeformat(file.file.size),
-                    "type": file.type,
-                    })
+            print(os.getcwd())
 
-            return JsonResponse({"data": data, "speed_dict": speed_dict})
+            return JsonResponse({"speed_dict": speed_dict})
         else:
             data = {"error_msg": "Only csv files are allowed."}
             return JsonResponse({"data": data})
