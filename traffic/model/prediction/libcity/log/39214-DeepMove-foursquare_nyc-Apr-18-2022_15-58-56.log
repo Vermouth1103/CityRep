@@ -1,0 +1,42 @@
+2022-04-18 15:58:56,024 - INFO - Log directory: ./libcity/log
+2022-04-18 15:58:56,025 - INFO - Begin pipeline, task=traj_loc_pred, model_name=DeepMove, dataset_name=foursquare_nyc, exp_id=39214
+2022-04-18 15:58:56,025 - INFO - {'task': 'traj_loc_pred', 'model': 'DeepMove', 'dataset': 'foursquare_nyc', 'saved_model': True, 'train': True, 'seed': 0, 'dataset_class': 'TrajectoryDataset', 'traj_encoder': 'StandardTrajectoryEncoder', 'executor': 'TrajLocPredExecutor', 'evaluator': 'TrajLocPredEvaluator', 'loc_emb_size': 500, 'uid_emb_size': 40, 'tim_emb_size': 10, 'hidden_size': 500, 'attn_type': 'dot', 'rnn_type': 'LSTM', 'dropout_p': 0.5, 'learning_rate': 0.001, 'lr_step': 3, 'max_epoch': 30, 'optimizer': 'adam', 'window_size': 72, 'max_session_len': 10, 'min_session_len': 5, 'min_sessions': 2, 'min_checkins': 3, 'batch_size': 20, 'num_workers': 0, 'cache_dataset': True, 'train_rate': 0.7, 'eval_rate': 0.1, 'history_type': 'splice', 'cut_method': 'time_interval', 'gpu': True, 'gpu_id': 0, 'L2': 1e-05, 'lr_decay': 0.1, 'clip': 5.0, 'schedule_threshold': 0.001, 'loss_func': 'default', 'load_best_epoch': True, 'hyper_tune': False, 'early_stop_lr': 9e-06, 'debug': False, 'metrics': ['Recall'], 'evaluate_method': 'popularity', 'topk': 1, 'geo': {'including_types': ['Point'], 'Point': {'venue_category_name': 'enum'}}, 'usr': {'properties': {'gender': 'enum', 'twitter_friend_count': 'num', 'twitter_follower_count': 'num'}}, 'dyna': {'including_types': ['trajectory'], 'trajectory': {'entity_id': 'usr_id', 'location': 'geo_id', 'timezone_offset_in_minutes': 'num'}}, 'distance_upper': 30.0, 'device': device(type='cuda', index=0), 'exp_id': 39214}
+2022-04-18 15:59:01,167 - INFO - finish cut data
+2022-04-18 16:05:17,939 - INFO - ==>Train Epoch:   0 Loss:7.59308 learning_rate:0.001
+2022-04-18 16:06:17,131 - INFO - ==>Eval Acc:0.14400 Eval Loss:6.77258
+2022-04-18 16:11:28,925 - INFO - ==>Train Epoch:   1 Loss:6.04039 learning_rate:0.001
+2022-04-18 16:12:28,496 - INFO - ==>Eval Acc:0.16651 Eval Loss:6.29930
+2022-04-18 16:17:51,398 - INFO - ==>Train Epoch:   2 Loss:5.44932 learning_rate:0.001
+2022-04-18 16:18:51,337 - INFO - ==>Eval Acc:0.17603 Eval Loss:6.12187
+2022-04-18 16:24:27,440 - INFO - ==>Train Epoch:   3 Loss:5.12458 learning_rate:0.001
+2022-04-18 16:25:27,279 - INFO - ==>Eval Acc:0.17798 Eval Loss:6.00260
+2022-04-18 16:30:55,098 - INFO - ==>Train Epoch:   4 Loss:4.88876 learning_rate:0.001
+2022-04-18 16:31:54,727 - INFO - ==>Eval Acc:0.18144 Eval Loss:5.94652
+2022-04-18 16:37:11,631 - INFO - ==>Train Epoch:   5 Loss:4.71535 learning_rate:0.001
+2022-04-18 16:38:11,769 - INFO - ==>Eval Acc:0.18801 Eval Loss:5.92709
+2022-04-18 16:43:48,446 - INFO - ==>Train Epoch:   6 Loss:4.58254 learning_rate:0.001
+2022-04-18 16:44:48,877 - INFO - ==>Eval Acc:0.18512 Eval Loss:5.92695
+2022-04-18 16:50:20,420 - INFO - ==>Train Epoch:   7 Loss:4.47068 learning_rate:0.001
+2022-04-18 16:51:20,698 - INFO - ==>Eval Acc:0.18686 Eval Loss:5.92578
+2022-04-18 16:56:56,321 - INFO - ==>Train Epoch:   8 Loss:4.36869 learning_rate:0.001
+2022-04-18 16:57:56,762 - INFO - ==>Eval Acc:0.18426 Eval Loss:5.93670
+2022-04-18 17:03:32,383 - INFO - ==>Train Epoch:   9 Loss:4.30596 learning_rate:0.001
+2022-04-18 17:04:33,138 - INFO - ==>Eval Acc:0.18469 Eval Loss:5.94098
+2022-04-18 17:10:18,632 - INFO - ==>Train Epoch:  10 Loss:3.59956 learning_rate:0.0001
+2022-04-18 17:11:25,445 - INFO - ==>Eval Acc:0.20366 Eval Loss:5.82608
+2022-04-18 17:17:33,925 - INFO - ==>Train Epoch:  11 Loss:3.48587 learning_rate:0.0001
+2022-04-18 17:18:35,307 - INFO - ==>Eval Acc:0.20020 Eval Loss:5.86576
+2022-04-18 17:23:50,317 - INFO - ==>Train Epoch:  12 Loss:3.44304 learning_rate:0.0001
+2022-04-18 17:24:52,799 - INFO - ==>Eval Acc:0.20071 Eval Loss:5.88662
+2022-04-18 17:30:00,908 - INFO - ==>Train Epoch:  13 Loss:3.41462 learning_rate:0.0001
+2022-04-18 17:31:03,013 - INFO - ==>Eval Acc:0.20071 Eval Loss:5.88163
+2022-04-18 17:36:39,635 - INFO - ==>Train Epoch:  14 Loss:3.38603 learning_rate:0.0001
+2022-04-18 17:37:40,381 - INFO - ==>Eval Acc:0.20035 Eval Loss:5.90208
+2022-04-18 17:42:54,165 - INFO - ==>Train Epoch:  15 Loss:3.26799 learning_rate:1e-05
+2022-04-18 17:43:55,003 - INFO - ==>Eval Acc:0.19941 Eval Loss:5.91345
+2022-04-18 17:49:30,218 - INFO - ==>Train Epoch:  16 Loss:3.27031 learning_rate:1e-05
+2022-04-18 17:50:31,439 - INFO - ==>Eval Acc:0.19962 Eval Loss:5.90960
+2022-04-18 17:56:05,575 - INFO - ==>Train Epoch:  17 Loss:3.25809 learning_rate:1e-05
+2022-04-18 17:57:05,837 - INFO - ==>Eval Acc:0.19869 Eval Loss:5.92253
+2022-04-18 18:02:42,725 - INFO - ==>Train Epoch:  18 Loss:3.26380 learning_rate:1e-05
+2022-04-18 18:03:44,354 - INFO - ==>Eval Acc:0.19934 Eval Loss:5.92289

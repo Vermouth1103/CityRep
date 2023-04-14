@@ -65,7 +65,7 @@ class SPGCN(Module):
 #    adj = adj + self_loop
         N = inputs.size()[0]
 #    edge = adj.nonzero().t()
-        edge = adj._indices()
+        edge = adj._indices().to(self.device)
         # print('gcn edge:', edge.shape, edge)
 #    edge = edge[1:, :]
         h = torch.mm(inputs, self.W)
@@ -121,7 +121,7 @@ class SPGAT(Module):
     #    adj = adj + self_loop
         N = inputs.size()[0]
     #    edge = adj.nonzero().t()
-        edge = adj._indices()
+        edge = adj._indices().to(dv)
         # print('gat edge:', edge.shape, edge)
     #    edge = edge[1:, :]
         h = torch.mm(inputs, self.W)

@@ -1,0 +1,28 @@
+2023-04-10 12:21:34,648 - INFO - Log directory: ./libcity/log
+2023-04-10 12:21:35,157 - INFO - Loaded file Xiongan.geo, num_nodes=487
+2023-04-10 12:21:35,160 - INFO - set_weight_link_or_dist: dist
+2023-04-10 12:21:35,160 - INFO - init_weight_inf_or_zero: inf
+2023-04-10 12:21:35,163 - INFO - Loaded file Xiongan.rel, shape=(487, 487)
+2023-04-10 12:21:35,163 - INFO - Start Calculate the weight by Gauss kernel!
+2023-04-10 12:21:35,166 - INFO - Loading ./libcity/cache/dataset_cache/point_based_Xiongan_12_12_0.7_0.1_standard_64_True_True_False_True.npz
+2023-04-10 12:21:35,205 - INFO - train	x: (26, 12, 487, 2), y: (26, 12, 487, 2)
+2023-04-10 12:21:35,205 - INFO - eval	x: (4, 12, 487, 2), y: (4, 12, 487, 2)
+2023-04-10 12:21:35,205 - INFO - test	x: (7, 12, 487, 2), y: (7, 12, 487, 2)
+2023-04-10 12:21:35,206 - INFO - StandardScaler mean: 59.92392878005366, std: 5.807862904711059
+2023-04-10 12:21:35,206 - INFO - NoneScaler
+2023-04-10 12:21:35,588 - INFO - You select rnn_type GRU in RNN!
+2023-04-10 12:21:38,908 - INFO - RNN(
+  (rnn): GRU(974, 64)
+  (fc): Linear(in_features=64, out_features=487, bias=True)
+)
+2023-04-10 12:21:38,909 - INFO - rnn.weight_ih_l0	torch.Size([192, 974])	cuda:0	True
+2023-04-10 12:21:38,909 - INFO - rnn.weight_hh_l0	torch.Size([192, 64])	cuda:0	True
+2023-04-10 12:21:38,909 - INFO - rnn.bias_ih_l0	torch.Size([192])	cuda:0	True
+2023-04-10 12:21:38,909 - INFO - rnn.bias_hh_l0	torch.Size([192])	cuda:0	True
+2023-04-10 12:21:38,909 - INFO - fc.weight	torch.Size([487, 64])	cuda:0	True
+2023-04-10 12:21:38,910 - INFO - fc.bias	torch.Size([487])	cuda:0	True
+2023-04-10 12:21:38,910 - INFO - Total parameter numbers: 231335
+2023-04-10 12:21:38,910 - INFO - You select `adam` optimizer.
+2023-04-10 12:21:38,910 - INFO - You select `multisteplr` lr_scheduler.
+2023-04-10 12:21:38,912 - WARNING - Received none train loss func and will use the loss func defined in the model.
+2023-04-10 12:21:38,912 - INFO - Loaded model at ./libcity/cache/31941/model_cache/RNN_Xiongan_epoch99.tar

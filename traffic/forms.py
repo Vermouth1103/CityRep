@@ -97,3 +97,19 @@ class NextLocPredForm(forms.Form):
     traj_seq = forms.CharField(label="Traj Seq", max_length=50,
                                         widget=forms.TextInput(attrs={'class': 'form-control'}))
     steps = forms.IntegerField(initial=1)
+
+class SpeedPredictionDataForm(forms.Form):
+
+    file = forms.FileField(widget=forms.ClearableFileInput(attrs={'class': 'form-control'}))
+
+    def clean_file_ext(self):
+        file = self.cleaned_data['file']
+        ext = file.name.split('.')[-1]
+        if ext != 'json':
+            raise forms.ValidationError("Only json files are allowed.")
+        return file
+    
+class SpeedPredictionPredForm(forms.Form):
+
+    # hyperparameter
+    pred_time = forms.IntegerField(initial=10)

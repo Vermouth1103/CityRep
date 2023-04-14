@@ -55,7 +55,6 @@
                     <li><a href="{% url 'traffic:representation_train' %}">表征建模</a></li>
                     <li><a href="{% url 'traffic:representation_pre' %}">表征展示</a></li>
                     <li><a href="{% url 'traffic:speed_prediction' %}">速度预测</a></li>
-                    <li><a href="{% url 'traffic:flow_prediction' %}">流量预测</a></li>
                     <li><a href="{% url 'traffic:route_plan' %}">路径规划</a></li>
                     <li><a href="{% url 'traffic:next_loc_prediction' %}">下一跳预测</a></li>
                     <li><a href="{% url 'traffic:accident' %}">事故推演</a></li>
@@ -241,7 +240,7 @@
                   {% csrf_token %}
                   {{ form.as_p }}
                   <!-- <input type="button" class="btn btn-info form-control" name="type" value="submit" id="btn1" /> -->
-                  <button class="btn btn-info form-control upload-btn" name="type" type="submit" id="upload">Upload</button>
+                  <button class="btn btn-info form-control upload-btn" name="type" type="submit" id="upload">上传</button>
                 </form>
               </div>
               <div style="height:260px; width:100%; display:none; overflow-y:auto" >
@@ -280,7 +279,7 @@
                   <div class="row">
                     <div class="col-md-3 col-sm-3">
                       <div class="item form-group">
-                        <label class="col-form-label col-md-6 col-sm-6 label-align" for="epochs" style="vertical-align: middle">Epochs: </span></label>
+                        <label class="col-form-label col-md-6 col-sm-6 label-align" for="epochs" style="vertical-align: middle">训练轮次: </span></label>
                         <div class="col-md-6 col-sm-6 ">
                           <input type="text" id="epochs" required="required" class="form-control parameter" value="30" style="color: gray">
                         </div>
@@ -288,7 +287,7 @@
                     </div>
                     <div class="col-md-3 col-sm-3">
                       <div class="item form-group">
-                        <label class="col-form-label col-md-6 col-sm-6 label-align" for="batch_size">Batch size: </span></label>
+                        <label class="col-form-label col-md-6 col-sm-6 label-align" for="batch_size">批数量大小: </span></label>
                         <div class="col-md-6 col-sm-6 ">
                           <input type="text" id="batch_size" required="required" class="form-control parameter" value="300" style="color: gray">
                         </div>
@@ -296,7 +295,7 @@
                     </div>
                     <div class="col-md-3 col-sm-3">
                       <div class="item form-group">
-                        <label class="col-form-label col-md-6 col-sm-6 label-align" for="lr">Learning rate: </span></label>
+                        <label class="col-form-label col-md-6 col-sm-6 label-align" for="lr">学习率: </span></label>
                         <div class="col-md-6 col-sm-6 ">
                           <input type="text" id="lr" required="required" class="form-control parameter" value="1e-4" style="color: gray">
                         </div>
@@ -304,7 +303,7 @@
                     </div>
                     <div class="col-md-3 col-sm-3">
                       <div class="item form-group">
-                        <label class="col-form-label col-md-6 col-sm-6 label-align" for="dropout">Dropout: </span></label>
+                        <label class="col-form-label col-md-6 col-sm-6 label-align" for="dropout">丢弃概率: </span></label>
                         <div class="col-md-6 col-sm-6 ">
                           <input type="text" id="dropout" required="required" class="form-control parameter" value="0.6" style="color: gray">
                         </div>
@@ -313,8 +312,8 @@
                   </div>
                   <div class="item form-group">
                     <div class="col-md-6 col-sm-6 offset-md-3 btn-group btn-group-justified">
-                      <button type="reset" class="btn btn-primary">Reset</button>
-                      <button type="submit" class="btn btn-success" id="submit-btn">Submit</button>
+                      <button type="reset" class="btn btn-primary">重置参数</button>
+                      <button type="submit" class="btn btn-success" id="submit-btn">开始训练</button>
                     </div>
                   </div>
                 </form>
@@ -374,7 +373,7 @@
                     <div class="col-md-4 col-sm-4">
                       <div class="item form-group">
                         <div class="col-md-6 col-sm-6 offset-md-3 btn-group btn-group-justified">
-                          <button type="submit" class="btn btn-success" id="pred-btn">Submit</button>
+                          <button type="submit" class="btn btn-success" id="pred-btn">预测</button>
                         </div>
                       </div>
                     </div>

@@ -1,0 +1,89 @@
+2023-01-06 17:39:49,495 - INFO - Log directory: ./libcity/log
+2023-01-06 17:39:50,375 - INFO - Loading file ./libcity/cache/dataset_cache/eta_Beijing_Taxi_Sample_ori_longer30_DeeptteEncoder.json
+2023-01-06 17:39:50,525 - INFO - longi_mean: 116.38772777340102
+2023-01-06 17:39:50,525 - INFO - longi_std: 0.07261763841827414
+2023-01-06 17:39:50,525 - INFO - lati_mean: 39.92589546753647
+2023-01-06 17:39:50,525 - INFO - lati_std: 0.049410813934588
+2023-01-06 17:39:50,525 - INFO - dist_mean: 12.680062835543923
+2023-01-06 17:39:50,525 - INFO - dist_std: 5.043491834097288
+2023-01-06 17:39:50,526 - INFO - time_mean: 2249.877973358706
+2023-01-06 17:39:50,526 - INFO - time_std: 1145.3334062262293
+2023-01-06 17:39:50,526 - INFO - dist_gap_mean: 0.2662553526828164
+2023-01-06 17:39:50,526 - INFO - dist_gap_std: 0.15408620900644737
+2023-01-06 17:39:50,526 - INFO - time_gap_mean: 47.24283002847011
+2023-01-06 17:39:50,526 - INFO - time_gap_std: 44.31597855637794
+2023-01-06 17:39:50,538 - INFO - Number of train data: 4204
+2023-01-06 17:39:50,538 - INFO - Number of eval  data: 587
+2023-01-06 17:39:50,539 - INFO - Number of test  data: 1171
+2023-01-06 17:39:53,692 - INFO - DeepTTE(
+  (attr_net): Attr(
+    (uid_em): Embedding(69, 16)
+    (weekid_em): Embedding(7, 3)
+    (timeid_em): Embedding(1440, 8)
+  )
+  (spatio_temporal): SpatioTemporal(
+    (geo_conv): GeoConv(
+      (state_em): Embedding(2, 2)
+      (process_coords): Linear(in_features=4, out_features=16, bias=True)
+      (conv): Conv1d(16, 32, kernel_size=(3,), stride=(1,))
+    )
+    (rnn): LSTM(61, 128, batch_first=True)
+    (attr2atten): Linear(in_features=28, out_features=128, bias=True)
+  )
+  (entire_estimate): EntireEstimator(
+    (input2hid): Linear(in_features=156, out_features=128, bias=True)
+    (residuals): ModuleList(
+      (0): Linear(in_features=128, out_features=128, bias=True)
+      (1): Linear(in_features=128, out_features=128, bias=True)
+      (2): Linear(in_features=128, out_features=128, bias=True)
+      (3): Linear(in_features=128, out_features=128, bias=True)
+    )
+    (hid2out): Linear(in_features=128, out_features=1, bias=True)
+  )
+  (local_estimate): LocalEstimator(
+    (input2hid): Linear(in_features=128, out_features=64, bias=True)
+    (hid2hid): Linear(in_features=64, out_features=32, bias=True)
+    (hid2out): Linear(in_features=32, out_features=1, bias=True)
+  )
+)
+2023-01-06 17:39:53,693 - INFO - attr_net.uid_em.weight	torch.Size([69, 16])	cuda:0	True
+2023-01-06 17:39:53,693 - INFO - attr_net.weekid_em.weight	torch.Size([7, 3])	cuda:0	True
+2023-01-06 17:39:53,693 - INFO - attr_net.timeid_em.weight	torch.Size([1440, 8])	cuda:0	True
+2023-01-06 17:39:53,693 - INFO - spatio_temporal.geo_conv.state_em.weight	torch.Size([2, 2])	cuda:0	True
+2023-01-06 17:39:53,693 - INFO - spatio_temporal.geo_conv.process_coords.weight	torch.Size([16, 4])	cuda:0	True
+2023-01-06 17:39:53,693 - INFO - spatio_temporal.geo_conv.process_coords.bias	torch.Size([16])	cuda:0	True
+2023-01-06 17:39:53,694 - INFO - spatio_temporal.geo_conv.conv.weight	torch.Size([32, 16, 3])	cuda:0	True
+2023-01-06 17:39:53,694 - INFO - spatio_temporal.geo_conv.conv.bias	torch.Size([32])	cuda:0	True
+2023-01-06 17:39:53,694 - INFO - spatio_temporal.rnn.weight_ih_l0	torch.Size([512, 61])	cuda:0	True
+2023-01-06 17:39:53,694 - INFO - spatio_temporal.rnn.weight_hh_l0	torch.Size([512, 128])	cuda:0	True
+2023-01-06 17:39:53,694 - INFO - spatio_temporal.rnn.bias_ih_l0	torch.Size([512])	cuda:0	True
+2023-01-06 17:39:53,694 - INFO - spatio_temporal.rnn.bias_hh_l0	torch.Size([512])	cuda:0	True
+2023-01-06 17:39:53,694 - INFO - spatio_temporal.attr2atten.weight	torch.Size([128, 28])	cuda:0	True
+2023-01-06 17:39:53,694 - INFO - spatio_temporal.attr2atten.bias	torch.Size([128])	cuda:0	True
+2023-01-06 17:39:53,694 - INFO - entire_estimate.input2hid.weight	torch.Size([128, 156])	cuda:0	True
+2023-01-06 17:39:53,694 - INFO - entire_estimate.input2hid.bias	torch.Size([128])	cuda:0	True
+2023-01-06 17:39:53,694 - INFO - entire_estimate.residuals.0.weight	torch.Size([128, 128])	cuda:0	True
+2023-01-06 17:39:53,694 - INFO - entire_estimate.residuals.0.bias	torch.Size([128])	cuda:0	True
+2023-01-06 17:39:53,694 - INFO - entire_estimate.residuals.1.weight	torch.Size([128, 128])	cuda:0	True
+2023-01-06 17:39:53,694 - INFO - entire_estimate.residuals.1.bias	torch.Size([128])	cuda:0	True
+2023-01-06 17:39:53,694 - INFO - entire_estimate.residuals.2.weight	torch.Size([128, 128])	cuda:0	True
+2023-01-06 17:39:53,694 - INFO - entire_estimate.residuals.2.bias	torch.Size([128])	cuda:0	True
+2023-01-06 17:39:53,695 - INFO - entire_estimate.residuals.3.weight	torch.Size([128, 128])	cuda:0	True
+2023-01-06 17:39:53,695 - INFO - entire_estimate.residuals.3.bias	torch.Size([128])	cuda:0	True
+2023-01-06 17:39:53,695 - INFO - entire_estimate.hid2out.weight	torch.Size([1, 128])	cuda:0	True
+2023-01-06 17:39:53,695 - INFO - entire_estimate.hid2out.bias	torch.Size([1])	cuda:0	True
+2023-01-06 17:39:53,695 - INFO - local_estimate.input2hid.weight	torch.Size([64, 128])	cuda:0	True
+2023-01-06 17:39:53,695 - INFO - local_estimate.input2hid.bias	torch.Size([64])	cuda:0	True
+2023-01-06 17:39:53,695 - INFO - local_estimate.hid2hid.weight	torch.Size([32, 64])	cuda:0	True
+2023-01-06 17:39:53,695 - INFO - local_estimate.hid2hid.bias	torch.Size([32])	cuda:0	True
+2023-01-06 17:39:53,695 - INFO - local_estimate.hid2out.weight	torch.Size([1, 32])	cuda:0	True
+2023-01-06 17:39:53,695 - INFO - local_estimate.hid2out.bias	torch.Size([1])	cuda:0	True
+2023-01-06 17:39:53,695 - INFO - Total parameter numbers: 212443
+2023-01-06 17:39:53,695 - INFO - You select `adam` optimizer.
+2023-01-06 17:39:53,696 - WARNING - Received none train loss func and will use the loss func defined in the model.
+2023-01-06 17:39:53,696 - INFO - Loaded model at ./libcity/cache/5/model_cache/DeepTTE_Beijing_Taxi_Sample_new_longer30.m
+2023-01-06 17:39:53,713 - INFO - Start evaluating ...
+2023-01-06 17:39:54,298 - INFO - Evaluate result is saved at ./libcity/cache/5/evaluate_cache/2023_01_06_17_39_54_DeepTTE_Beijing_Taxi_Sample_ori_longer30.csv
+2023-01-06 17:39:54,309 - INFO - 
+          MAE      MAPE          MSE         RMSE  masked_MAE  masked_MAPE   masked_MSE  masked_RMSE        R2      EVAR
+1  924.108154  0.380512  1376952.875  1173.436401  924.108154     0.380512  1376952.875  1173.436401 -0.177174  0.485732

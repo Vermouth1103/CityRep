@@ -2,10 +2,12 @@ from django.shortcuts import render
 from django.views import View
 from django.http import JsonResponse
 from django.template.defaultfilters import filesizeformat
-from .models import RepresentationData, RepresentationHyperparameter, AccidentData, RoutePlanData, RoutePlanHyperparameter, NextLocData, NextLocHyperparameter
-from .forms import RepresentationDataForm, RepresentationHyperparameterForm, AccidentDataForm, AccidentPredForm, RoutePlanDataForm, RoutePlanHyperparameterForm, RoutePlanPredForm, NextLocDataForm, NextLocHyperparameterForm, NextLocPredForm
+from .models import RepresentationData, RepresentationHyperparameter, AccidentData, RoutePlanData, RoutePlanHyperparameter, NextLocData, NextLocHyperparameter, SpeedPredictionData
+from .forms import RepresentationDataForm, RepresentationHyperparameterForm, AccidentDataForm, AccidentPredForm, RoutePlanDataForm, RoutePlanHyperparameterForm, RoutePlanPredForm, NextLocDataForm, NextLocHyperparameterForm, NextLocPredForm, SpeedPredictionDataForm, SpeedPredictionPredForm
 
 import os
+import pandas as pd
+import numpy
 from .model.preprocess.preprocess_roadnetwork import generate_graph, generate_features
 from .model.preprocess.preprocess_trajectory import generate_trajectory_adj, generate_traj4rp, generate_traj4nlp
 from .model.preprocess.preprocess_spectral_cluster import generate_spectral_label
@@ -16,6 +18,8 @@ from .model.load_route_plan_model import *
 from .model.train_loc_pred import *
 from .model.load_loc_pred_model import *
 from .model.utils import *
+from .model.prediction import *
+from .model.prediction.scripts.train_speed import *
 
 # Create your views here.
 
@@ -210,15 +214,114 @@ class RepresentationPreView(View):
 
 class SpeedPredicitonView(View):
 
-    def get(self, request):
-        template = "traffic/speed_prediction.html"
-        return render(request, template)
-
-class FlowPredictionView(View):
+    template = "traffic/speed_prediction.html"
 
     def get(self, request):
-        template = "traffic/flow_prediction.html"
-        return render(request, template)
+        form = SpeedPredictionDataForm()
+        return render(request, self.template, {"form": form})
+    
+    def post(self, request):
+        print(f"POST data: {request.POST}")
+
+        form = SpeedPredictionPredForm(data=request.POST)
+
+        if form.is_valid():
+            hparams = form.cleaned_data
+            hparams = dict_to_object(hparams)
+
+            hparams.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+            print(f"hparams: {hparams}")
+
+            print(os.getcwd())
+            os.chdir('./traffic/model/prediction')
+            predict()
+            os.chdir('../../../')
+            output_path = os.path.join(os.getcwd(), "traffic/model/prediction/output.csv")
+            df = pd.read_csv(output_path)
+            with open(os.path.join(os.getcwd(), "traffic/model/prediction/entity_mapping.json"), "r") as f:
+                entity_mapping_dict = json.load(f)
+            speed_dict = dict()
+            for id, group in df.groupby("id"):
+                speed_dict[entity_mapping_dict[str(int(id))]] = list(group["speed"])[hparams["pred_time"]//5]
+            return JsonResponse({"speed_dict": speed_dict})
+        else:
+            data = {"error_msg": "Hyper parameter set invalid."}
+            return JsonResponse(data)
+
+class SpeedPredictionUploadView(View):
+
+    def post(self, request):
+
+        form = SpeedPredictionDataForm(data=request.POST, files=request.FILES)
+
+        if form.is_valid():
+            # get cleaned data
+            raw_file = form.cleaned_data.get("file")
+            data_type = "speed_prediction"
+            new_file = SpeedPredictionData()
+            check, speed_dict = self.handle_uploaded_file(raw_file, data_type)
+            print(check)
+            if check == -1:
+                data = {"error_msg": data_type+" file invalid."}
+                return JsonResponse(data)
+            else:
+                new_file.file = check
+                new_file.type = data_type
+                new_file.save()
+
+            os.chdir('./traffic/model/prediction')
+            train()
+            os.chdir('../../../')
+            
+            data = []
+            files = SpeedPredictionData.objects.all().order_by("-id")
+            for file in files:
+                data.append({
+                    "url": file.file.url,
+                    "size": filesizeformat(file.file.size),
+                    "type": file.type,
+                    })
+
+            return JsonResponse({"data": data, "speed_dict": speed_dict})
+        else:
+            data = {"error_msg": "Only csv files are allowed."}
+            return JsonResponse({"data": data})
+
+    def handle_uploaded_file(self, file, data_type):
+
+        root = "media"
+        app_name = "traffic"
+
+        upload_dir = "upload"
+        preprocessed_dir = "preprocessed"
+
+        file_name = file.name
+        upload_file_path = os.path.join(app_name, upload_dir, data_type, file_name)
+        absolute_upload_file_path = os.path.join(root, upload_file_path)
+
+        absolute_upload_dir_path = os.path.dirname(absolute_upload_file_path)
+        if not os.path.exists(absolute_upload_dir_path):
+            os.makedirs(absolute_upload_dir_path)
+
+        absolute_preprocessed_dir_path = os.path.join(root, app_name, preprocessed_dir, data_type)
+        if not os.path.exists(absolute_preprocessed_dir_path):
+            os.makedirs(absolute_preprocessed_dir_path)
+
+        with open(absolute_upload_file_path, "wb+") as f:
+            for chunk in file.chunks():
+                f.write(chunk)
+
+        try:
+            speed_dict = {}
+            data = pd.read_csv(absolute_upload_file_path)
+            for id, group in data.groupby("entity_id"):
+                speed_dict[id] = np.average(list(group["traffic_speed"]))
+            print(speed_dict)
+            return upload_file_path, speed_dict
+        
+        except Exception as e:
+            print(e)
+            return -1, -1
 
 class RoutePlanView(View):
 

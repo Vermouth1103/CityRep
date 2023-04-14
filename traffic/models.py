@@ -31,14 +31,14 @@ class RepresentationHyperparameter(models.Model):
 
 class AccidentData(models.Model):
     file = models.FileField(upload_to="traffic", null=True)
-    type = models.CharField(max_length=50, verbose_name="Data Type", default="route_plan_trajectory")
+    type = models.CharField(max_length=50, verbose_name="Data Type", default="accident_data")
 
     def __str__(self):
         return self.type
 
 class RoutePlanData(models.Model):
     file = models.FileField(upload_to="traffic", null=True)
-    type = models.CharField(max_length=50, verbose_name="Data Type", default="route_plan_trajectory")
+    type = models.CharField(max_length=50, verbose_name="Data Type", default="route_plan_data")
 
     def __str__(self):
         return self.type
@@ -53,7 +53,7 @@ class RoutePlanHyperparameter(models.Model):
 
 class NextLocData(models.Model):
     file = models.FileField(upload_to="traffic", null=True)
-    type = models.CharField(max_length=50, verbose_name="Data Type", default="route_plan_trajectory")
+    type = models.CharField(max_length=50, verbose_name="Data Type", default="next_loc_data")
 
     def __str__(self):
         return self.type
@@ -66,3 +66,9 @@ class NextLocHyperparameter(models.Model):
     lr = models.FloatField()
     dropout = models.FloatField()
 
+class SpeedPredictionData(models.Model):
+    file = models.FileField(upload_to="traffic", null=True)
+    type = models.CharField(max_length=50, verbose_name="Data Type", default="speed_prediction_data")
+
+    def __str__(self):
+        return self.type

@@ -503,7 +503,7 @@ class GraphAutoencoderTra(Module):
 #    self.struct_assign = F.softmax(struct_assign, 0)
 
         self.struct_emb = torch.mm(self.struct_assign.t(), self.raw_feat)
-        edge = raw_adj._indices()  # .to(self.hparams.device)
+        edge = raw_adj._indices().to(self.hparams.device)
         edge_e = torch.ones(edge.shape[1], dtype=torch.float).to(
             self.hparams.device)
         struct_inter = self.special_spmm(edge, edge_e, torch.Size(

@@ -55,7 +55,6 @@
                     <li><a href="{% url 'traffic:representation_train' %}">表征建模</a></li>
                     <li><a href="{% url 'traffic:representation_pre' %}">表征展示</a></li>
                     <li><a href="{% url 'traffic:speed_prediction' %}">速度预测</a></li>
-                    <li><a href="{% url 'traffic:flow_prediction' %}">流量预测</a></li>
                     <li><a href="{% url 'traffic:route_plan' %}">路径规划</a></li>
                     <li><a href="{% url 'traffic:next_loc_prediction' %}">下一跳预测</a></li>
                     <li><a href="{% url 'traffic:accident' %}">事故推演</a></li>
@@ -213,42 +212,6 @@
             </div>
           </div>
         </div>
-
-        <!-- <div class="row">
-          <div class="col-md-12 col-sm-12">
-            <div class="x_panel">
-              <div class="x_title">
-                <p style="text-align: center; font-weight:bolder; font-size:30px;">相关介绍</p>
-              </div>
-              <div class="x_content" style="text-align: left; font-weight: normal; font-size:20px">
-                <div class="downstream_task_input col-md-12 col-sm-12">
-                  <p style="font-weight: bolder; font-size: 25px;">任务描述</p>
-                  <p style="text-indent: 2em;">
-                    基于表征模型训练得到的结果，给定预测模型，用户可自行设置一系列超参数。待下一跳预测模型训练结束后，给定路网中的起始轨迹序列和预测步数n，模型将给出在轨迹序列后面n跳的预测路段。
-                  </p>
-                </div>
-                <div class="downstream_task_input col-md-12 col-sm-12">
-                  <p style="font-weight: bolder; font-size: 25px;">训练输入</p>
-                  <ul>
-                    <li>（已有）路段到结构区的分配矩阵：包含每条路段属于每个结构区的概率值。</li>
-                    <li>（已有）结构区到功能区的分配矩阵：包含每个结构区属于每个功能区的概率值。</li>
-                    <li>（新增）路网历史轨迹：包含过去时间段内路网上各个路段的历史流量，格式如下：</li>
-                    <p style="text-align: left;">
-                      <img src="../../static/assets/img/trajectory.png" weight="200px" height="80px"></img>
-                    </p>
-                  </ul>
-                </div>
-                <div class="downstream_task_output col-md-12 col-sm-12">
-                  <p style="font-weight: bolder; font-size: 25px;">任务应用</p>
-                  <ul>
-                    <li>给定路网中的起始轨迹序列（鼠标点击地图上目标路段，可以得到该路段ID）和预测步数n，点击预测按钮即可得到后续n跳预测路段。</li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div> -->
-
         <div class="row">
           <div class="col-md-12 col-sm-12">
             <div class="x_panel">
@@ -277,7 +240,7 @@
                       <ul class="errorlist" id="error1"></ul>
                       {% csrf_token %}
                       <div class="row">
-                        <div class="col-md-10 col-sm-10">
+                        <div class="col-md-9 col-sm-9">
                           <div class="item form-group">
                             <label class="col-form-label col-md-4 col-sm-4 label-align" for="epochs" style="vertical-align: middle">历史流量: </span></label>
                             <div class="col-md-8 col-sm-8 ">
@@ -285,10 +248,10 @@
                             </div>
                           </div>
                         </div>
-                        <div class="col-md-2 col-sm-2">
+                        <div class="col-md-3 col-sm-3">
                           <div class="item form-group">
-                            <div class="col-md-6 col-sm-6 offset-md-3 btn-group btn-group-justified">
-                              <button type="submit" class="btn btn-success" id="upload">Upload</button>
+                            <div class="col-md-9 col-sm-9 offset-md-1 btn-group btn-group-justified">
+                              <button type="submit" class="btn btn-success" id="upload">上传</button>
                             </div>
                           </div>
                         </div>
@@ -320,7 +283,7 @@
                         <div class="col-md-4 col-sm-4">
                           <div class="item form-group">
                             <div class="col-md-6 col-sm-6 offset-md-3 btn-group btn-group-justified">
-                              <button type="submit" class="btn btn-success" id="pred">Submit</button>
+                              <button type="submit" class="btn btn-success" id="pred">预测</button>
                             </div>
                           </div>
                         </div>

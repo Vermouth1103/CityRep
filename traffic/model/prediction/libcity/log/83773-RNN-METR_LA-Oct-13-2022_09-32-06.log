@@ -1,0 +1,39 @@
+2022-10-13 09:32:06,547 - INFO - Log directory: ./libcity/log
+2022-10-13 09:32:06,547 - INFO - Begin pipeline, task=traffic_state_pred, model_name=GRU, dataset_name=METR_LA, exp_id=83773
+2022-10-13 09:32:06,547 - INFO - {'task': 'traffic_state_pred', 'model': 'RNN', 'dataset': 'METR_LA', 'saved_model': True, 'train': False, 'seed': 0, 'train_rate': 0.0, 'eval_rate': 0.0, 'exp_id': 83773, 'dataset_class': 'TrafficStatePointDataset', 'executor': 'TrafficStateExecutor', 'evaluator': 'TrafficStateEvaluator', 'rnn_type': 'GRU', 'hidden_size': 64, 'num_layers': 1, 'dropout': 0, 'bidirectional': False, 'teacher_forcing_ratio': 0, 'scaler': 'standard', 'load_external': True, 'normal_external': False, 'ext_scaler': 'none', 'add_time_in_day': True, 'add_day_in_week': False, 'max_epoch': 100, 'learner': 'adam', 'learning_rate': 0.01, 'lr_decay': True, 'lr_scheduler': 'multisteplr', 'lr_decay_ratio': 0.1, 'steps': [5, 20, 40, 70], 'clip_grad_norm': True, 'max_grad_norm': 5, 'use_early_stop': True, 'patience': 50, 'batch_size': 64, 'cache_dataset': True, 'num_workers': 0, 'pad_with_last_sample': True, 'input_window': 12, 'output_window': 12, 'gpu': True, 'gpu_id': 0, 'train_loss': 'none', 'epoch': 0, 'weight_decay': 0, 'lr_epsilon': 1e-08, 'lr_beta1': 0.9, 'lr_beta2': 0.999, 'lr_alpha': 0.99, 'lr_momentum': 0, 'step_size': 10, 'lr_T_max': 30, 'lr_eta_min': 0, 'lr_patience': 10, 'lr_threshold': 0.0001, 'log_level': 'INFO', 'log_every': 1, 'load_best_epoch': True, 'hyper_tune': False, 'metrics': ['MAE', 'MAPE', 'MSE', 'RMSE', 'masked_MAE', 'masked_MAPE', 'masked_MSE', 'masked_RMSE', 'R2', 'EVAR'], 'evaluator_mode': 'single', 'save_mode': ['csv'], 'geo': {'including_types': ['Point'], 'Point': {}}, 'rel': {'including_types': ['geo'], 'geo': {'cost': 'num'}}, 'dyna': {'including_types': ['state'], 'state': {'entity_id': 'geo_id', 'traffic_speed': 'num'}}, 'data_col': ['traffic_speed'], 'weight_col': 'cost', 'data_files': ['METR_LA'], 'geo_file': 'METR_LA', 'rel_file': 'METR_LA', 'output_dim': 1, 'time_intervals': 300, 'init_weight_inf_or_zero': 'inf', 'set_weight_link_or_dist': 'dist', 'calculate_weight_adj': True, 'weight_adj_epsilon': 0.1, 'device': device(type='cuda', index=0)}
+2022-10-13 09:32:06,586 - INFO - Loaded file METR_LA.geo, num_nodes=207
+2022-10-13 09:32:06,610 - INFO - set_weight_link_or_dist: dist
+2022-10-13 09:32:06,611 - INFO - init_weight_inf_or_zero: inf
+2022-10-13 09:32:06,733 - INFO - Loaded file METR_LA.rel, shape=(207, 207)
+2022-10-13 09:32:06,733 - INFO - Start Calculate the weight by Gauss kernel!
+2022-10-13 09:32:06,734 - INFO - Loading ./libcity/cache/dataset_cache/point_based_METR_LA_12_12_0.0_0.0_standard_64_True_True_False_True.npz
+2022-10-13 09:32:19,114 - INFO - train	x: (0, 12, 207, 2), y: (0, 12, 207, 2)
+2022-10-13 09:32:19,114 - INFO - eval	x: (0, 12, 207, 2), y: (0, 12, 207, 2)
+2022-10-13 09:32:19,114 - INFO - test	x: (34249, 12, 207, 2), y: (34249, 12, 207, 2)
+2022-10-13 09:32:19,116 - INFO - StandardScaler mean: nan, std: nan
+2022-10-13 09:32:19,116 - INFO - NoneScaler
+2022-10-13 09:32:24,358 - INFO - You select rnn_type GRU in RNN!
+2022-10-13 09:32:27,740 - INFO - RNN(
+  (rnn): GRU(414, 64)
+  (fc): Linear(in_features=64, out_features=207, bias=True)
+)
+2022-10-13 09:32:27,740 - INFO - rnn.weight_ih_l0	torch.Size([192, 414])	cuda:0	True
+2022-10-13 09:32:27,740 - INFO - rnn.weight_hh_l0	torch.Size([192, 64])	cuda:0	True
+2022-10-13 09:32:27,740 - INFO - rnn.bias_ih_l0	torch.Size([192])	cuda:0	True
+2022-10-13 09:32:27,740 - INFO - rnn.bias_hh_l0	torch.Size([192])	cuda:0	True
+2022-10-13 09:32:27,740 - INFO - fc.weight	torch.Size([207, 64])	cuda:0	True
+2022-10-13 09:32:27,740 - INFO - fc.bias	torch.Size([207])	cuda:0	True
+2022-10-13 09:32:27,741 - INFO - Total parameter numbers: 105615
+2022-10-13 09:32:27,741 - INFO - You select `adam` optimizer.
+2022-10-13 09:32:27,741 - INFO - You select `multisteplr` lr_scheduler.
+2022-10-13 09:32:27,742 - WARNING - Received none train loss func and will use the loss func defined in the model.
+2022-10-13 09:32:27,742 - INFO - Start training ...
+2022-10-13 09:32:27,742 - INFO - num_batches:536
+2022-10-13 09:32:45,039 - INFO - epoch complete!
+2022-10-13 09:32:45,040 - INFO - evaluating now!
+2022-10-13 09:32:51,718 - INFO - Epoch [0/100] train_loss: 0.0000, val_loss: 0.0000, lr: 0.010000, 23.98s
+2022-10-13 09:32:51,722 - INFO - Saved model at 0
+2022-10-13 09:32:51,722 - INFO - Val loss decrease from inf to 0.0000, saving to ./libcity/cache/83773/model_cache/RNN_METR_LA_epoch0.tar
+2022-10-13 09:33:07,919 - INFO - epoch complete!
+2022-10-13 09:33:07,920 - INFO - evaluating now!
+2022-10-13 09:33:14,235 - INFO - Epoch [1/100] train_loss: 0.0000, val_loss: 0.0000, lr: 0.010000, 22.51s

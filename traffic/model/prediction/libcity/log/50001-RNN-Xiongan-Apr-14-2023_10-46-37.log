@@ -1,0 +1,551 @@
+2023-04-14 10:46:37,971 - INFO - Log directory: ./libcity/log
+2023-04-14 10:46:37,971 - INFO - Begin pipeline, task=traffic_state_pred, model_name=GRU, dataset_name=Xiongan, exp_id=50001
+2023-04-14 10:46:37,971 - INFO - {'task': 'traffic_state_pred', 'model': 'RNN', 'dataset': 'Xiongan', 'saved_model': True, 'train': True, 'exp_id': '50001', 'seed': 0, 'dataset_class': 'TrafficStatePointDataset', 'executor': 'TrafficStateExecutor', 'evaluator': 'TrafficStateEvaluator', 'rnn_type': 'GRU', 'hidden_size': 64, 'num_layers': 1, 'dropout': 0, 'bidirectional': False, 'teacher_forcing_ratio': 0, 'scaler': 'standard', 'load_external': True, 'normal_external': False, 'ext_scaler': 'none', 'add_time_in_day': True, 'add_day_in_week': False, 'max_epoch': 100, 'learner': 'adam', 'learning_rate': 0.01, 'lr_decay': True, 'lr_scheduler': 'multisteplr', 'lr_decay_ratio': 0.1, 'steps': [5, 20, 40, 70], 'clip_grad_norm': True, 'max_grad_norm': 5, 'use_early_stop': True, 'patience': 50, 'batch_size': 64, 'cache_dataset': True, 'num_workers': 0, 'pad_with_last_sample': True, 'train_rate': 0.7, 'eval_rate': 0.1, 'input_window': 12, 'output_window': 12, 'gpu': True, 'gpu_id': 0, 'train_loss': 'none', 'epoch': 0, 'weight_decay': 0, 'lr_epsilon': 1e-08, 'lr_beta1': 0.9, 'lr_beta2': 0.999, 'lr_alpha': 0.99, 'lr_momentum': 0, 'step_size': 10, 'lr_T_max': 30, 'lr_eta_min': 0, 'lr_patience': 10, 'lr_threshold': 0.0001, 'log_level': 'INFO', 'log_every': 1, 'load_best_epoch': True, 'hyper_tune': False, 'metrics': ['MAE', 'MAPE', 'MSE', 'RMSE', 'masked_MAE', 'masked_MAPE', 'masked_MSE', 'masked_RMSE', 'R2', 'EVAR'], 'evaluator_mode': 'single', 'save_mode': ['csv'], 'geo': {'including_types': ['Point'], 'Point': {}}, 'rel': {'including_types': ['geo'], 'geo': {'cost': 'num'}}, 'dyna': {'including_types': ['state'], 'state': {'entity_id': 'geo_id', 'traffic_speed': 'num'}}, 'data_col': ['traffic_speed'], 'weight_col': 'cost', 'data_files': ['Xiongan'], 'geo_file': 'Xiongan', 'rel_file': 'Xiongan', 'output_dim': 1, 'time_intervals': 300, 'init_weight_inf_or_zero': 'inf', 'set_weight_link_or_dist': 'dist', 'calculate_weight_adj': True, 'weight_adj_epsilon': 0.1, 'device': device(type='cuda', index=0)}
+2023-04-14 10:46:37,980 - INFO - Loaded file Xiongan.geo, num_nodes=487
+2023-04-14 10:46:37,983 - INFO - set_weight_link_or_dist: dist
+2023-04-14 10:46:37,983 - INFO - init_weight_inf_or_zero: inf
+2023-04-14 10:46:37,989 - INFO - Loaded file Xiongan.rel, shape=(487, 487)
+2023-04-14 10:46:37,989 - INFO - Start Calculate the weight by Gauss kernel!
+2023-04-14 10:46:37,993 - INFO - Loading ./libcity/cache/dataset_cache/point_based_Xiongan_12_12_0.7_0.1_standard_64_True_True_False_True.npz
+2023-04-14 10:46:38,042 - INFO - train	x: (26, 12, 487, 2), y: (26, 12, 487, 2)
+2023-04-14 10:46:38,043 - INFO - eval	x: (4, 12, 487, 2), y: (4, 12, 487, 2)
+2023-04-14 10:46:38,043 - INFO - test	x: (7, 12, 487, 2), y: (7, 12, 487, 2)
+2023-04-14 10:46:38,043 - INFO - StandardScaler mean: 59.92392878005366, std: 5.807862904711059
+2023-04-14 10:46:38,043 - INFO - NoneScaler
+2023-04-14 10:46:38,191 - INFO - You select rnn_type GRU in RNN!
+2023-04-14 10:46:41,353 - INFO - RNN(
+  (rnn): GRU(974, 64)
+  (fc): Linear(in_features=64, out_features=487, bias=True)
+)
+2023-04-14 10:46:41,354 - INFO - rnn.weight_ih_l0	torch.Size([192, 974])	cuda:0	True
+2023-04-14 10:46:41,354 - INFO - rnn.weight_hh_l0	torch.Size([192, 64])	cuda:0	True
+2023-04-14 10:46:41,354 - INFO - rnn.bias_ih_l0	torch.Size([192])	cuda:0	True
+2023-04-14 10:46:41,354 - INFO - rnn.bias_hh_l0	torch.Size([192])	cuda:0	True
+2023-04-14 10:46:41,354 - INFO - fc.weight	torch.Size([487, 64])	cuda:0	True
+2023-04-14 10:46:41,354 - INFO - fc.bias	torch.Size([487])	cuda:0	True
+2023-04-14 10:46:41,354 - INFO - Total parameter numbers: 231335
+2023-04-14 10:46:41,354 - INFO - You select `adam` optimizer.
+2023-04-14 10:46:41,354 - INFO - You select `multisteplr` lr_scheduler.
+2023-04-14 10:46:41,355 - WARNING - Received none train loss func and will use the loss func defined in the model.
+2023-04-14 10:46:41,355 - INFO - Start training ...
+2023-04-14 10:46:41,355 - INFO - num_batches:1
+2023-04-14 10:46:41,406 - INFO - epoch complete!
+2023-04-14 10:46:41,407 - INFO - evaluating now!
+2023-04-14 10:46:41,424 - INFO - Epoch [0/100] train_loss: 5.0072, val_loss: 5.0799, lr: 0.010000, 0.07s
+2023-04-14 10:46:41,432 - INFO - Saved model at 0
+2023-04-14 10:46:41,433 - INFO - Val loss decrease from inf to 5.0799, saving to ./libcity/cache/50001/model_cache/RNN_Xiongan_epoch0.tar
+2023-04-14 10:46:41,466 - INFO - epoch complete!
+2023-04-14 10:46:41,466 - INFO - evaluating now!
+2023-04-14 10:46:41,484 - INFO - Epoch [1/100] train_loss: 5.0799, val_loss: 5.0446, lr: 0.010000, 0.05s
+2023-04-14 10:46:41,492 - INFO - Saved model at 1
+2023-04-14 10:46:41,492 - INFO - Val loss decrease from 5.0799 to 5.0446, saving to ./libcity/cache/50001/model_cache/RNN_Xiongan_epoch1.tar
+2023-04-14 10:46:41,533 - INFO - epoch complete!
+2023-04-14 10:46:41,533 - INFO - evaluating now!
+2023-04-14 10:46:41,558 - INFO - Epoch [2/100] train_loss: 5.0446, val_loss: 4.8182, lr: 0.010000, 0.07s
+2023-04-14 10:46:41,566 - INFO - Saved model at 2
+2023-04-14 10:46:41,566 - INFO - Val loss decrease from 5.0446 to 4.8182, saving to ./libcity/cache/50001/model_cache/RNN_Xiongan_epoch2.tar
+2023-04-14 10:46:41,612 - INFO - epoch complete!
+2023-04-14 10:46:41,612 - INFO - evaluating now!
+2023-04-14 10:46:41,631 - INFO - Epoch [3/100] train_loss: 4.8182, val_loss: 4.6643, lr: 0.010000, 0.06s
+2023-04-14 10:46:41,639 - INFO - Saved model at 3
+2023-04-14 10:46:41,639 - INFO - Val loss decrease from 4.8182 to 4.6643, saving to ./libcity/cache/50001/model_cache/RNN_Xiongan_epoch3.tar
+2023-04-14 10:46:41,686 - INFO - epoch complete!
+2023-04-14 10:46:41,686 - INFO - evaluating now!
+2023-04-14 10:46:41,707 - INFO - Epoch [4/100] train_loss: 4.6643, val_loss: 4.5551, lr: 0.001000, 0.07s
+2023-04-14 10:46:41,715 - INFO - Saved model at 4
+2023-04-14 10:46:41,715 - INFO - Val loss decrease from 4.6643 to 4.5551, saving to ./libcity/cache/50001/model_cache/RNN_Xiongan_epoch4.tar
+2023-04-14 10:46:41,751 - INFO - epoch complete!
+2023-04-14 10:46:41,751 - INFO - evaluating now!
+2023-04-14 10:46:41,774 - INFO - Epoch [5/100] train_loss: 4.5551, val_loss: 4.5161, lr: 0.001000, 0.06s
+2023-04-14 10:46:41,782 - INFO - Saved model at 5
+2023-04-14 10:46:41,783 - INFO - Val loss decrease from 4.5551 to 4.5161, saving to ./libcity/cache/50001/model_cache/RNN_Xiongan_epoch5.tar
+2023-04-14 10:46:41,824 - INFO - epoch complete!
+2023-04-14 10:46:41,824 - INFO - evaluating now!
+2023-04-14 10:46:41,844 - INFO - Epoch [6/100] train_loss: 4.5161, val_loss: 4.4734, lr: 0.001000, 0.06s
+2023-04-14 10:46:41,852 - INFO - Saved model at 6
+2023-04-14 10:46:41,852 - INFO - Val loss decrease from 4.5161 to 4.4734, saving to ./libcity/cache/50001/model_cache/RNN_Xiongan_epoch6.tar
+2023-04-14 10:46:41,889 - INFO - epoch complete!
+2023-04-14 10:46:41,890 - INFO - evaluating now!
+2023-04-14 10:46:41,910 - INFO - Epoch [7/100] train_loss: 4.4734, val_loss: 4.4344, lr: 0.001000, 0.06s
+2023-04-14 10:46:41,919 - INFO - Saved model at 7
+2023-04-14 10:46:41,919 - INFO - Val loss decrease from 4.4734 to 4.4344, saving to ./libcity/cache/50001/model_cache/RNN_Xiongan_epoch7.tar
+2023-04-14 10:46:41,961 - INFO - epoch complete!
+2023-04-14 10:46:41,961 - INFO - evaluating now!
+2023-04-14 10:46:41,982 - INFO - Epoch [8/100] train_loss: 4.4344, val_loss: 4.3997, lr: 0.001000, 0.06s
+2023-04-14 10:46:41,991 - INFO - Saved model at 8
+2023-04-14 10:46:41,991 - INFO - Val loss decrease from 4.4344 to 4.3997, saving to ./libcity/cache/50001/model_cache/RNN_Xiongan_epoch8.tar
+2023-04-14 10:46:42,029 - INFO - epoch complete!
+2023-04-14 10:46:42,030 - INFO - evaluating now!
+2023-04-14 10:46:42,049 - INFO - Epoch [9/100] train_loss: 4.3997, val_loss: 4.3682, lr: 0.001000, 0.06s
+2023-04-14 10:46:42,057 - INFO - Saved model at 9
+2023-04-14 10:46:42,057 - INFO - Val loss decrease from 4.3997 to 4.3682, saving to ./libcity/cache/50001/model_cache/RNN_Xiongan_epoch9.tar
+2023-04-14 10:46:42,090 - INFO - epoch complete!
+2023-04-14 10:46:42,090 - INFO - evaluating now!
+2023-04-14 10:46:42,119 - INFO - Epoch [10/100] train_loss: 4.3682, val_loss: 4.3398, lr: 0.001000, 0.06s
+2023-04-14 10:46:42,127 - INFO - Saved model at 10
+2023-04-14 10:46:42,127 - INFO - Val loss decrease from 4.3682 to 4.3398, saving to ./libcity/cache/50001/model_cache/RNN_Xiongan_epoch10.tar
+2023-04-14 10:46:42,170 - INFO - epoch complete!
+2023-04-14 10:46:42,170 - INFO - evaluating now!
+2023-04-14 10:46:42,191 - INFO - Epoch [11/100] train_loss: 4.3398, val_loss: 4.3106, lr: 0.001000, 0.06s
+2023-04-14 10:46:42,199 - INFO - Saved model at 11
+2023-04-14 10:46:42,199 - INFO - Val loss decrease from 4.3398 to 4.3106, saving to ./libcity/cache/50001/model_cache/RNN_Xiongan_epoch11.tar
+2023-04-14 10:46:42,238 - INFO - epoch complete!
+2023-04-14 10:46:42,239 - INFO - evaluating now!
+2023-04-14 10:46:42,259 - INFO - Epoch [12/100] train_loss: 4.3106, val_loss: 4.2808, lr: 0.001000, 0.06s
+2023-04-14 10:46:42,267 - INFO - Saved model at 12
+2023-04-14 10:46:42,267 - INFO - Val loss decrease from 4.3106 to 4.2808, saving to ./libcity/cache/50001/model_cache/RNN_Xiongan_epoch12.tar
+2023-04-14 10:46:42,305 - INFO - epoch complete!
+2023-04-14 10:46:42,306 - INFO - evaluating now!
+2023-04-14 10:46:42,325 - INFO - Epoch [13/100] train_loss: 4.2808, val_loss: 4.2534, lr: 0.001000, 0.06s
+2023-04-14 10:46:42,332 - INFO - Saved model at 13
+2023-04-14 10:46:42,333 - INFO - Val loss decrease from 4.2808 to 4.2534, saving to ./libcity/cache/50001/model_cache/RNN_Xiongan_epoch13.tar
+2023-04-14 10:46:42,366 - INFO - epoch complete!
+2023-04-14 10:46:42,366 - INFO - evaluating now!
+2023-04-14 10:46:42,387 - INFO - Epoch [14/100] train_loss: 4.2534, val_loss: 4.2257, lr: 0.001000, 0.05s
+2023-04-14 10:46:42,394 - INFO - Saved model at 14
+2023-04-14 10:46:42,395 - INFO - Val loss decrease from 4.2534 to 4.2257, saving to ./libcity/cache/50001/model_cache/RNN_Xiongan_epoch14.tar
+2023-04-14 10:46:42,436 - INFO - epoch complete!
+2023-04-14 10:46:42,436 - INFO - evaluating now!
+2023-04-14 10:46:42,463 - INFO - Epoch [15/100] train_loss: 4.2257, val_loss: 4.1969, lr: 0.001000, 0.07s
+2023-04-14 10:46:42,471 - INFO - Saved model at 15
+2023-04-14 10:46:42,471 - INFO - Val loss decrease from 4.2257 to 4.1969, saving to ./libcity/cache/50001/model_cache/RNN_Xiongan_epoch15.tar
+2023-04-14 10:46:42,514 - INFO - epoch complete!
+2023-04-14 10:46:42,515 - INFO - evaluating now!
+2023-04-14 10:46:42,537 - INFO - Epoch [16/100] train_loss: 4.1969, val_loss: 4.1688, lr: 0.001000, 0.07s
+2023-04-14 10:46:42,545 - INFO - Saved model at 16
+2023-04-14 10:46:42,545 - INFO - Val loss decrease from 4.1969 to 4.1688, saving to ./libcity/cache/50001/model_cache/RNN_Xiongan_epoch16.tar
+2023-04-14 10:46:42,592 - INFO - epoch complete!
+2023-04-14 10:46:42,592 - INFO - evaluating now!
+2023-04-14 10:46:42,613 - INFO - Epoch [17/100] train_loss: 4.1688, val_loss: 4.1413, lr: 0.001000, 0.07s
+2023-04-14 10:46:42,621 - INFO - Saved model at 17
+2023-04-14 10:46:42,621 - INFO - Val loss decrease from 4.1688 to 4.1413, saving to ./libcity/cache/50001/model_cache/RNN_Xiongan_epoch17.tar
+2023-04-14 10:46:42,658 - INFO - epoch complete!
+2023-04-14 10:46:42,659 - INFO - evaluating now!
+2023-04-14 10:46:42,680 - INFO - Epoch [18/100] train_loss: 4.1413, val_loss: 4.1130, lr: 0.001000, 0.06s
+2023-04-14 10:46:42,688 - INFO - Saved model at 18
+2023-04-14 10:46:42,688 - INFO - Val loss decrease from 4.1413 to 4.1130, saving to ./libcity/cache/50001/model_cache/RNN_Xiongan_epoch18.tar
+2023-04-14 10:46:42,726 - INFO - epoch complete!
+2023-04-14 10:46:42,727 - INFO - evaluating now!
+2023-04-14 10:46:42,746 - INFO - Epoch [19/100] train_loss: 4.1130, val_loss: 4.0849, lr: 0.000100, 0.06s
+2023-04-14 10:46:42,754 - INFO - Saved model at 19
+2023-04-14 10:46:42,754 - INFO - Val loss decrease from 4.1130 to 4.0849, saving to ./libcity/cache/50001/model_cache/RNN_Xiongan_epoch19.tar
+2023-04-14 10:46:42,797 - INFO - epoch complete!
+2023-04-14 10:46:42,797 - INFO - evaluating now!
+2023-04-14 10:46:42,816 - INFO - Epoch [20/100] train_loss: 4.0849, val_loss: 4.0819, lr: 0.000100, 0.06s
+2023-04-14 10:46:42,824 - INFO - Saved model at 20
+2023-04-14 10:46:42,825 - INFO - Val loss decrease from 4.0849 to 4.0819, saving to ./libcity/cache/50001/model_cache/RNN_Xiongan_epoch20.tar
+2023-04-14 10:46:42,863 - INFO - epoch complete!
+2023-04-14 10:46:42,863 - INFO - evaluating now!
+2023-04-14 10:46:42,887 - INFO - Epoch [21/100] train_loss: 4.0819, val_loss: 4.0786, lr: 0.000100, 0.06s
+2023-04-14 10:46:42,896 - INFO - Saved model at 21
+2023-04-14 10:46:42,896 - INFO - Val loss decrease from 4.0819 to 4.0786, saving to ./libcity/cache/50001/model_cache/RNN_Xiongan_epoch21.tar
+2023-04-14 10:46:42,934 - INFO - epoch complete!
+2023-04-14 10:46:42,934 - INFO - evaluating now!
+2023-04-14 10:46:42,955 - INFO - Epoch [22/100] train_loss: 4.0786, val_loss: 4.0749, lr: 0.000100, 0.06s
+2023-04-14 10:46:42,963 - INFO - Saved model at 22
+2023-04-14 10:46:42,963 - INFO - Val loss decrease from 4.0786 to 4.0749, saving to ./libcity/cache/50001/model_cache/RNN_Xiongan_epoch22.tar
+2023-04-14 10:46:42,997 - INFO - epoch complete!
+2023-04-14 10:46:42,998 - INFO - evaluating now!
+2023-04-14 10:46:43,019 - INFO - Epoch [23/100] train_loss: 4.0749, val_loss: 4.0711, lr: 0.000100, 0.06s
+2023-04-14 10:46:43,027 - INFO - Saved model at 23
+2023-04-14 10:46:43,027 - INFO - Val loss decrease from 4.0749 to 4.0711, saving to ./libcity/cache/50001/model_cache/RNN_Xiongan_epoch23.tar
+2023-04-14 10:46:43,061 - INFO - epoch complete!
+2023-04-14 10:46:43,062 - INFO - evaluating now!
+2023-04-14 10:46:43,080 - INFO - Epoch [24/100] train_loss: 4.0711, val_loss: 4.0673, lr: 0.000100, 0.05s
+2023-04-14 10:46:43,088 - INFO - Saved model at 24
+2023-04-14 10:46:43,088 - INFO - Val loss decrease from 4.0711 to 4.0673, saving to ./libcity/cache/50001/model_cache/RNN_Xiongan_epoch24.tar
+2023-04-14 10:46:43,129 - INFO - epoch complete!
+2023-04-14 10:46:43,129 - INFO - evaluating now!
+2023-04-14 10:46:43,149 - INFO - Epoch [25/100] train_loss: 4.0673, val_loss: 4.0634, lr: 0.000100, 0.06s
+2023-04-14 10:46:43,157 - INFO - Saved model at 25
+2023-04-14 10:46:43,157 - INFO - Val loss decrease from 4.0673 to 4.0634, saving to ./libcity/cache/50001/model_cache/RNN_Xiongan_epoch25.tar
+2023-04-14 10:46:43,195 - INFO - epoch complete!
+2023-04-14 10:46:43,196 - INFO - evaluating now!
+2023-04-14 10:46:43,216 - INFO - Epoch [26/100] train_loss: 4.0634, val_loss: 4.0594, lr: 0.000100, 0.06s
+2023-04-14 10:46:43,224 - INFO - Saved model at 26
+2023-04-14 10:46:43,224 - INFO - Val loss decrease from 4.0634 to 4.0594, saving to ./libcity/cache/50001/model_cache/RNN_Xiongan_epoch26.tar
+2023-04-14 10:46:43,264 - INFO - epoch complete!
+2023-04-14 10:46:43,265 - INFO - evaluating now!
+2023-04-14 10:46:43,285 - INFO - Epoch [27/100] train_loss: 4.0594, val_loss: 4.0554, lr: 0.000100, 0.06s
+2023-04-14 10:46:43,293 - INFO - Saved model at 27
+2023-04-14 10:46:43,293 - INFO - Val loss decrease from 4.0594 to 4.0554, saving to ./libcity/cache/50001/model_cache/RNN_Xiongan_epoch27.tar
+2023-04-14 10:46:43,333 - INFO - epoch complete!
+2023-04-14 10:46:43,334 - INFO - evaluating now!
+2023-04-14 10:46:43,354 - INFO - Epoch [28/100] train_loss: 4.0554, val_loss: 4.0515, lr: 0.000100, 0.06s
+2023-04-14 10:46:43,362 - INFO - Saved model at 28
+2023-04-14 10:46:43,362 - INFO - Val loss decrease from 4.0554 to 4.0515, saving to ./libcity/cache/50001/model_cache/RNN_Xiongan_epoch28.tar
+2023-04-14 10:46:43,402 - INFO - epoch complete!
+2023-04-14 10:46:43,402 - INFO - evaluating now!
+2023-04-14 10:46:43,423 - INFO - Epoch [29/100] train_loss: 4.0515, val_loss: 4.0475, lr: 0.000100, 0.06s
+2023-04-14 10:46:43,432 - INFO - Saved model at 29
+2023-04-14 10:46:43,432 - INFO - Val loss decrease from 4.0515 to 4.0475, saving to ./libcity/cache/50001/model_cache/RNN_Xiongan_epoch29.tar
+2023-04-14 10:46:43,471 - INFO - epoch complete!
+2023-04-14 10:46:43,471 - INFO - evaluating now!
+2023-04-14 10:46:43,491 - INFO - Epoch [30/100] train_loss: 4.0475, val_loss: 4.0436, lr: 0.000100, 0.06s
+2023-04-14 10:46:43,499 - INFO - Saved model at 30
+2023-04-14 10:46:43,499 - INFO - Val loss decrease from 4.0475 to 4.0436, saving to ./libcity/cache/50001/model_cache/RNN_Xiongan_epoch30.tar
+2023-04-14 10:46:43,543 - INFO - epoch complete!
+2023-04-14 10:46:43,543 - INFO - evaluating now!
+2023-04-14 10:46:43,564 - INFO - Epoch [31/100] train_loss: 4.0436, val_loss: 4.0396, lr: 0.000100, 0.06s
+2023-04-14 10:46:43,572 - INFO - Saved model at 31
+2023-04-14 10:46:43,573 - INFO - Val loss decrease from 4.0436 to 4.0396, saving to ./libcity/cache/50001/model_cache/RNN_Xiongan_epoch31.tar
+2023-04-14 10:46:43,610 - INFO - epoch complete!
+2023-04-14 10:46:43,610 - INFO - evaluating now!
+2023-04-14 10:46:43,637 - INFO - Epoch [32/100] train_loss: 4.0396, val_loss: 4.0356, lr: 0.000100, 0.06s
+2023-04-14 10:46:43,646 - INFO - Saved model at 32
+2023-04-14 10:46:43,646 - INFO - Val loss decrease from 4.0396 to 4.0356, saving to ./libcity/cache/50001/model_cache/RNN_Xiongan_epoch32.tar
+2023-04-14 10:46:43,683 - INFO - epoch complete!
+2023-04-14 10:46:43,683 - INFO - evaluating now!
+2023-04-14 10:46:43,707 - INFO - Epoch [33/100] train_loss: 4.0356, val_loss: 4.0316, lr: 0.000100, 0.06s
+2023-04-14 10:46:43,716 - INFO - Saved model at 33
+2023-04-14 10:46:43,716 - INFO - Val loss decrease from 4.0356 to 4.0316, saving to ./libcity/cache/50001/model_cache/RNN_Xiongan_epoch33.tar
+2023-04-14 10:46:43,758 - INFO - epoch complete!
+2023-04-14 10:46:43,758 - INFO - evaluating now!
+2023-04-14 10:46:43,778 - INFO - Epoch [34/100] train_loss: 4.0316, val_loss: 4.0277, lr: 0.000100, 0.06s
+2023-04-14 10:46:43,785 - INFO - Saved model at 34
+2023-04-14 10:46:43,786 - INFO - Val loss decrease from 4.0316 to 4.0277, saving to ./libcity/cache/50001/model_cache/RNN_Xiongan_epoch34.tar
+2023-04-14 10:46:43,821 - INFO - epoch complete!
+2023-04-14 10:46:43,821 - INFO - evaluating now!
+2023-04-14 10:46:43,841 - INFO - Epoch [35/100] train_loss: 4.0277, val_loss: 4.0238, lr: 0.000100, 0.06s
+2023-04-14 10:46:43,849 - INFO - Saved model at 35
+2023-04-14 10:46:43,849 - INFO - Val loss decrease from 4.0277 to 4.0238, saving to ./libcity/cache/50001/model_cache/RNN_Xiongan_epoch35.tar
+2023-04-14 10:46:43,880 - INFO - epoch complete!
+2023-04-14 10:46:43,880 - INFO - evaluating now!
+2023-04-14 10:46:43,900 - INFO - Epoch [36/100] train_loss: 4.0238, val_loss: 4.0199, lr: 0.000100, 0.05s
+2023-04-14 10:46:43,907 - INFO - Saved model at 36
+2023-04-14 10:46:43,908 - INFO - Val loss decrease from 4.0238 to 4.0199, saving to ./libcity/cache/50001/model_cache/RNN_Xiongan_epoch36.tar
+2023-04-14 10:46:43,948 - INFO - epoch complete!
+2023-04-14 10:46:43,948 - INFO - evaluating now!
+2023-04-14 10:46:43,968 - INFO - Epoch [37/100] train_loss: 4.0199, val_loss: 4.0160, lr: 0.000100, 0.06s
+2023-04-14 10:46:43,976 - INFO - Saved model at 37
+2023-04-14 10:46:43,976 - INFO - Val loss decrease from 4.0199 to 4.0160, saving to ./libcity/cache/50001/model_cache/RNN_Xiongan_epoch37.tar
+2023-04-14 10:46:44,013 - INFO - epoch complete!
+2023-04-14 10:46:44,014 - INFO - evaluating now!
+2023-04-14 10:46:44,034 - INFO - Epoch [38/100] train_loss: 4.0160, val_loss: 4.0121, lr: 0.000100, 0.06s
+2023-04-14 10:46:44,041 - INFO - Saved model at 38
+2023-04-14 10:46:44,041 - INFO - Val loss decrease from 4.0160 to 4.0121, saving to ./libcity/cache/50001/model_cache/RNN_Xiongan_epoch38.tar
+2023-04-14 10:46:44,086 - INFO - epoch complete!
+2023-04-14 10:46:44,086 - INFO - evaluating now!
+2023-04-14 10:46:44,108 - INFO - Epoch [39/100] train_loss: 4.0121, val_loss: 4.0083, lr: 0.000010, 0.07s
+2023-04-14 10:46:44,116 - INFO - Saved model at 39
+2023-04-14 10:46:44,116 - INFO - Val loss decrease from 4.0121 to 4.0083, saving to ./libcity/cache/50001/model_cache/RNN_Xiongan_epoch39.tar
+2023-04-14 10:46:44,153 - INFO - epoch complete!
+2023-04-14 10:46:44,153 - INFO - evaluating now!
+2023-04-14 10:46:44,178 - INFO - Epoch [40/100] train_loss: 4.0083, val_loss: 4.0079, lr: 0.000010, 0.06s
+2023-04-14 10:46:44,188 - INFO - Saved model at 40
+2023-04-14 10:46:44,188 - INFO - Val loss decrease from 4.0083 to 4.0079, saving to ./libcity/cache/50001/model_cache/RNN_Xiongan_epoch40.tar
+2023-04-14 10:46:44,229 - INFO - epoch complete!
+2023-04-14 10:46:44,230 - INFO - evaluating now!
+2023-04-14 10:46:44,251 - INFO - Epoch [41/100] train_loss: 4.0079, val_loss: 4.0075, lr: 0.000010, 0.06s
+2023-04-14 10:46:44,260 - INFO - Saved model at 41
+2023-04-14 10:46:44,261 - INFO - Val loss decrease from 4.0079 to 4.0075, saving to ./libcity/cache/50001/model_cache/RNN_Xiongan_epoch41.tar
+2023-04-14 10:46:44,297 - INFO - epoch complete!
+2023-04-14 10:46:44,298 - INFO - evaluating now!
+2023-04-14 10:46:44,318 - INFO - Epoch [42/100] train_loss: 4.0075, val_loss: 4.0071, lr: 0.000010, 0.06s
+2023-04-14 10:46:44,326 - INFO - Saved model at 42
+2023-04-14 10:46:44,326 - INFO - Val loss decrease from 4.0075 to 4.0071, saving to ./libcity/cache/50001/model_cache/RNN_Xiongan_epoch42.tar
+2023-04-14 10:46:44,359 - INFO - epoch complete!
+2023-04-14 10:46:44,359 - INFO - evaluating now!
+2023-04-14 10:46:44,379 - INFO - Epoch [43/100] train_loss: 4.0071, val_loss: 4.0067, lr: 0.000010, 0.05s
+2023-04-14 10:46:44,386 - INFO - Saved model at 43
+2023-04-14 10:46:44,387 - INFO - Val loss decrease from 4.0071 to 4.0067, saving to ./libcity/cache/50001/model_cache/RNN_Xiongan_epoch43.tar
+2023-04-14 10:46:44,418 - INFO - epoch complete!
+2023-04-14 10:46:44,418 - INFO - evaluating now!
+2023-04-14 10:46:44,438 - INFO - Epoch [44/100] train_loss: 4.0067, val_loss: 4.0063, lr: 0.000010, 0.05s
+2023-04-14 10:46:44,446 - INFO - Saved model at 44
+2023-04-14 10:46:44,446 - INFO - Val loss decrease from 4.0067 to 4.0063, saving to ./libcity/cache/50001/model_cache/RNN_Xiongan_epoch44.tar
+2023-04-14 10:46:44,478 - INFO - epoch complete!
+2023-04-14 10:46:44,479 - INFO - evaluating now!
+2023-04-14 10:46:44,501 - INFO - Epoch [45/100] train_loss: 4.0063, val_loss: 4.0059, lr: 0.000010, 0.05s
+2023-04-14 10:46:44,508 - INFO - Saved model at 45
+2023-04-14 10:46:44,508 - INFO - Val loss decrease from 4.0063 to 4.0059, saving to ./libcity/cache/50001/model_cache/RNN_Xiongan_epoch45.tar
+2023-04-14 10:46:44,546 - INFO - epoch complete!
+2023-04-14 10:46:44,546 - INFO - evaluating now!
+2023-04-14 10:46:44,567 - INFO - Epoch [46/100] train_loss: 4.0059, val_loss: 4.0054, lr: 0.000010, 0.06s
+2023-04-14 10:46:44,574 - INFO - Saved model at 46
+2023-04-14 10:46:44,574 - INFO - Val loss decrease from 4.0059 to 4.0054, saving to ./libcity/cache/50001/model_cache/RNN_Xiongan_epoch46.tar
+2023-04-14 10:46:44,615 - INFO - epoch complete!
+2023-04-14 10:46:44,615 - INFO - evaluating now!
+2023-04-14 10:46:44,634 - INFO - Epoch [47/100] train_loss: 4.0054, val_loss: 4.0050, lr: 0.000010, 0.06s
+2023-04-14 10:46:44,642 - INFO - Saved model at 47
+2023-04-14 10:46:44,642 - INFO - Val loss decrease from 4.0054 to 4.0050, saving to ./libcity/cache/50001/model_cache/RNN_Xiongan_epoch47.tar
+2023-04-14 10:46:44,681 - INFO - epoch complete!
+2023-04-14 10:46:44,681 - INFO - evaluating now!
+2023-04-14 10:46:44,702 - INFO - Epoch [48/100] train_loss: 4.0050, val_loss: 4.0046, lr: 0.000010, 0.06s
+2023-04-14 10:46:44,710 - INFO - Saved model at 48
+2023-04-14 10:46:44,710 - INFO - Val loss decrease from 4.0050 to 4.0046, saving to ./libcity/cache/50001/model_cache/RNN_Xiongan_epoch48.tar
+2023-04-14 10:46:44,745 - INFO - epoch complete!
+2023-04-14 10:46:44,746 - INFO - evaluating now!
+2023-04-14 10:46:44,765 - INFO - Epoch [49/100] train_loss: 4.0046, val_loss: 4.0042, lr: 0.000010, 0.05s
+2023-04-14 10:46:44,772 - INFO - Saved model at 49
+2023-04-14 10:46:44,773 - INFO - Val loss decrease from 4.0046 to 4.0042, saving to ./libcity/cache/50001/model_cache/RNN_Xiongan_epoch49.tar
+2023-04-14 10:46:44,815 - INFO - epoch complete!
+2023-04-14 10:46:44,815 - INFO - evaluating now!
+2023-04-14 10:46:44,837 - INFO - Epoch [50/100] train_loss: 4.0042, val_loss: 4.0037, lr: 0.000010, 0.06s
+2023-04-14 10:46:44,845 - INFO - Saved model at 50
+2023-04-14 10:46:44,845 - INFO - Val loss decrease from 4.0042 to 4.0037, saving to ./libcity/cache/50001/model_cache/RNN_Xiongan_epoch50.tar
+2023-04-14 10:46:44,886 - INFO - epoch complete!
+2023-04-14 10:46:44,887 - INFO - evaluating now!
+2023-04-14 10:46:44,908 - INFO - Epoch [51/100] train_loss: 4.0037, val_loss: 4.0033, lr: 0.000010, 0.06s
+2023-04-14 10:46:44,916 - INFO - Saved model at 51
+2023-04-14 10:46:44,916 - INFO - Val loss decrease from 4.0037 to 4.0033, saving to ./libcity/cache/50001/model_cache/RNN_Xiongan_epoch51.tar
+2023-04-14 10:46:44,956 - INFO - epoch complete!
+2023-04-14 10:46:44,956 - INFO - evaluating now!
+2023-04-14 10:46:44,976 - INFO - Epoch [52/100] train_loss: 4.0033, val_loss: 4.0029, lr: 0.000010, 0.06s
+2023-04-14 10:46:44,984 - INFO - Saved model at 52
+2023-04-14 10:46:44,984 - INFO - Val loss decrease from 4.0033 to 4.0029, saving to ./libcity/cache/50001/model_cache/RNN_Xiongan_epoch52.tar
+2023-04-14 10:46:45,025 - INFO - epoch complete!
+2023-04-14 10:46:45,026 - INFO - evaluating now!
+2023-04-14 10:46:45,047 - INFO - Epoch [53/100] train_loss: 4.0029, val_loss: 4.0025, lr: 0.000010, 0.06s
+2023-04-14 10:46:45,055 - INFO - Saved model at 53
+2023-04-14 10:46:45,055 - INFO - Val loss decrease from 4.0029 to 4.0025, saving to ./libcity/cache/50001/model_cache/RNN_Xiongan_epoch53.tar
+2023-04-14 10:46:45,095 - INFO - epoch complete!
+2023-04-14 10:46:45,095 - INFO - evaluating now!
+2023-04-14 10:46:45,117 - INFO - Epoch [54/100] train_loss: 4.0025, val_loss: 4.0020, lr: 0.000010, 0.06s
+2023-04-14 10:46:45,125 - INFO - Saved model at 54
+2023-04-14 10:46:45,125 - INFO - Val loss decrease from 4.0025 to 4.0020, saving to ./libcity/cache/50001/model_cache/RNN_Xiongan_epoch54.tar
+2023-04-14 10:46:45,158 - INFO - epoch complete!
+2023-04-14 10:46:45,159 - INFO - evaluating now!
+2023-04-14 10:46:45,179 - INFO - Epoch [55/100] train_loss: 4.0020, val_loss: 4.0016, lr: 0.000010, 0.05s
+2023-04-14 10:46:45,187 - INFO - Saved model at 55
+2023-04-14 10:46:45,187 - INFO - Val loss decrease from 4.0020 to 4.0016, saving to ./libcity/cache/50001/model_cache/RNN_Xiongan_epoch55.tar
+2023-04-14 10:46:45,227 - INFO - epoch complete!
+2023-04-14 10:46:45,228 - INFO - evaluating now!
+2023-04-14 10:46:45,248 - INFO - Epoch [56/100] train_loss: 4.0016, val_loss: 4.0012, lr: 0.000010, 0.06s
+2023-04-14 10:46:45,255 - INFO - Saved model at 56
+2023-04-14 10:46:45,255 - INFO - Val loss decrease from 4.0016 to 4.0012, saving to ./libcity/cache/50001/model_cache/RNN_Xiongan_epoch56.tar
+2023-04-14 10:46:45,299 - INFO - epoch complete!
+2023-04-14 10:46:45,300 - INFO - evaluating now!
+2023-04-14 10:46:45,319 - INFO - Epoch [57/100] train_loss: 4.0012, val_loss: 4.0008, lr: 0.000010, 0.06s
+2023-04-14 10:46:45,327 - INFO - Saved model at 57
+2023-04-14 10:46:45,327 - INFO - Val loss decrease from 4.0012 to 4.0008, saving to ./libcity/cache/50001/model_cache/RNN_Xiongan_epoch57.tar
+2023-04-14 10:46:45,365 - INFO - epoch complete!
+2023-04-14 10:46:45,365 - INFO - evaluating now!
+2023-04-14 10:46:45,393 - INFO - Epoch [58/100] train_loss: 4.0008, val_loss: 4.0003, lr: 0.000010, 0.07s
+2023-04-14 10:46:45,400 - INFO - Saved model at 58
+2023-04-14 10:46:45,401 - INFO - Val loss decrease from 4.0008 to 4.0003, saving to ./libcity/cache/50001/model_cache/RNN_Xiongan_epoch58.tar
+2023-04-14 10:46:45,445 - INFO - epoch complete!
+2023-04-14 10:46:45,445 - INFO - evaluating now!
+2023-04-14 10:46:45,471 - INFO - Epoch [59/100] train_loss: 4.0003, val_loss: 3.9999, lr: 0.000010, 0.07s
+2023-04-14 10:46:45,480 - INFO - Saved model at 59
+2023-04-14 10:46:45,480 - INFO - Val loss decrease from 4.0003 to 3.9999, saving to ./libcity/cache/50001/model_cache/RNN_Xiongan_epoch59.tar
+2023-04-14 10:46:45,518 - INFO - epoch complete!
+2023-04-14 10:46:45,519 - INFO - evaluating now!
+2023-04-14 10:46:45,545 - INFO - Epoch [60/100] train_loss: 3.9999, val_loss: 3.9995, lr: 0.000010, 0.06s
+2023-04-14 10:46:45,553 - INFO - Saved model at 60
+2023-04-14 10:46:45,554 - INFO - Val loss decrease from 3.9999 to 3.9995, saving to ./libcity/cache/50001/model_cache/RNN_Xiongan_epoch60.tar
+2023-04-14 10:46:45,599 - INFO - epoch complete!
+2023-04-14 10:46:45,599 - INFO - evaluating now!
+2023-04-14 10:46:45,624 - INFO - Epoch [61/100] train_loss: 3.9995, val_loss: 3.9991, lr: 0.000010, 0.07s
+2023-04-14 10:46:45,633 - INFO - Saved model at 61
+2023-04-14 10:46:45,633 - INFO - Val loss decrease from 3.9995 to 3.9991, saving to ./libcity/cache/50001/model_cache/RNN_Xiongan_epoch61.tar
+2023-04-14 10:46:45,676 - INFO - epoch complete!
+2023-04-14 10:46:45,677 - INFO - evaluating now!
+2023-04-14 10:46:45,705 - INFO - Epoch [62/100] train_loss: 3.9991, val_loss: 3.9986, lr: 0.000010, 0.07s
+2023-04-14 10:46:45,713 - INFO - Saved model at 62
+2023-04-14 10:46:45,713 - INFO - Val loss decrease from 3.9991 to 3.9986, saving to ./libcity/cache/50001/model_cache/RNN_Xiongan_epoch62.tar
+2023-04-14 10:46:45,761 - INFO - epoch complete!
+2023-04-14 10:46:45,762 - INFO - evaluating now!
+2023-04-14 10:46:45,784 - INFO - Epoch [63/100] train_loss: 3.9986, val_loss: 3.9982, lr: 0.000010, 0.07s
+2023-04-14 10:46:45,792 - INFO - Saved model at 63
+2023-04-14 10:46:45,792 - INFO - Val loss decrease from 3.9986 to 3.9982, saving to ./libcity/cache/50001/model_cache/RNN_Xiongan_epoch63.tar
+2023-04-14 10:46:45,833 - INFO - epoch complete!
+2023-04-14 10:46:45,833 - INFO - evaluating now!
+2023-04-14 10:46:45,854 - INFO - Epoch [64/100] train_loss: 3.9982, val_loss: 3.9978, lr: 0.000010, 0.06s
+2023-04-14 10:46:45,862 - INFO - Saved model at 64
+2023-04-14 10:46:45,862 - INFO - Val loss decrease from 3.9982 to 3.9978, saving to ./libcity/cache/50001/model_cache/RNN_Xiongan_epoch64.tar
+2023-04-14 10:46:45,902 - INFO - epoch complete!
+2023-04-14 10:46:45,902 - INFO - evaluating now!
+2023-04-14 10:46:45,927 - INFO - Epoch [65/100] train_loss: 3.9978, val_loss: 3.9974, lr: 0.000010, 0.06s
+2023-04-14 10:46:45,937 - INFO - Saved model at 65
+2023-04-14 10:46:45,937 - INFO - Val loss decrease from 3.9978 to 3.9974, saving to ./libcity/cache/50001/model_cache/RNN_Xiongan_epoch65.tar
+2023-04-14 10:46:45,978 - INFO - epoch complete!
+2023-04-14 10:46:45,979 - INFO - evaluating now!
+2023-04-14 10:46:46,000 - INFO - Epoch [66/100] train_loss: 3.9974, val_loss: 3.9969, lr: 0.000010, 0.06s
+2023-04-14 10:46:46,007 - INFO - Saved model at 66
+2023-04-14 10:46:46,007 - INFO - Val loss decrease from 3.9974 to 3.9969, saving to ./libcity/cache/50001/model_cache/RNN_Xiongan_epoch66.tar
+2023-04-14 10:46:46,049 - INFO - epoch complete!
+2023-04-14 10:46:46,049 - INFO - evaluating now!
+2023-04-14 10:46:46,070 - INFO - Epoch [67/100] train_loss: 3.9969, val_loss: 3.9965, lr: 0.000010, 0.06s
+2023-04-14 10:46:46,078 - INFO - Saved model at 67
+2023-04-14 10:46:46,078 - INFO - Val loss decrease from 3.9969 to 3.9965, saving to ./libcity/cache/50001/model_cache/RNN_Xiongan_epoch67.tar
+2023-04-14 10:46:46,119 - INFO - epoch complete!
+2023-04-14 10:46:46,119 - INFO - evaluating now!
+2023-04-14 10:46:46,141 - INFO - Epoch [68/100] train_loss: 3.9965, val_loss: 3.9961, lr: 0.000010, 0.06s
+2023-04-14 10:46:46,148 - INFO - Saved model at 68
+2023-04-14 10:46:46,148 - INFO - Val loss decrease from 3.9965 to 3.9961, saving to ./libcity/cache/50001/model_cache/RNN_Xiongan_epoch68.tar
+2023-04-14 10:46:46,191 - INFO - epoch complete!
+2023-04-14 10:46:46,192 - INFO - evaluating now!
+2023-04-14 10:46:46,212 - INFO - Epoch [69/100] train_loss: 3.9961, val_loss: 3.9957, lr: 0.000001, 0.06s
+2023-04-14 10:46:46,220 - INFO - Saved model at 69
+2023-04-14 10:46:46,221 - INFO - Val loss decrease from 3.9961 to 3.9957, saving to ./libcity/cache/50001/model_cache/RNN_Xiongan_epoch69.tar
+2023-04-14 10:46:46,257 - INFO - epoch complete!
+2023-04-14 10:46:46,258 - INFO - evaluating now!
+2023-04-14 10:46:46,275 - INFO - Epoch [70/100] train_loss: 3.9957, val_loss: 3.9956, lr: 0.000001, 0.05s
+2023-04-14 10:46:46,284 - INFO - Saved model at 70
+2023-04-14 10:46:46,284 - INFO - Val loss decrease from 3.9957 to 3.9956, saving to ./libcity/cache/50001/model_cache/RNN_Xiongan_epoch70.tar
+2023-04-14 10:46:46,319 - INFO - epoch complete!
+2023-04-14 10:46:46,319 - INFO - evaluating now!
+2023-04-14 10:46:46,338 - INFO - Epoch [71/100] train_loss: 3.9956, val_loss: 3.9956, lr: 0.000001, 0.05s
+2023-04-14 10:46:46,346 - INFO - Saved model at 71
+2023-04-14 10:46:46,346 - INFO - Val loss decrease from 3.9956 to 3.9956, saving to ./libcity/cache/50001/model_cache/RNN_Xiongan_epoch71.tar
+2023-04-14 10:46:46,381 - INFO - epoch complete!
+2023-04-14 10:46:46,381 - INFO - evaluating now!
+2023-04-14 10:46:46,400 - INFO - Epoch [72/100] train_loss: 3.9956, val_loss: 3.9955, lr: 0.000001, 0.05s
+2023-04-14 10:46:46,408 - INFO - Saved model at 72
+2023-04-14 10:46:46,408 - INFO - Val loss decrease from 3.9956 to 3.9955, saving to ./libcity/cache/50001/model_cache/RNN_Xiongan_epoch72.tar
+2023-04-14 10:46:46,447 - INFO - epoch complete!
+2023-04-14 10:46:46,448 - INFO - evaluating now!
+2023-04-14 10:46:46,466 - INFO - Epoch [73/100] train_loss: 3.9955, val_loss: 3.9955, lr: 0.000001, 0.06s
+2023-04-14 10:46:46,474 - INFO - Saved model at 73
+2023-04-14 10:46:46,474 - INFO - Val loss decrease from 3.9955 to 3.9955, saving to ./libcity/cache/50001/model_cache/RNN_Xiongan_epoch73.tar
+2023-04-14 10:46:46,508 - INFO - epoch complete!
+2023-04-14 10:46:46,509 - INFO - evaluating now!
+2023-04-14 10:46:46,532 - INFO - Epoch [74/100] train_loss: 3.9955, val_loss: 3.9955, lr: 0.000001, 0.06s
+2023-04-14 10:46:46,540 - INFO - Saved model at 74
+2023-04-14 10:46:46,540 - INFO - Val loss decrease from 3.9955 to 3.9955, saving to ./libcity/cache/50001/model_cache/RNN_Xiongan_epoch74.tar
+2023-04-14 10:46:46,572 - INFO - epoch complete!
+2023-04-14 10:46:46,572 - INFO - evaluating now!
+2023-04-14 10:46:46,591 - INFO - Epoch [75/100] train_loss: 3.9955, val_loss: 3.9954, lr: 0.000001, 0.05s
+2023-04-14 10:46:46,598 - INFO - Saved model at 75
+2023-04-14 10:46:46,598 - INFO - Val loss decrease from 3.9955 to 3.9954, saving to ./libcity/cache/50001/model_cache/RNN_Xiongan_epoch75.tar
+2023-04-14 10:46:46,636 - INFO - epoch complete!
+2023-04-14 10:46:46,636 - INFO - evaluating now!
+2023-04-14 10:46:46,654 - INFO - Epoch [76/100] train_loss: 3.9954, val_loss: 3.9954, lr: 0.000001, 0.06s
+2023-04-14 10:46:46,661 - INFO - Saved model at 76
+2023-04-14 10:46:46,662 - INFO - Val loss decrease from 3.9954 to 3.9954, saving to ./libcity/cache/50001/model_cache/RNN_Xiongan_epoch76.tar
+2023-04-14 10:46:46,701 - INFO - epoch complete!
+2023-04-14 10:46:46,702 - INFO - evaluating now!
+2023-04-14 10:46:46,719 - INFO - Epoch [77/100] train_loss: 3.9954, val_loss: 3.9953, lr: 0.000001, 0.06s
+2023-04-14 10:46:46,726 - INFO - Saved model at 77
+2023-04-14 10:46:46,726 - INFO - Val loss decrease from 3.9954 to 3.9953, saving to ./libcity/cache/50001/model_cache/RNN_Xiongan_epoch77.tar
+2023-04-14 10:46:46,760 - INFO - epoch complete!
+2023-04-14 10:46:46,760 - INFO - evaluating now!
+2023-04-14 10:46:46,777 - INFO - Epoch [78/100] train_loss: 3.9953, val_loss: 3.9953, lr: 0.000001, 0.05s
+2023-04-14 10:46:46,785 - INFO - Saved model at 78
+2023-04-14 10:46:46,785 - INFO - Val loss decrease from 3.9953 to 3.9953, saving to ./libcity/cache/50001/model_cache/RNN_Xiongan_epoch78.tar
+2023-04-14 10:46:46,816 - INFO - epoch complete!
+2023-04-14 10:46:46,816 - INFO - evaluating now!
+2023-04-14 10:46:46,842 - INFO - Epoch [79/100] train_loss: 3.9953, val_loss: 3.9952, lr: 0.000001, 0.06s
+2023-04-14 10:46:46,850 - INFO - Saved model at 79
+2023-04-14 10:46:46,850 - INFO - Val loss decrease from 3.9953 to 3.9952, saving to ./libcity/cache/50001/model_cache/RNN_Xiongan_epoch79.tar
+2023-04-14 10:46:46,885 - INFO - epoch complete!
+2023-04-14 10:46:46,886 - INFO - evaluating now!
+2023-04-14 10:46:46,909 - INFO - Epoch [80/100] train_loss: 3.9952, val_loss: 3.9952, lr: 0.000001, 0.06s
+2023-04-14 10:46:46,919 - INFO - Saved model at 80
+2023-04-14 10:46:46,919 - INFO - Val loss decrease from 3.9952 to 3.9952, saving to ./libcity/cache/50001/model_cache/RNN_Xiongan_epoch80.tar
+2023-04-14 10:46:46,961 - INFO - epoch complete!
+2023-04-14 10:46:46,961 - INFO - evaluating now!
+2023-04-14 10:46:46,978 - INFO - Epoch [81/100] train_loss: 3.9952, val_loss: 3.9951, lr: 0.000001, 0.06s
+2023-04-14 10:46:46,985 - INFO - Saved model at 81
+2023-04-14 10:46:46,985 - INFO - Val loss decrease from 3.9952 to 3.9951, saving to ./libcity/cache/50001/model_cache/RNN_Xiongan_epoch81.tar
+2023-04-14 10:46:47,029 - INFO - epoch complete!
+2023-04-14 10:46:47,030 - INFO - evaluating now!
+2023-04-14 10:46:47,056 - INFO - Epoch [82/100] train_loss: 3.9951, val_loss: 3.9951, lr: 0.000001, 0.07s
+2023-04-14 10:46:47,067 - INFO - Saved model at 82
+2023-04-14 10:46:47,067 - INFO - Val loss decrease from 3.9951 to 3.9951, saving to ./libcity/cache/50001/model_cache/RNN_Xiongan_epoch82.tar
+2023-04-14 10:46:47,114 - INFO - epoch complete!
+2023-04-14 10:46:47,115 - INFO - evaluating now!
+2023-04-14 10:46:47,133 - INFO - Epoch [83/100] train_loss: 3.9951, val_loss: 3.9951, lr: 0.000001, 0.07s
+2023-04-14 10:46:47,140 - INFO - Saved model at 83
+2023-04-14 10:46:47,141 - INFO - Val loss decrease from 3.9951 to 3.9951, saving to ./libcity/cache/50001/model_cache/RNN_Xiongan_epoch83.tar
+2023-04-14 10:46:47,176 - INFO - epoch complete!
+2023-04-14 10:46:47,176 - INFO - evaluating now!
+2023-04-14 10:46:47,195 - INFO - Epoch [84/100] train_loss: 3.9951, val_loss: 3.9950, lr: 0.000001, 0.05s
+2023-04-14 10:46:47,202 - INFO - Saved model at 84
+2023-04-14 10:46:47,202 - INFO - Val loss decrease from 3.9951 to 3.9950, saving to ./libcity/cache/50001/model_cache/RNN_Xiongan_epoch84.tar
+2023-04-14 10:46:47,237 - INFO - epoch complete!
+2023-04-14 10:46:47,237 - INFO - evaluating now!
+2023-04-14 10:46:47,256 - INFO - Epoch [85/100] train_loss: 3.9950, val_loss: 3.9950, lr: 0.000001, 0.05s
+2023-04-14 10:46:47,264 - INFO - Saved model at 85
+2023-04-14 10:46:47,265 - INFO - Val loss decrease from 3.9950 to 3.9950, saving to ./libcity/cache/50001/model_cache/RNN_Xiongan_epoch85.tar
+2023-04-14 10:46:47,304 - INFO - epoch complete!
+2023-04-14 10:46:47,304 - INFO - evaluating now!
+2023-04-14 10:46:47,321 - INFO - Epoch [86/100] train_loss: 3.9950, val_loss: 3.9949, lr: 0.000001, 0.06s
+2023-04-14 10:46:47,328 - INFO - Saved model at 86
+2023-04-14 10:46:47,328 - INFO - Val loss decrease from 3.9950 to 3.9949, saving to ./libcity/cache/50001/model_cache/RNN_Xiongan_epoch86.tar
+2023-04-14 10:46:47,358 - INFO - epoch complete!
+2023-04-14 10:46:47,359 - INFO - evaluating now!
+2023-04-14 10:46:47,377 - INFO - Epoch [87/100] train_loss: 3.9949, val_loss: 3.9949, lr: 0.000001, 0.05s
+2023-04-14 10:46:47,384 - INFO - Saved model at 87
+2023-04-14 10:46:47,385 - INFO - Val loss decrease from 3.9949 to 3.9949, saving to ./libcity/cache/50001/model_cache/RNN_Xiongan_epoch87.tar
+2023-04-14 10:46:47,416 - INFO - epoch complete!
+2023-04-14 10:46:47,416 - INFO - evaluating now!
+2023-04-14 10:46:47,434 - INFO - Epoch [88/100] train_loss: 3.9949, val_loss: 3.9948, lr: 0.000001, 0.05s
+2023-04-14 10:46:47,444 - INFO - Saved model at 88
+2023-04-14 10:46:47,445 - INFO - Val loss decrease from 3.9949 to 3.9948, saving to ./libcity/cache/50001/model_cache/RNN_Xiongan_epoch88.tar
+2023-04-14 10:46:47,482 - INFO - epoch complete!
+2023-04-14 10:46:47,482 - INFO - evaluating now!
+2023-04-14 10:46:47,504 - INFO - Epoch [89/100] train_loss: 3.9948, val_loss: 3.9948, lr: 0.000001, 0.06s
+2023-04-14 10:46:47,511 - INFO - Saved model at 89
+2023-04-14 10:46:47,511 - INFO - Val loss decrease from 3.9948 to 3.9948, saving to ./libcity/cache/50001/model_cache/RNN_Xiongan_epoch89.tar
+2023-04-14 10:46:47,551 - INFO - epoch complete!
+2023-04-14 10:46:47,551 - INFO - evaluating now!
+2023-04-14 10:46:47,569 - INFO - Epoch [90/100] train_loss: 3.9948, val_loss: 3.9947, lr: 0.000001, 0.06s
+2023-04-14 10:46:47,576 - INFO - Saved model at 90
+2023-04-14 10:46:47,576 - INFO - Val loss decrease from 3.9948 to 3.9947, saving to ./libcity/cache/50001/model_cache/RNN_Xiongan_epoch90.tar
+2023-04-14 10:46:47,616 - INFO - epoch complete!
+2023-04-14 10:46:47,616 - INFO - evaluating now!
+2023-04-14 10:46:47,635 - INFO - Epoch [91/100] train_loss: 3.9947, val_loss: 3.9947, lr: 0.000001, 0.06s
+2023-04-14 10:46:47,644 - INFO - Saved model at 91
+2023-04-14 10:46:47,644 - INFO - Val loss decrease from 3.9947 to 3.9947, saving to ./libcity/cache/50001/model_cache/RNN_Xiongan_epoch91.tar
+2023-04-14 10:46:47,680 - INFO - epoch complete!
+2023-04-14 10:46:47,680 - INFO - evaluating now!
+2023-04-14 10:46:47,699 - INFO - Epoch [92/100] train_loss: 3.9947, val_loss: 3.9947, lr: 0.000001, 0.05s
+2023-04-14 10:46:47,707 - INFO - Saved model at 92
+2023-04-14 10:46:47,707 - INFO - Val loss decrease from 3.9947 to 3.9947, saving to ./libcity/cache/50001/model_cache/RNN_Xiongan_epoch92.tar
+2023-04-14 10:46:47,749 - INFO - epoch complete!
+2023-04-14 10:46:47,750 - INFO - evaluating now!
+2023-04-14 10:46:47,769 - INFO - Epoch [93/100] train_loss: 3.9947, val_loss: 3.9946, lr: 0.000001, 0.06s
+2023-04-14 10:46:47,776 - INFO - Saved model at 93
+2023-04-14 10:46:47,777 - INFO - Val loss decrease from 3.9947 to 3.9946, saving to ./libcity/cache/50001/model_cache/RNN_Xiongan_epoch93.tar
+2023-04-14 10:46:47,813 - INFO - epoch complete!
+2023-04-14 10:46:47,813 - INFO - evaluating now!
+2023-04-14 10:46:47,832 - INFO - Epoch [94/100] train_loss: 3.9946, val_loss: 3.9946, lr: 0.000001, 0.06s
+2023-04-14 10:46:47,839 - INFO - Saved model at 94
+2023-04-14 10:46:47,840 - INFO - Val loss decrease from 3.9946 to 3.9946, saving to ./libcity/cache/50001/model_cache/RNN_Xiongan_epoch94.tar
+2023-04-14 10:46:47,871 - INFO - epoch complete!
+2023-04-14 10:46:47,871 - INFO - evaluating now!
+2023-04-14 10:46:47,889 - INFO - Epoch [95/100] train_loss: 3.9946, val_loss: 3.9945, lr: 0.000001, 0.05s
+2023-04-14 10:46:47,897 - INFO - Saved model at 95
+2023-04-14 10:46:47,897 - INFO - Val loss decrease from 3.9946 to 3.9945, saving to ./libcity/cache/50001/model_cache/RNN_Xiongan_epoch95.tar
+2023-04-14 10:46:47,928 - INFO - epoch complete!
+2023-04-14 10:46:47,928 - INFO - evaluating now!
+2023-04-14 10:46:47,946 - INFO - Epoch [96/100] train_loss: 3.9945, val_loss: 3.9945, lr: 0.000001, 0.05s
+2023-04-14 10:46:47,953 - INFO - Saved model at 96
+2023-04-14 10:46:47,953 - INFO - Val loss decrease from 3.9945 to 3.9945, saving to ./libcity/cache/50001/model_cache/RNN_Xiongan_epoch96.tar
+2023-04-14 10:46:47,986 - INFO - epoch complete!
+2023-04-14 10:46:47,987 - INFO - evaluating now!
+2023-04-14 10:46:48,009 - INFO - Epoch [97/100] train_loss: 3.9945, val_loss: 3.9944, lr: 0.000001, 0.06s
+2023-04-14 10:46:48,019 - INFO - Saved model at 97
+2023-04-14 10:46:48,019 - INFO - Val loss decrease from 3.9945 to 3.9944, saving to ./libcity/cache/50001/model_cache/RNN_Xiongan_epoch97.tar
+2023-04-14 10:46:48,058 - INFO - epoch complete!
+2023-04-14 10:46:48,059 - INFO - evaluating now!
+2023-04-14 10:46:48,082 - INFO - Epoch [98/100] train_loss: 3.9944, val_loss: 3.9944, lr: 0.000001, 0.06s
+2023-04-14 10:46:48,090 - INFO - Saved model at 98
+2023-04-14 10:46:48,091 - INFO - Val loss decrease from 3.9944 to 3.9944, saving to ./libcity/cache/50001/model_cache/RNN_Xiongan_epoch98.tar
+2023-04-14 10:46:48,133 - INFO - epoch complete!
+2023-04-14 10:46:48,133 - INFO - evaluating now!
+2023-04-14 10:46:48,159 - INFO - Epoch [99/100] train_loss: 3.9944, val_loss: 3.9943, lr: 0.000001, 0.07s
+2023-04-14 10:46:48,169 - INFO - Saved model at 99
+2023-04-14 10:46:48,169 - INFO - Val loss decrease from 3.9944 to 3.9943, saving to ./libcity/cache/50001/model_cache/RNN_Xiongan_epoch99.tar
+2023-04-14 10:46:48,169 - INFO - Trained totally 100 epochs, average train time is 0.038s, average eval time is 0.021s
+2023-04-14 10:46:48,187 - INFO - Loaded model at 99
+2023-04-14 10:46:48,187 - INFO - Saved model at ./libcity/cache/50001/model_cache/GRU_Xiongan.m
+2023-04-14 10:46:48,194 - INFO - Start evaluating ...
+2023-04-14 10:46:48,366 - INFO - Note that you select the single mode to evaluate!
+2023-04-14 10:46:48,370 - INFO - Evaluate result is saved at ./libcity/cache/50001/evaluate_cache/2023_04_14_10_46_48_RNN_Xiongan.csv
+2023-04-14 10:46:48,384 - INFO - 
+         MAE      MAPE        MSE      RMSE  masked_MAE  masked_MAPE  masked_MSE  masked_RMSE        R2      EVAR
+1   2.229669  0.037292  12.286847  3.505260    2.229669     0.037292   12.286847     3.505260  0.595785  0.597194
+2   3.328136  0.055695  20.387901  4.515296    3.328136     0.055695   20.387901     4.515296  0.376131  0.377738
+3   4.012479  0.069000  27.124950  5.208162    4.012479     0.069000   27.124950     5.208162  0.203398  0.211331
+4   4.116618  0.069292  26.674046  5.164692    4.116618     0.069292   26.674046     5.164692  0.198627  0.198657
+5   4.293771  0.071557  28.251122  5.315178    4.293771     0.071557   28.251122     5.315178  0.111762  0.117021
+6   4.129182  0.069604  27.347439  5.229478    4.129182     0.069604   27.347439     5.229478  0.175793  0.176087
+7   4.291319  0.073062  28.897469  5.375637    4.291319     0.073062   28.897469     5.375637  0.091339  0.092749
+8   4.445592  0.075391  30.205141  5.495920    4.445592     0.075391   30.205141     5.495920  0.113870  0.114300
+9   4.330373  0.073310  29.235062  5.406946    4.330373     0.073310   29.235062     5.406946  0.129064  0.129065
+10  4.432420  0.074066  31.566580  5.618414    4.432420     0.074066   31.566580     5.618414  0.076364  0.078232
+11  4.452809  0.075806  32.270756  5.680736    4.452809     0.075806   32.270756     5.680736  0.036678  0.037987
+12  3.869791  0.065331  24.398321  4.939466    3.869791     0.065331   24.398321     4.939466  0.250775  0.251432

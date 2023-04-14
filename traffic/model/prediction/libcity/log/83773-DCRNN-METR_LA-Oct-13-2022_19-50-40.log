@@ -1,0 +1,85 @@
+2022-10-13 19:50:40,475 - INFO - Log directory: ./libcity/log
+2022-10-13 19:50:40,476 - INFO - Begin pipeline, task=traffic_state_pred, model_name=DCRNN, dataset_name=METR_LA, exp_id=83773
+2022-10-13 19:50:40,476 - INFO - {'task': 'traffic_state_pred', 'model': 'DCRNN', 'dataset': 'METR_LA', 'saved_model': True, 'train': False, 'seed': 0, 'train_rate': 0.0, 'eval_rate': 0.0, 'batch_size': 1, 'exp_id': 83773, 'dataset_class': 'TrafficStatePointDataset', 'executor': 'DCRNNExecutor', 'evaluator': 'TrafficStateEvaluator', 'cl_decay_steps': 2000, 'filter_type': 'dual_random_walk', 'bidir_adj_mx': False, 'max_diffusion_step': 2, 'num_rnn_layers': 2, 'rnn_units': 64, 'use_curriculum_learning': True, 'scaler': 'standard', 'load_external': True, 'normal_external': False, 'ext_scaler': 'none', 'add_time_in_day': True, 'add_day_in_week': False, 'max_epoch': 100, 'learner': 'adam', 'learning_rate': 0.01, 'lr_decay': True, 'lr_scheduler': 'multisteplr', 'lr_decay_ratio': 0.1, 'steps': [5, 20, 40, 70], 'clip_grad_norm': True, 'max_grad_norm': 5, 'use_early_stop': True, 'patience': 50, 'cache_dataset': True, 'num_workers': 0, 'pad_with_last_sample': True, 'input_window': 12, 'output_window': 12, 'gpu': True, 'gpu_id': 0, 'train_loss': 'none', 'epoch': 0, 'weight_decay': 0, 'lr_epsilon': 1e-08, 'lr_beta1': 0.9, 'lr_beta2': 0.999, 'lr_alpha': 0.99, 'lr_momentum': 0, 'step_size': 10, 'lr_T_max': 30, 'lr_eta_min': 0, 'lr_patience': 10, 'lr_threshold': 0.0001, 'log_level': 'INFO', 'log_every': 1, 'load_best_epoch': True, 'hyper_tune': False, 'metrics': ['MAE', 'MAPE', 'MSE', 'RMSE', 'masked_MAE', 'masked_MAPE', 'masked_MSE', 'masked_RMSE', 'R2', 'EVAR'], 'evaluator_mode': 'single', 'save_mode': ['csv'], 'geo': {'including_types': ['Point'], 'Point': {}}, 'rel': {'including_types': ['geo'], 'geo': {'cost': 'num'}}, 'dyna': {'including_types': ['state'], 'state': {'entity_id': 'geo_id', 'traffic_speed': 'num'}}, 'data_col': ['traffic_speed'], 'weight_col': 'cost', 'data_files': ['METR_LA'], 'geo_file': 'METR_LA', 'rel_file': 'METR_LA', 'output_dim': 1, 'time_intervals': 300, 'init_weight_inf_or_zero': 'inf', 'set_weight_link_or_dist': 'dist', 'calculate_weight_adj': True, 'weight_adj_epsilon': 0.1, 'device': device(type='cuda', index=0)}
+2022-10-13 19:50:40,483 - INFO - Loaded file METR_LA.geo, num_nodes=207
+2022-10-13 19:50:40,490 - INFO - set_weight_link_or_dist: dist
+2022-10-13 19:50:40,490 - INFO - init_weight_inf_or_zero: inf
+2022-10-13 19:50:40,520 - INFO - Loaded file METR_LA.rel, shape=(207, 207)
+2022-10-13 19:50:40,520 - INFO - Start Calculate the weight by Gauss kernel!
+2022-10-13 19:50:40,521 - INFO - Loading file METR_LA.dyna
+2022-10-13 19:50:40,534 - INFO - Loaded file METR_LA.dyna, shape=(24, 207, 1)
+2022-10-13 19:50:40,535 - INFO - Dataset created
+2022-10-13 19:50:40,535 - INFO - x shape: (1, 12, 207, 2), y shape: (1, 12, 207, 2)
+2022-10-13 19:50:40,535 - INFO - train	x: (0, 12, 207, 2), y: (0, 12, 207, 2)
+2022-10-13 19:50:40,535 - INFO - eval	x: (0, 12, 207, 2), y: (0, 12, 207, 2)
+2022-10-13 19:50:40,535 - INFO - test	x: (1, 12, 207, 2), y: (1, 12, 207, 2)
+2022-10-13 19:50:40,542 - INFO - Saved at ./libcity/cache/dataset_cache/point_based_METR_LA_12_12_0.0_0.0_standard_1_True_True_False_True.npz
+2022-10-13 19:50:40,542 - INFO - StandardScaler mean: 60.42133351864633, std: 13.545443420409597
+2022-10-13 19:50:40,542 - INFO - NoneScaler
+2022-10-13 19:50:43,723 - INFO - DCRNN(
+  (encoder_model): EncoderModel(
+    (dcgru_layers): ModuleList(
+      (0): DCGRUCell(
+        (_fn): GCONV()
+        (_gconv): GCONV()
+      )
+      (1): DCGRUCell(
+        (_fn): GCONV()
+        (_gconv): GCONV()
+      )
+    )
+  )
+  (decoder_model): DecoderModel(
+    (projection_layer): Linear(in_features=64, out_features=1, bias=True)
+    (dcgru_layers): ModuleList(
+      (0): DCGRUCell(
+        (_fn): GCONV()
+        (_gconv): GCONV()
+      )
+      (1): DCGRUCell(
+        (_fn): GCONV()
+        (_gconv): GCONV()
+      )
+    )
+  )
+)
+2022-10-13 19:50:43,723 - INFO - encoder_model.dcgru_layers.0._fn.weight	torch.Size([330, 128])	cuda:0	True
+2022-10-13 19:50:43,723 - INFO - encoder_model.dcgru_layers.0._fn.biases	torch.Size([128])	cuda:0	True
+2022-10-13 19:50:43,723 - INFO - encoder_model.dcgru_layers.0._gconv.weight	torch.Size([330, 64])	cuda:0	True
+2022-10-13 19:50:43,724 - INFO - encoder_model.dcgru_layers.0._gconv.biases	torch.Size([64])	cuda:0	True
+2022-10-13 19:50:43,724 - INFO - encoder_model.dcgru_layers.1._fn.weight	torch.Size([640, 128])	cuda:0	True
+2022-10-13 19:50:43,724 - INFO - encoder_model.dcgru_layers.1._fn.biases	torch.Size([128])	cuda:0	True
+2022-10-13 19:50:43,724 - INFO - encoder_model.dcgru_layers.1._gconv.weight	torch.Size([640, 64])	cuda:0	True
+2022-10-13 19:50:43,724 - INFO - encoder_model.dcgru_layers.1._gconv.biases	torch.Size([64])	cuda:0	True
+2022-10-13 19:50:43,724 - INFO - decoder_model.projection_layer.weight	torch.Size([1, 64])	cuda:0	True
+2022-10-13 19:50:43,724 - INFO - decoder_model.projection_layer.bias	torch.Size([1])	cuda:0	True
+2022-10-13 19:50:43,724 - INFO - decoder_model.dcgru_layers.0._fn.weight	torch.Size([325, 128])	cuda:0	True
+2022-10-13 19:50:43,724 - INFO - decoder_model.dcgru_layers.0._fn.biases	torch.Size([128])	cuda:0	True
+2022-10-13 19:50:43,725 - INFO - decoder_model.dcgru_layers.0._gconv.weight	torch.Size([325, 64])	cuda:0	True
+2022-10-13 19:50:43,725 - INFO - decoder_model.dcgru_layers.0._gconv.biases	torch.Size([64])	cuda:0	True
+2022-10-13 19:50:43,725 - INFO - decoder_model.dcgru_layers.1._fn.weight	torch.Size([640, 128])	cuda:0	True
+2022-10-13 19:50:43,725 - INFO - decoder_model.dcgru_layers.1._fn.biases	torch.Size([128])	cuda:0	True
+2022-10-13 19:50:43,725 - INFO - decoder_model.dcgru_layers.1._gconv.weight	torch.Size([640, 64])	cuda:0	True
+2022-10-13 19:50:43,725 - INFO - decoder_model.dcgru_layers.1._gconv.biases	torch.Size([64])	cuda:0	True
+2022-10-13 19:50:43,725 - INFO - Total parameter numbers: 372353
+2022-10-13 19:50:43,725 - INFO - You select `adam` optimizer.
+2022-10-13 19:50:43,726 - INFO - You select `multisteplr` lr_scheduler.
+2022-10-13 19:50:43,726 - WARNING - Received none train loss func and will use the loss func defined in the model.
+2022-10-13 19:50:43,726 - INFO - Loaded model at ./libcity/cache/83773/model_cache/DCRNN_METR_LA.m
+2022-10-13 19:50:43,741 - INFO - Start evaluating ...
+2022-10-13 19:50:44,945 - INFO - Note that you select the single mode to evaluate!
+2022-10-13 19:50:44,952 - INFO - Evaluate result is saved at ./libcity/cache/83773/evaluate_cache/2022_10_13_19_50_44_DCRNN_METR_LA.csv
+2022-10-13 19:50:44,967 - INFO - 
+         MAE  MAPE         MSE       RMSE  masked_MAE  masked_MAPE  masked_MSE  masked_RMSE        R2      EVAR
+1   4.636890   inf  161.209961  12.696849    2.501543     0.043446   15.993279     3.999160 -0.037106  0.048926
+2   5.120626   inf  171.264267  13.086798    2.966845     0.051614   21.720514     4.660527 -0.105668  0.022918
+3   5.585642   inf  177.101730  13.307958    3.425183     0.058676   24.673653     4.967258 -0.154167  0.010716
+4   5.357374   inf  174.006607  13.191156    3.182780     0.053529   20.640692     4.543203 -0.151700  0.010990
+5   5.955894   inf  184.047104  13.566396    3.792439     0.065327   29.712440     5.450912 -0.200306  0.011728
+6   7.412012   inf  207.572311  14.407370    5.294675     0.094356   53.401569     7.307638 -0.311364 -0.005261
+7   6.437314   inf  188.395996  13.725742    4.280152     0.072572   32.778603     5.725260 -0.237934 -0.001908
+8   6.800307   inf  197.793610  14.063911    4.651644     0.080962   41.932117     6.475502 -0.271021 -0.007083
+9   6.784010   inf  198.179123  14.077611    4.630723     0.080331   41.779484     6.463705 -0.268460 -0.010966
+10  6.649572   inf  195.395798  13.978405    4.488379     0.077638   38.462231     6.201793 -0.244363  0.001367
+11  6.672312   inf  197.612274  14.057464    4.509037     0.077747   40.363380     6.353218 -0.268866 -0.024035
+12  6.559144   inf  193.781387  13.920538    4.389415     0.075291   36.057335     6.004776 -0.252874 -0.002439

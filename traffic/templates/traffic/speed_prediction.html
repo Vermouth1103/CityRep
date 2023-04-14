@@ -18,6 +18,8 @@
   <!-- Font Awesome -->
   <link href=" {% static 'assets/css/font-awesome.min.css' %} " rel="stylesheet">
 
+  <!-- Leaflet-->
+  <link href=" {% static 'assets/css/leaflet.css' %} " rel="stylesheet">
   <!-- Custom Theme Style -->
   <link href=" {% static 'assets/css/custom.min.css' %} " rel="stylesheet">
 </head>
@@ -48,7 +50,6 @@
                     <li><a href="{% url 'traffic:representation_train' %}">表征建模</a></li>
                     <li><a href="{% url 'traffic:representation_pre' %}">表征展示</a></li>
                     <li><a href="{% url 'traffic:speed_prediction' %}">速度预测</a></li>
-                    <li><a href="{% url 'traffic:flow_prediction' %}">流量预测</a></li>
                     <li><a href="{% url 'traffic:route_plan' %}">路径规划</a></li>
                     <li><a href="{% url 'traffic:next_loc_prediction' %}">下一跳预测</a></li>
                     <li><a href="{% url 'traffic:accident' %}">事故推演</a></li>
@@ -190,53 +191,96 @@
 
       <!-- page content -->
       <div class="right_col" role="main">
-        <div class="">
-          <div class="page-title">
-            <div class="title_left">
-              <h3>Plain Page</h3>
-            </div>
-
-            <div class="title_right">
-              <div class="col-md-5 col-sm-5   form-group pull-right top_search">
-                <div class="input-group">
-                  <input type="text" class="form-control" placeholder="Search for...">
-                  <span class="input-group-btn">
-                    <button class="btn btn-default" type="button">Go!</button>
-                  </span>
-                </div>
-              </div>
-            </div>
+        <div class="page-title">
+          <div class="title_left">
+            <h3>速度预测任务</h3>
           </div>
 
-          <div class="clearfix"></div>
-
-          <div class="row">
-            <div class="col-md-12 col-sm-12  ">
-              <div class="x_panel">
-                <div class="x_title">
-                  <h2>Plain Page</h2>
-                  <ul class="nav navbar-right panel_toolbox">
-                    <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
-                    </li>
-                    <li class="dropdown">
-                      <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-wrench"></i></a>
-                      <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                          <a class="dropdown-item" href="#">Settings 1</a>
-                          <a class="dropdown-item" href="#">Settings 2</a>
-                        </div>
-                    </li>
-                    <li><a class="close-link"><i class="fa fa-close"></i></a>
-                    </li>
-                  </ul>
-                  <div class="clearfix"></div>
-                </div>
-                <div class="x_content">
-                    Add content to the page ...
-                </div>
+          <div class="title_right">
+            <div class="col-md-5 col-sm-5 form-group pull-right top_search">
+              <div class="input-group">
+                <input type="text" class="form-control" placeholder="Search for...">
+                <span class="input-group-btn">
+                  <button class="btn btn-default" type="button">Go!</button>
+                </span>
               </div>
             </div>
           </div>
         </div>
+        
+        <div class="clearfix"></div>
+
+        <div class="row">
+          <div class="col-md-12 col-sm-12">
+
+            <div class="x_panel">
+              <div class="x_title">
+                <h2>速度预测</h2>
+                <ul class="nav navbar-right panel_toolbox">
+                  <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                  </li>
+                  <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-wrench"></i></a>
+                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                        <a class="dropdown-item" href="#">Settings 1</a>
+                        <a class="dropdown-item" href="#">Settings 2</a>
+                      </div>
+                  </li>
+                  <li><a class="close-link"><i class="fa fa-close"></i></a>
+                  </li>
+                </ul>
+                <div class="clearfix"></div>
+              </div>
+
+              <div class="x_content">
+                <div class="row v-align">
+                  <div class="col-md-6 col-sm-6">
+                    <form action="" method="post" enctype="multipart/form-data" id="form">
+                      {% csrf_token %}
+                      <div class="col-md-8 col-sm-8">
+                        <div class="item form-group">
+                          <label class="col-form-label col-md-6 col-sm-6 offset-md-2 label-align" for="epochs" style="vertical-align: middle">历史数据: </span></label>
+                          <div class="col-md-6 col-sm-6">
+                            <input type="file" id="upload_file" required="required" class="form-control parameter" style="color: gray">
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-md-2 col-sm-2 offset-md-1 offset-sm-1">
+                        <button class="btn btn-info form-control upload-btn" name="type" type="submit" id="upload">上传</button>
+                      </div>
+                    </form>
+                  </div>
+                  <div class="col-md-6 col-sm-6 justify-content-start">
+                    <form action="" method="post" enctype="multipart/form-data" id="form">
+                      <div class="col-md-4 col-sm-4" style="float:left">
+                        <div class="item form-group">
+                          <label class="col-form-label col-md-8 col-sm-8 offset-md-1 label-align" for="batch_size">预测时间（分钟）: </span></label>
+                          <div class="col-md-6 col-sm-6 ">
+                            <input type="text" id="pred_time" required="required" class="form-control parameter" value="10" style="color: gray">
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-md-2 col-sm-2 offset-md-1 offset-sm-1">
+                        <button class="btn btn-info form-control upload-btn" name="type" type="submit" id="pred">预测</button>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-12 col-sm-12">
+                    <div id="mapid" style="height: 580px;"></div>
+                  </div>
+                </div>
+              </div>
+              <div style="height:260px; width:100%; display:none; overflow-y:auto" >
+                <table class="table table-striped" id="result1"></table>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="clearfix"></div>
+
       </div>
       <!-- /page content -->
 
@@ -245,8 +289,12 @@
 
   <!-- jQuery -->
   <script src=" {% static 'assets/js/jquery.min.js' %} "></script>
+  <script src=" {% static 'assets/js/leaflet.js' %} "></script>
   <!-- Bootstrap -->
   <script src=" {% static 'assets/js/bootstrap.bundle.min.js' %} "></script>
+  <script src=" {% static 'assets/js/jquery.cookie.js' %} "></script>
+
+  <script src=" {% static 'assets/js/speed_prediction.js' %} "></script>
 
   <!-- Custom Theme Scripts -->
   <script src=" {% static 'assets/js/custom.min.js' %} "></script>
