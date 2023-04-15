@@ -1,13 +1,10 @@
-# mysite_login/urls.py
-
-from django.conf.urls import url
-from django.contrib import admin
+from django.urls import path
 from . import views
-
+from main.views import IndexView 
 
 app_name = "login"
 urlpatterns = [
-    url("^admin/", admin.site.urls),
-    url("login/", views.LoginView().as_view(), name="login"),
-    # url("register/", views.register),
+    path("login/", views.LoginView.as_view(), name="login"),
+    path("register/", views.RegisterView.as_view(), name="register"),
+    path("logout/", views.LogoutView.as_view(), name="logout")
 ]

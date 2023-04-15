@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+
+{% load static %}
+
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <!-- Meta, title, CSS, favicons, etc. -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>演示系统</title>
+
+    <!-- Bootstrap -->
+    <link href=" {% static 'assets/css/bootstrap.min.css' %} " rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href=" {% static 'assets/css/font-awesome.min.css' %} " rel="stylesheet">
+
+    <link href=" {% static 'assets/css/animate.min.css' %} " rel="stylesheet">
+    <link href=" {% static 'assets/css/nprogress.css' %} " rel="stylesheet">
+
+    <!-- Leaflet-->
+    <link href=" {% static 'assets/css/leaflet.css' %} " rel="stylesheet">
+
+    <!-- Custom Theme Style -->
+    <link href=" {% static 'assets/css/custom.min.css' %} " rel="stylesheet">
+  </head>
+
+  <body class="login">
+    <div class="col-sm-4 col-md-4 offset-md-4 offset-sm-4">
+      <h3 style="text-align: center">用户注册</h3>
+      {% if messages %}
+          <ul class="messages">
+              {% for message in messages %}
+                  <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+              {% endfor %}
+          </ul>
+      {% endif %}
+
+      <form action="/register/" method="post" enctype="multipart/form-data" id="form">
+          {% csrf_token %}
+          <div class="form-group">
+            {{ register_form.username.label_tag }}
+            {{ register_form.username}}
+          </div>
+          <div class="form-group">
+              {{ register_form.password1.label_tag }}
+              {{ register_form.password1 }}
+          </div>
+          <div class="form-group">
+              {{ register_form.password2.label_tag }}
+              {{ register_form.password2 }}
+          </div>
+          <div class="form-group">
+              {{ register_form.email.label_tag }}
+              {{ register_form.email }}
+          </div>
+          已有账户？<a href="/login/" class="text-success">
+            <ins>登录</ins>
+          </a>
+          <button type="submit" class="btn btn-primary float-right" id="register-btn">注册</button>
+      </form>
+    </div>
+
+    <!-- jQuery -->
+    <script src=" {% static 'assets/js/jquery.min.js' %} "></script>
+    <!-- Bootstrap -->
+    <script src=" {% static 'assets/js/bootstrap.bundle.min.js' %} "></script>
+    <script src=" {% static 'assets/js/jquery.cookie.js' %} "></script>
+
+    <!-- <script src=" {% static 'assets/js/login.js' %} "></script> -->
+
+    <!-- Custom Theme Scripts -->
+    <script src=" {% static 'assets/js/custom.min.js' %} "></script>
+  </body>
+</html>

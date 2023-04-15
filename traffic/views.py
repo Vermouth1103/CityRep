@@ -2,6 +2,8 @@ from django.shortcuts import render
 from django.views import View
 from django.http import JsonResponse
 from django.template.defaultfilters import filesizeformat
+from django.contrib.auth.mixins import LoginRequiredMixin
+
 from .models import RepresentationData, RepresentationHyperparameter, AccidentData, RoutePlanData, RoutePlanHyperparameter, NextLocData, NextLocHyperparameter, SpeedPredictionData
 from .forms import RepresentationDataForm, RepresentationHyperparameterForm, AccidentDataForm, AccidentPredForm, RoutePlanDataForm, RoutePlanHyperparameterForm, RoutePlanPredForm, NextLocDataForm, NextLocHyperparameterForm, NextLocPredForm, SpeedPredictionDataForm, SpeedPredictionPredForm
 
@@ -23,13 +25,13 @@ from .model.prediction.scripts.train_speed import *
 
 # Create your views here.
 
-class IntroductionView(View):
+class IntroductionView(LoginRequiredMixin, View):
 
     def get(self, request):
         template = "traffic/introduction.html"
         return render(request, template)
 
-class RepresentationTrainView(View):
+class RepresentationTrainView(LoginRequiredMixin, View):
 
     def get(self, request):
         form = RepresentationDataForm()
@@ -105,7 +107,7 @@ class RepresentationTrainView(View):
             data = {"error_msg": "Hyper parameter set invalid."}
             return JsonResponse(data)
 
-class RepresentationUploadView(View):
+class RepresentationUploadView(LoginRequiredMixin, View):
 
     def post(self, request):
 
@@ -206,13 +208,13 @@ class RepresentationUploadView(View):
 
         return upload_file_path
 
-class RepresentationPreView(View):
+class RepresentationPreView(LoginRequiredMixin, View):
 
     def get(self, request):
         template = "traffic/representation_pre.html"
         return render(request, template)
 
-class SpeedPredicitonView(View):
+class SpeedPredicitonView(LoginRequiredMixin, View):
 
     template = "traffic/speed_prediction.html"
 
@@ -250,7 +252,7 @@ class SpeedPredicitonView(View):
             data = {"error_msg": "Hyper parameter set invalid."}
             return JsonResponse(data)
 
-class SpeedPredictionUploadView(View):
+class SpeedPredictionUploadView(LoginRequiredMixin, View):
 
     def post(self, request):
 
@@ -318,7 +320,7 @@ class SpeedPredictionUploadView(View):
             print(e)
             return -1, -1
 
-class RoutePlanView(View):
+class RoutePlanView(LoginRequiredMixin, View):
 
     template = "traffic/route_plan.html"
 
@@ -367,7 +369,7 @@ class RoutePlanView(View):
             data = {"error_msg": "Hyper parameter set invalid."}
             return JsonResponse(data)
 
-class RoutePlanUploadView(View):
+class RoutePlanUploadView(LoginRequiredMixin, View):
 
     def post(self, request):
 
@@ -449,7 +451,7 @@ class RoutePlanUploadView(View):
 
         return upload_file_path
 
-class RoutePlanTrainView(View):
+class RoutePlanTrainView(LoginRequiredMixin, View):
 
     def post(self, request):
         print(f"POST data: {request.POST}")
@@ -503,7 +505,7 @@ class RoutePlanTrainView(View):
             data = {"error_msg": "Hyper parameter set invalid."}
             return JsonResponse(data)
 
-class NextLocPredictionView(View):
+class NextLocPredictionView(LoginRequiredMixin, View):
 
     template = "traffic/next_loc_prediction.html"
 
@@ -553,7 +555,7 @@ class NextLocPredictionView(View):
             data = {"error_msg": "Hyper parameter set invalid."}
             return JsonResponse(data)
 
-class NextLocPredictionUploadView(View):
+class NextLocPredictionUploadView(LoginRequiredMixin, View):
 
     def post(self, request):
 
@@ -635,7 +637,7 @@ class NextLocPredictionUploadView(View):
 
         return upload_file_path
 
-class NextLocPredictionTrainView(View):
+class NextLocPredictionTrainView(LoginRequiredMixin, View):
 
     def post(self, request):
         print(f"POST data: {request.POST}")
@@ -689,7 +691,7 @@ class NextLocPredictionTrainView(View):
             data = {"error_msg": "Hyper parameter set invalid."}
             return JsonResponse(data)
 
-class AccidentView(View):
+class AccidentView(LoginRequiredMixin, View):
 
     def get(self, request):
         template = "traffic/accident.html"
@@ -728,7 +730,7 @@ class AccidentView(View):
             data = {"error_msg": "Hyper parameter set invalid."}
             return JsonResponse(data)
     
-class AccidentUploadView(View):
+class AccidentUploadView(LoginRequiredMixin, View):
 
     def post(self, request):
 
@@ -787,7 +789,7 @@ class AccidentUploadView(View):
 
         return upload_file_path, speed
     
-class RoutePlanView(View):
+class RoutePlanView(LoginRequiredMixin, View):
 
     template = "traffic/route_plan.html"
 
@@ -836,7 +838,7 @@ class RoutePlanView(View):
             data = {"error_msg": "Hyper parameter set invalid."}
             return JsonResponse(data)
 
-class RoutePlanUploadView(View):
+class RoutePlanUploadView(LoginRequiredMixin, View):
 
     def post(self, request):
 
@@ -918,7 +920,7 @@ class RoutePlanUploadView(View):
 
         return upload_file_path
 
-class RoutePlanTrainView(View):
+class RoutePlanTrainView(LoginRequiredMixin, View):
 
     def post(self, request):
         print(f"POST data: {request.POST}")
