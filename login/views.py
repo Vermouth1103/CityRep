@@ -24,6 +24,7 @@ class LoginView(View):
         if user is not None:
             # 如果用户存在，且用户名和密码正确，则登录用户
             login(request, user)
+            request.session['is_login'] = True
             return redirect("/main/")
         else:
             # 如果用户名和密码不正确，则返回登录页面，并显示错误消息
@@ -59,7 +60,7 @@ class RegisterView(View):
     
 class LogoutView(View):
 
-    def get(self, request):
+    def post(self, request):
         if not request.session.get('is_login', None):
             # 如果本来就未登录，也就没有登出一说
             return redirect("/login/")

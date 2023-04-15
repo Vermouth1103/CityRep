@@ -9,5 +9,6 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 class IndexView(LoginRequiredMixin, View):
         
     def get(self, request):
+        print(request.session.get('is_login', None))
         template = "main/index.html"
         return render(request, template)

@@ -28,6 +28,7 @@ from .model.prediction.scripts.train_speed import *
 class IntroductionView(LoginRequiredMixin, View):
 
     def get(self, request):
+        print(request.session.get('is_login', None))
         template = "traffic/introduction.html"
         return render(request, template)
 
