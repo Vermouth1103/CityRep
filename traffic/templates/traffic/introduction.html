@@ -10,7 +10,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <title> 演示系统 </title>
+  <title> 城市体征构建与认知系统 </title>
   <link rel="icon" href="#"/>
 
   <!-- Bootstrap -->
@@ -191,44 +191,6 @@
           </div>
         </div>
 
-        <div class="row">
-          <div class="col-md-12 col-sm-12">
-            <div class="x_panel">
-              <div class="x_title">
-                <ul class="nav navbar-right panel_toolbox">
-                  <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a></li>
-                  <li><a class="close-link"><i class="fa fa-close"></i></a>
-                  </li>
-                </ul>
-                <p style="text-align: center; font-weight:bolder; font-size:30px;">数据介绍</p>
-              </div>
-              <div class="x_content" style="text-align: left; font-weight: normal; font-size:20px">
-                <div class="upstream_task_input col-md-12 col-sm-12">
-                  <p style="font-weight: bolder; font-size: 25px;">表征模型输入</p>
-                  <ul>
-                    <li>路网数据：包含节点数据和边数据。</li>
-                      <ul style="list-style-type:square">
-                        <li>节点数据：包含节点序号、节点坐标和节点属性，格式为：</li>
-                        <img src="../../static/assets/img/node.png">
-                        <li>边数据：包含边序号，边长度，起始节点，终止节点，经过节点坐标和边属性，格式为：</li>
-                        <img src="../../static/assets/img/edge.png">
-                      </ul>
-                    <li>车辆轨迹数据：将轨迹经纬度映射到路网上，得到节点序列，如[1, 2, 3]表示车辆从节点1经过节点2到达节点3。</li>
-                    <li>POI数据：包含经纬度和POI种类。</li>
-                  </ul>
-                </div>
-                <div class="upstream_task_output col-md-12 col-sm-12">
-                  <p style="font-weight: bolder; font-size: 25px;">表征模型输出</p>
-                  <ul>
-                    <li>路段到结构区的分配矩阵：包含每条路段属于每个结构区的概率值。</li>
-                    <li>结构区到功能区的分配矩阵：包含每个结构区属于每个功能区的概率值。</li>
-                    <li>路段表征矩阵：包含每条路段的特征。</li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
       </div>
       <!-- /page content -->
 

@@ -4,12 +4,9 @@ import pickle
 import os
 
 def generate_trajectory_adj(absolute_file_path, data_type, road_network_path):
-    
     with open(road_network_path, "r") as f:
         road_data = json.load(f)
-    
     road_num = len(road_data["features"])
-
     tra_adj = np.zeros((road_num, road_num))
 
     with open(absolute_file_path, "r") as f:

@@ -1,0 +1,45 @@
+2023-04-16 22:27:02,822 - INFO - Log directory: ./libcity/log
+2023-04-16 22:27:03,330 - INFO - Loaded file Xiongan.geo, num_nodes=487
+2023-04-16 22:27:03,333 - INFO - set_weight_link_or_dist: dist
+2023-04-16 22:27:03,333 - INFO - init_weight_inf_or_zero: inf
+2023-04-16 22:27:03,336 - INFO - Loaded file Xiongan.rel, shape=(487, 487)
+2023-04-16 22:27:03,336 - INFO - Start Calculate the weight by Gauss kernel!
+2023-04-16 22:27:03,339 - INFO - Loading ./libcity/cache/dataset_cache/point_based_Xiongan_12_12_0.7_0.1_standard_64_True_True_False_True.npz
+2023-04-16 22:27:03,378 - INFO - train	x: (26, 12, 487, 2), y: (26, 12, 487, 2)
+2023-04-16 22:27:03,378 - INFO - eval	x: (4, 12, 487, 2), y: (4, 12, 487, 2)
+2023-04-16 22:27:03,378 - INFO - test	x: (7, 12, 487, 2), y: (7, 12, 487, 2)
+2023-04-16 22:27:03,379 - INFO - StandardScaler mean: 59.92392878005366, std: 5.807862904711059
+2023-04-16 22:27:03,379 - INFO - NoneScaler
+2023-04-16 22:27:03,786 - INFO - You select rnn_type GRU in RNN!
+2023-04-16 22:27:06,648 - INFO - RNN(
+  (rnn): GRU(974, 64)
+  (fc): Linear(in_features=64, out_features=487, bias=True)
+)
+2023-04-16 22:27:06,649 - INFO - rnn.weight_ih_l0	torch.Size([192, 974])	cuda:0	True
+2023-04-16 22:27:06,649 - INFO - rnn.weight_hh_l0	torch.Size([192, 64])	cuda:0	True
+2023-04-16 22:27:06,649 - INFO - rnn.bias_ih_l0	torch.Size([192])	cuda:0	True
+2023-04-16 22:27:06,649 - INFO - rnn.bias_hh_l0	torch.Size([192])	cuda:0	True
+2023-04-16 22:27:06,649 - INFO - fc.weight	torch.Size([487, 64])	cuda:0	True
+2023-04-16 22:27:06,649 - INFO - fc.bias	torch.Size([487])	cuda:0	True
+2023-04-16 22:27:06,649 - INFO - Total parameter numbers: 231335
+2023-04-16 22:27:06,650 - INFO - You select `adam` optimizer.
+2023-04-16 22:27:06,650 - INFO - You select `multisteplr` lr_scheduler.
+2023-04-16 22:27:06,651 - WARNING - Received none train loss func and will use the loss func defined in the model.
+2023-04-16 22:27:06,651 - INFO - Loaded model at ./libcity/cache/50001/model_cache/GRU_Xiongan.m
+2023-04-16 22:27:06,658 - INFO - Start evaluating ...
+2023-04-16 22:27:06,839 - INFO - Note that you select the single mode to evaluate!
+2023-04-16 22:27:06,845 - INFO - Evaluate result is saved at ./libcity/cache/50001/evaluate_cache/2023_04_16_22_27_06_RNN_Xiongan.csv
+2023-04-16 22:27:06,860 - INFO - 
+         MAE      MAPE        MSE      RMSE  masked_MAE  masked_MAPE  masked_MSE  masked_RMSE        R2      EVAR
+1   2.250899  0.037647  12.368184  3.516843    2.250899     0.037647   12.368184     3.516843  0.593109  0.594523
+2   3.344276  0.055966  20.481039  4.525598    3.344276     0.055966   20.481039     4.525598  0.373281  0.374910
+3   4.026163  0.069235  27.212032  5.216516    4.026163     0.069235   27.212032     5.216516  0.200841  0.208777
+4   4.127725  0.069481  26.735954  5.170682    4.127725     0.069481   26.735954     5.170682  0.196767  0.196795
+5   4.303253  0.071719  28.313322  5.321026    4.303253     0.071719   28.313322     5.321026  0.109807  0.115023
+6   4.137739  0.069749  27.397327  5.234246    4.137739     0.069749   27.397327     5.234246  0.174289  0.174582
+7   4.298354  0.073181  28.927374  5.378417    4.298354     0.073181   28.927374     5.378417  0.090398  0.091811
+8   4.452670  0.075511  30.248686  5.499880    4.452670     0.075511   30.248686     5.499880  0.112592  0.113023
+9   4.334240  0.073378  29.229095  5.406394    4.334240     0.073378   29.229095     5.406394  0.129242  0.129243
+10  4.437533  0.074155  31.576397  5.619288    4.437533     0.074155   31.576397     5.619288  0.076077  0.077923
+11  4.457975  0.075895  32.282185  5.681741    4.457975     0.075895   32.282185     5.681741  0.036337  0.037675
+12  3.879151  0.065489  24.454947  4.945194    3.879151     0.065489   24.454947     4.945194  0.249036  0.249670

@@ -970,7 +970,7 @@ class RoutePlanTrainView(LoginRequiredMixin, View):
             
             train_route_plan(hparams)
 
-            return JsonResponse(data)
+            return JsonResponse({})
         else:
             data = {"error_msg": "Hyper parameter set invalid."}
             return JsonResponse(data)

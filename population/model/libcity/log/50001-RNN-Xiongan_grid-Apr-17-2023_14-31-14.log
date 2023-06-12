@@ -1,0 +1,32 @@
+2023-04-17 14:31:14,226 - INFO - Log directory: ./libcity/log
+2023-04-17 14:31:14,801 - INFO - Loaded file Xiongan_grid.geo, num_nodes=364
+2023-04-17 14:31:14,803 - INFO - set_weight_link_or_dist: dist
+2023-04-17 14:31:14,803 - INFO - init_weight_inf_or_zero: inf
+2023-04-17 14:31:14,806 - INFO - Loaded file Xiongan_grid.rel, shape=(364, 364)
+2023-04-17 14:31:14,807 - INFO - Start Calculate the weight by Gauss kernel!
+2023-04-17 14:31:14,809 - INFO - Loading file Xiongan_grid.dyna
+2023-04-17 14:31:14,836 - INFO - Loaded file Xiongan_grid.dyna, shape=(60, 364, 1)
+2023-04-17 14:31:14,845 - INFO - Dataset created
+2023-04-17 14:31:14,846 - INFO - x shape: (37, 12, 364, 2), y shape: (37, 12, 364, 2)
+2023-04-17 14:31:14,846 - INFO - train	x: (26, 12, 364, 2), y: (26, 12, 364, 2)
+2023-04-17 14:31:14,846 - INFO - eval	x: (4, 12, 364, 2), y: (4, 12, 364, 2)
+2023-04-17 14:31:14,846 - INFO - test	x: (7, 12, 364, 2), y: (7, 12, 364, 2)
+2023-04-17 14:31:15,045 - INFO - Saved at ./libcity/cache/dataset_cache/point_based_Xiongan_grid_12_12_0.7_0.1_standard_64_True_True_False_True.npz
+2023-04-17 14:31:15,046 - INFO - StandardScaler mean: 59.99072364799272, std: 5.747457510909558
+2023-04-17 14:31:15,046 - INFO - NoneScaler
+2023-04-17 14:31:15,500 - INFO - You select rnn_type GRU in RNN!
+2023-04-17 14:31:18,361 - INFO - RNN(
+  (rnn): GRU(728, 64)
+  (fc): Linear(in_features=64, out_features=364, bias=True)
+)
+2023-04-17 14:31:18,361 - INFO - rnn.weight_ih_l0	torch.Size([192, 728])	cuda:0	True
+2023-04-17 14:31:18,361 - INFO - rnn.weight_hh_l0	torch.Size([192, 64])	cuda:0	True
+2023-04-17 14:31:18,361 - INFO - rnn.bias_ih_l0	torch.Size([192])	cuda:0	True
+2023-04-17 14:31:18,361 - INFO - rnn.bias_hh_l0	torch.Size([192])	cuda:0	True
+2023-04-17 14:31:18,361 - INFO - fc.weight	torch.Size([364, 64])	cuda:0	True
+2023-04-17 14:31:18,361 - INFO - fc.bias	torch.Size([364])	cuda:0	True
+2023-04-17 14:31:18,361 - INFO - Total parameter numbers: 176108
+2023-04-17 14:31:18,362 - INFO - You select `adam` optimizer.
+2023-04-17 14:31:18,362 - INFO - You select `multisteplr` lr_scheduler.
+2023-04-17 14:31:18,362 - WARNING - Received none train loss func and will use the loss func defined in the model.
+2023-04-17 14:31:18,362 - INFO - Loaded model at ./libcity/cache/50001/model_cache/GRU_Xiongan_grid.m

@@ -1,0 +1,411 @@
+2023-01-06 14:22:15,089 - INFO - Log directory: ./libcity/log
+2023-01-06 14:22:15,090 - INFO - Begin pipeline, task=eta, model_name=DeepTTE, dataset_name=Beijing_Taxi_Sample_new_longer30, exp_id=93216
+2023-01-06 14:22:15,090 - INFO - {'task': 'eta', 'model': 'DeepTTE', 'dataset': 'Beijing_Taxi_Sample_new_longer30', 'saved_model': True, 'train': True, 'seed': 0, 'batch_size': 64, 'dataset_class': 'ETADataset', 'eta_encoder': 'DeeptteEncoder', 'executor': 'ETAExecutor', 'evaluator': 'ETAEvaluator', 'uid_emb_size': 16, 'weekid_emb_size': 3, 'timdid_emb_size': 8, 'kernel_size': 3, 'num_filter': 32, 'pooling_method': 'attention', 'num_final_fcs': 4, 'final_fc_size': 128, 'alpha': 0.1, 'rnn_type': 'LSTM', 'rnn_num_layers': 1, 'hidden_size': 128, 'max_epoch': 100, 'learner': 'adam', 'learning_rate': 0.001, 'lr_decay': False, 'clip_grad_norm': False, 'use_early_stop': False, 'patience': 20, 'num_workers': 0, 'min_session_len': 5, 'max_session_len': 50, 'min_sessions': 0, 'window_size': 1, 'cut_method': 'time_interval', 'pad_with_last_sample': True, 'sort_by_traj_len': True, 'cache_dataset': True, 'train_rate': 0.7, 'eval_rate': 0.1, 'gpu': True, 'gpu_id': 0, 'train_loss': 'none', 'epoch': 0, 'weight_decay': 0, 'lr_epsilon': 1e-08, 'lr_beta1': 0.9, 'lr_beta2': 0.999, 'lr_alpha': 0.99, 'lr_momentum': 0, 'lr_scheduler': 'multisteplr', 'lr_decay_ratio': 0.1, 'steps': [5, 20, 40, 70], 'step_size': 10, 'lr_T_max': 30, 'lr_eta_min': 0, 'lr_patience': 10, 'lr_threshold': 0.0001, 'max_grad_norm': 1.0, 'log_level': 'INFO', 'log_every': 1, 'load_best_epoch': True, 'hyper_tune': False, 'metrics': ['MAE', 'MAPE', 'MSE', 'RMSE', 'masked_MAE', 'masked_MAPE', 'masked_MSE', 'masked_RMSE', 'R2', 'EVAR'], 'mode': 'single', 'save_modes': ['csv'], 'geo': {'including_types': ['Polygon'], 'Polygon': {'coordinates': 'coordinate', 'embedding': 'other'}}, 'usr': {'properties': {}}, 'dyna': {'including_types': ['trajectory'], 'trajectory': {'entity_id': 'usr_id', 'traj_id': 'num', 'coordinates': 'coordinate', 'current_dis': 'num', 'speeds': 'other', 'speeds_relevant1': 'other', 'speeds_relevant2': 'other', 'speeds_long': 'other', 'grid_len': 'num', 'holiday': 'num'}}, 'geo_file': 'Beijing_Taxi_Sample_new_longer30', 'usr_file': 'Beijing_Taxi_Sample_new_longer30', 'dyna_file': 'Beijing_Taxi_Sample_new_longer30', 'device': device(type='cuda', index=0), 'exp_id': 93216}
+2023-01-06 14:22:15,095 - INFO - Dataset created
+2023-01-06 14:22:16,426 - INFO - Loaded file Beijing_Taxi_Sample_new_longer30.dyna, shape=(290813, 14)
+2023-01-06 14:22:51,937 - INFO - Saved at ./libcity/cache/dataset_cache/eta_Beijing_Taxi_Sample_new_longer30_DeeptteEncoder.json
+2023-01-06 14:22:52,103 - INFO - longi_mean: 116.38775224575281
+2023-01-06 14:22:52,104 - INFO - longi_std: 0.07436581782419843
+2023-01-06 14:22:52,104 - INFO - lati_mean: 39.92595912826014
+2023-01-06 14:22:52,104 - INFO - lati_std: 0.051960612818695746
+2023-01-06 14:22:52,104 - INFO - dist_mean: 46.394674660283926
+2023-01-06 14:22:52,104 - INFO - dist_std: 24.736874488458618
+2023-01-06 14:22:52,104 - INFO - time_mean: 2249.877973358706
+2023-01-06 14:22:52,104 - INFO - time_std: 1145.3334062262293
+2023-01-06 14:22:52,104 - INFO - dist_gap_mean: 0.9741931585426983
+2023-01-06 14:22:52,104 - INFO - dist_gap_std: 4.724302966927774
+2023-01-06 14:22:52,104 - INFO - time_gap_mean: 47.24283002847011
+2023-01-06 14:22:52,104 - INFO - time_gap_std: 44.31597855637794
+2023-01-06 14:22:52,119 - INFO - Number of train data: 4204
+2023-01-06 14:22:52,119 - INFO - Number of eval  data: 587
+2023-01-06 14:22:52,119 - INFO - Number of test  data: 1171
+2023-01-06 14:22:54,754 - INFO - DeepTTE(
+  (attr_net): Attr(
+    (uid_em): Embedding(69, 16)
+    (weekid_em): Embedding(7, 3)
+    (timeid_em): Embedding(1440, 8)
+  )
+  (spatio_temporal): SpatioTemporal(
+    (geo_conv): GeoConv(
+      (state_em): Embedding(2, 2)
+      (process_coords): Linear(in_features=4, out_features=16, bias=True)
+      (conv): Conv1d(16, 32, kernel_size=(3,), stride=(1,))
+    )
+    (rnn): LSTM(61, 128, batch_first=True)
+    (attr2atten): Linear(in_features=28, out_features=128, bias=True)
+  )
+  (entire_estimate): EntireEstimator(
+    (input2hid): Linear(in_features=156, out_features=128, bias=True)
+    (residuals): ModuleList(
+      (0): Linear(in_features=128, out_features=128, bias=True)
+      (1): Linear(in_features=128, out_features=128, bias=True)
+      (2): Linear(in_features=128, out_features=128, bias=True)
+      (3): Linear(in_features=128, out_features=128, bias=True)
+    )
+    (hid2out): Linear(in_features=128, out_features=1, bias=True)
+  )
+  (local_estimate): LocalEstimator(
+    (input2hid): Linear(in_features=128, out_features=64, bias=True)
+    (hid2hid): Linear(in_features=64, out_features=32, bias=True)
+    (hid2out): Linear(in_features=32, out_features=1, bias=True)
+  )
+)
+2023-01-06 14:22:54,754 - INFO - attr_net.uid_em.weight	torch.Size([69, 16])	cuda:0	True
+2023-01-06 14:22:54,755 - INFO - attr_net.weekid_em.weight	torch.Size([7, 3])	cuda:0	True
+2023-01-06 14:22:54,755 - INFO - attr_net.timeid_em.weight	torch.Size([1440, 8])	cuda:0	True
+2023-01-06 14:22:54,755 - INFO - spatio_temporal.geo_conv.state_em.weight	torch.Size([2, 2])	cuda:0	True
+2023-01-06 14:22:54,755 - INFO - spatio_temporal.geo_conv.process_coords.weight	torch.Size([16, 4])	cuda:0	True
+2023-01-06 14:22:54,755 - INFO - spatio_temporal.geo_conv.process_coords.bias	torch.Size([16])	cuda:0	True
+2023-01-06 14:22:54,755 - INFO - spatio_temporal.geo_conv.conv.weight	torch.Size([32, 16, 3])	cuda:0	True
+2023-01-06 14:22:54,755 - INFO - spatio_temporal.geo_conv.conv.bias	torch.Size([32])	cuda:0	True
+2023-01-06 14:22:54,755 - INFO - spatio_temporal.rnn.weight_ih_l0	torch.Size([512, 61])	cuda:0	True
+2023-01-06 14:22:54,755 - INFO - spatio_temporal.rnn.weight_hh_l0	torch.Size([512, 128])	cuda:0	True
+2023-01-06 14:22:54,755 - INFO - spatio_temporal.rnn.bias_ih_l0	torch.Size([512])	cuda:0	True
+2023-01-06 14:22:54,755 - INFO - spatio_temporal.rnn.bias_hh_l0	torch.Size([512])	cuda:0	True
+2023-01-06 14:22:54,755 - INFO - spatio_temporal.attr2atten.weight	torch.Size([128, 28])	cuda:0	True
+2023-01-06 14:22:54,755 - INFO - spatio_temporal.attr2atten.bias	torch.Size([128])	cuda:0	True
+2023-01-06 14:22:54,755 - INFO - entire_estimate.input2hid.weight	torch.Size([128, 156])	cuda:0	True
+2023-01-06 14:22:54,755 - INFO - entire_estimate.input2hid.bias	torch.Size([128])	cuda:0	True
+2023-01-06 14:22:54,756 - INFO - entire_estimate.residuals.0.weight	torch.Size([128, 128])	cuda:0	True
+2023-01-06 14:22:54,756 - INFO - entire_estimate.residuals.0.bias	torch.Size([128])	cuda:0	True
+2023-01-06 14:22:54,756 - INFO - entire_estimate.residuals.1.weight	torch.Size([128, 128])	cuda:0	True
+2023-01-06 14:22:54,756 - INFO - entire_estimate.residuals.1.bias	torch.Size([128])	cuda:0	True
+2023-01-06 14:22:54,756 - INFO - entire_estimate.residuals.2.weight	torch.Size([128, 128])	cuda:0	True
+2023-01-06 14:22:54,756 - INFO - entire_estimate.residuals.2.bias	torch.Size([128])	cuda:0	True
+2023-01-06 14:22:54,756 - INFO - entire_estimate.residuals.3.weight	torch.Size([128, 128])	cuda:0	True
+2023-01-06 14:22:54,756 - INFO - entire_estimate.residuals.3.bias	torch.Size([128])	cuda:0	True
+2023-01-06 14:22:54,756 - INFO - entire_estimate.hid2out.weight	torch.Size([1, 128])	cuda:0	True
+2023-01-06 14:22:54,756 - INFO - entire_estimate.hid2out.bias	torch.Size([1])	cuda:0	True
+2023-01-06 14:22:54,756 - INFO - local_estimate.input2hid.weight	torch.Size([64, 128])	cuda:0	True
+2023-01-06 14:22:54,756 - INFO - local_estimate.input2hid.bias	torch.Size([64])	cuda:0	True
+2023-01-06 14:22:54,756 - INFO - local_estimate.hid2hid.weight	torch.Size([32, 64])	cuda:0	True
+2023-01-06 14:22:54,756 - INFO - local_estimate.hid2hid.bias	torch.Size([32])	cuda:0	True
+2023-01-06 14:22:54,756 - INFO - local_estimate.hid2out.weight	torch.Size([1, 32])	cuda:0	True
+2023-01-06 14:22:54,756 - INFO - local_estimate.hid2out.bias	torch.Size([1])	cuda:0	True
+2023-01-06 14:22:54,757 - INFO - Total parameter numbers: 212443
+2023-01-06 14:22:54,757 - INFO - You select `adam` optimizer.
+2023-01-06 14:22:54,757 - WARNING - Received none train loss func and will use the loss func defined in the model.
+2023-01-06 14:22:54,757 - INFO - Start training ...
+2023-01-06 14:22:54,757 - INFO - num_batches:66
+2023-01-06 14:22:57,466 - INFO - epoch complete!
+2023-01-06 14:22:57,466 - INFO - evaluating now!
+2023-01-06 14:22:57,633 - INFO - Epoch [0/100] train_loss: 0.5084, val_loss: 0.3693, lr: 0.001000, 2.88s
+2023-01-06 14:22:57,641 - INFO - Saved model at 0
+2023-01-06 14:22:57,642 - INFO - Val loss decrease from inf to 0.3693, saving to ./libcity/cache/93216/model_cache/DeepTTE_Beijing_Taxi_Sample_new_longer30_epoch0.tar
+2023-01-06 14:23:00,332 - INFO - epoch complete!
+2023-01-06 14:23:00,332 - INFO - evaluating now!
+2023-01-06 14:23:00,498 - INFO - Epoch [1/100] train_loss: 0.3273, val_loss: 0.3013, lr: 0.001000, 2.86s
+2023-01-06 14:23:00,507 - INFO - Saved model at 1
+2023-01-06 14:23:00,507 - INFO - Val loss decrease from 0.3693 to 0.3013, saving to ./libcity/cache/93216/model_cache/DeepTTE_Beijing_Taxi_Sample_new_longer30_epoch1.tar
+2023-01-06 14:23:03,213 - INFO - epoch complete!
+2023-01-06 14:23:03,214 - INFO - evaluating now!
+2023-01-06 14:23:03,379 - INFO - Epoch [2/100] train_loss: 0.3372, val_loss: 0.2352, lr: 0.001000, 2.87s
+2023-01-06 14:23:03,388 - INFO - Saved model at 2
+2023-01-06 14:23:03,388 - INFO - Val loss decrease from 0.3013 to 0.2352, saving to ./libcity/cache/93216/model_cache/DeepTTE_Beijing_Taxi_Sample_new_longer30_epoch2.tar
+2023-01-06 14:23:06,114 - INFO - epoch complete!
+2023-01-06 14:23:06,114 - INFO - evaluating now!
+2023-01-06 14:23:06,282 - INFO - Epoch [3/100] train_loss: 0.2929, val_loss: 0.2757, lr: 0.001000, 2.89s
+2023-01-06 14:23:08,961 - INFO - epoch complete!
+2023-01-06 14:23:08,961 - INFO - evaluating now!
+2023-01-06 14:23:09,129 - INFO - Epoch [4/100] train_loss: 0.2663, val_loss: 0.2282, lr: 0.001000, 2.85s
+2023-01-06 14:23:09,137 - INFO - Saved model at 4
+2023-01-06 14:23:09,138 - INFO - Val loss decrease from 0.2352 to 0.2282, saving to ./libcity/cache/93216/model_cache/DeepTTE_Beijing_Taxi_Sample_new_longer30_epoch4.tar
+2023-01-06 14:23:11,806 - INFO - epoch complete!
+2023-01-06 14:23:11,806 - INFO - evaluating now!
+2023-01-06 14:23:11,972 - INFO - Epoch [5/100] train_loss: 0.2732, val_loss: 0.2311, lr: 0.001000, 2.83s
+2023-01-06 14:23:14,669 - INFO - epoch complete!
+2023-01-06 14:23:14,669 - INFO - evaluating now!
+2023-01-06 14:23:14,835 - INFO - Epoch [6/100] train_loss: 0.2432, val_loss: 0.2084, lr: 0.001000, 2.86s
+2023-01-06 14:23:14,843 - INFO - Saved model at 6
+2023-01-06 14:23:14,843 - INFO - Val loss decrease from 0.2282 to 0.2084, saving to ./libcity/cache/93216/model_cache/DeepTTE_Beijing_Taxi_Sample_new_longer30_epoch6.tar
+2023-01-06 14:23:17,511 - INFO - epoch complete!
+2023-01-06 14:23:17,511 - INFO - evaluating now!
+2023-01-06 14:23:17,678 - INFO - Epoch [7/100] train_loss: 0.2331, val_loss: 0.2108, lr: 0.001000, 2.83s
+2023-01-06 14:23:20,729 - INFO - epoch complete!
+2023-01-06 14:23:20,730 - INFO - evaluating now!
+2023-01-06 14:23:20,903 - INFO - Epoch [8/100] train_loss: 0.2143, val_loss: 0.2199, lr: 0.001000, 3.22s
+2023-01-06 14:23:23,617 - INFO - epoch complete!
+2023-01-06 14:23:23,618 - INFO - evaluating now!
+2023-01-06 14:23:23,784 - INFO - Epoch [9/100] train_loss: 0.2176, val_loss: 0.2056, lr: 0.001000, 2.88s
+2023-01-06 14:23:23,793 - INFO - Saved model at 9
+2023-01-06 14:23:23,793 - INFO - Val loss decrease from 0.2084 to 0.2056, saving to ./libcity/cache/93216/model_cache/DeepTTE_Beijing_Taxi_Sample_new_longer30_epoch9.tar
+2023-01-06 14:23:26,501 - INFO - epoch complete!
+2023-01-06 14:23:26,501 - INFO - evaluating now!
+2023-01-06 14:23:26,671 - INFO - Epoch [10/100] train_loss: 0.2180, val_loss: 0.2062, lr: 0.001000, 2.88s
+2023-01-06 14:23:29,391 - INFO - epoch complete!
+2023-01-06 14:23:29,391 - INFO - evaluating now!
+2023-01-06 14:23:29,568 - INFO - Epoch [11/100] train_loss: 0.2282, val_loss: 0.2080, lr: 0.001000, 2.90s
+2023-01-06 14:23:32,307 - INFO - epoch complete!
+2023-01-06 14:23:32,308 - INFO - evaluating now!
+2023-01-06 14:23:32,474 - INFO - Epoch [12/100] train_loss: 0.2108, val_loss: 0.2158, lr: 0.001000, 2.90s
+2023-01-06 14:23:35,188 - INFO - epoch complete!
+2023-01-06 14:23:35,189 - INFO - evaluating now!
+2023-01-06 14:23:35,357 - INFO - Epoch [13/100] train_loss: 0.2270, val_loss: 0.2303, lr: 0.001000, 2.88s
+2023-01-06 14:23:38,056 - INFO - epoch complete!
+2023-01-06 14:23:38,057 - INFO - evaluating now!
+2023-01-06 14:23:38,224 - INFO - Epoch [14/100] train_loss: 0.2185, val_loss: 0.2028, lr: 0.001000, 2.87s
+2023-01-06 14:23:38,234 - INFO - Saved model at 14
+2023-01-06 14:23:38,234 - INFO - Val loss decrease from 0.2056 to 0.2028, saving to ./libcity/cache/93216/model_cache/DeepTTE_Beijing_Taxi_Sample_new_longer30_epoch14.tar
+2023-01-06 14:23:40,961 - INFO - epoch complete!
+2023-01-06 14:23:40,961 - INFO - evaluating now!
+2023-01-06 14:23:41,128 - INFO - Epoch [15/100] train_loss: 0.1994, val_loss: 0.2060, lr: 0.001000, 2.89s
+2023-01-06 14:23:43,451 - INFO - epoch complete!
+2023-01-06 14:23:43,451 - INFO - evaluating now!
+2023-01-06 14:23:43,618 - INFO - Epoch [16/100] train_loss: 0.2009, val_loss: 0.2057, lr: 0.001000, 2.49s
+2023-01-06 14:23:45,911 - INFO - epoch complete!
+2023-01-06 14:23:45,912 - INFO - evaluating now!
+2023-01-06 14:23:46,078 - INFO - Epoch [17/100] train_loss: 0.2007, val_loss: 0.2104, lr: 0.001000, 2.46s
+2023-01-06 14:23:48,371 - INFO - epoch complete!
+2023-01-06 14:23:48,372 - INFO - evaluating now!
+2023-01-06 14:23:48,540 - INFO - Epoch [18/100] train_loss: 0.1904, val_loss: 0.2113, lr: 0.001000, 2.46s
+2023-01-06 14:23:50,862 - INFO - epoch complete!
+2023-01-06 14:23:50,862 - INFO - evaluating now!
+2023-01-06 14:23:51,029 - INFO - Epoch [19/100] train_loss: 0.1945, val_loss: 0.2202, lr: 0.001000, 2.49s
+2023-01-06 14:23:53,344 - INFO - epoch complete!
+2023-01-06 14:23:53,344 - INFO - evaluating now!
+2023-01-06 14:23:53,510 - INFO - Epoch [20/100] train_loss: 0.1914, val_loss: 0.2412, lr: 0.001000, 2.48s
+2023-01-06 14:23:55,950 - INFO - epoch complete!
+2023-01-06 14:23:55,950 - INFO - evaluating now!
+2023-01-06 14:23:56,116 - INFO - Epoch [21/100] train_loss: 0.1931, val_loss: 0.2910, lr: 0.001000, 2.61s
+2023-01-06 14:23:58,391 - INFO - epoch complete!
+2023-01-06 14:23:58,392 - INFO - evaluating now!
+2023-01-06 14:23:58,556 - INFO - Epoch [22/100] train_loss: 0.2138, val_loss: 0.2832, lr: 0.001000, 2.44s
+2023-01-06 14:24:00,857 - INFO - epoch complete!
+2023-01-06 14:24:00,858 - INFO - evaluating now!
+2023-01-06 14:24:01,023 - INFO - Epoch [23/100] train_loss: 0.1965, val_loss: 0.2210, lr: 0.001000, 2.47s
+2023-01-06 14:24:03,743 - INFO - epoch complete!
+2023-01-06 14:24:03,743 - INFO - evaluating now!
+2023-01-06 14:24:03,909 - INFO - Epoch [24/100] train_loss: 0.1851, val_loss: 0.2398, lr: 0.001000, 2.89s
+2023-01-06 14:24:06,607 - INFO - epoch complete!
+2023-01-06 14:24:06,607 - INFO - evaluating now!
+2023-01-06 14:24:06,773 - INFO - Epoch [25/100] train_loss: 0.1881, val_loss: 0.2356, lr: 0.001000, 2.86s
+2023-01-06 14:24:09,476 - INFO - epoch complete!
+2023-01-06 14:24:09,476 - INFO - evaluating now!
+2023-01-06 14:24:09,642 - INFO - Epoch [26/100] train_loss: 0.1919, val_loss: 0.2232, lr: 0.001000, 2.87s
+2023-01-06 14:24:12,359 - INFO - epoch complete!
+2023-01-06 14:24:12,359 - INFO - evaluating now!
+2023-01-06 14:24:12,525 - INFO - Epoch [27/100] train_loss: 0.1956, val_loss: 0.2055, lr: 0.001000, 2.88s
+2023-01-06 14:24:15,257 - INFO - epoch complete!
+2023-01-06 14:24:15,257 - INFO - evaluating now!
+2023-01-06 14:24:15,424 - INFO - Epoch [28/100] train_loss: 0.2053, val_loss: 0.2097, lr: 0.001000, 2.90s
+2023-01-06 14:24:18,122 - INFO - epoch complete!
+2023-01-06 14:24:18,122 - INFO - evaluating now!
+2023-01-06 14:24:18,296 - INFO - Epoch [29/100] train_loss: 0.1844, val_loss: 0.2309, lr: 0.001000, 2.87s
+2023-01-06 14:24:21,019 - INFO - epoch complete!
+2023-01-06 14:24:21,020 - INFO - evaluating now!
+2023-01-06 14:24:21,195 - INFO - Epoch [30/100] train_loss: 0.1779, val_loss: 0.2660, lr: 0.001000, 2.90s
+2023-01-06 14:24:23,906 - INFO - epoch complete!
+2023-01-06 14:24:23,906 - INFO - evaluating now!
+2023-01-06 14:24:24,079 - INFO - Epoch [31/100] train_loss: 0.1783, val_loss: 0.2694, lr: 0.001000, 2.88s
+2023-01-06 14:24:26,774 - INFO - epoch complete!
+2023-01-06 14:24:26,775 - INFO - evaluating now!
+2023-01-06 14:24:26,947 - INFO - Epoch [32/100] train_loss: 0.1777, val_loss: 0.2584, lr: 0.001000, 2.87s
+2023-01-06 14:24:29,796 - INFO - epoch complete!
+2023-01-06 14:24:29,796 - INFO - evaluating now!
+2023-01-06 14:24:29,963 - INFO - Epoch [33/100] train_loss: 0.1786, val_loss: 0.2906, lr: 0.001000, 3.01s
+2023-01-06 14:24:32,638 - INFO - epoch complete!
+2023-01-06 14:24:32,638 - INFO - evaluating now!
+2023-01-06 14:24:32,807 - INFO - Epoch [34/100] train_loss: 0.1862, val_loss: 0.2541, lr: 0.001000, 2.84s
+2023-01-06 14:24:35,511 - INFO - epoch complete!
+2023-01-06 14:24:35,511 - INFO - evaluating now!
+2023-01-06 14:24:35,682 - INFO - Epoch [35/100] train_loss: 0.1852, val_loss: 0.2238, lr: 0.001000, 2.87s
+2023-01-06 14:24:38,338 - INFO - epoch complete!
+2023-01-06 14:24:38,338 - INFO - evaluating now!
+2023-01-06 14:24:38,510 - INFO - Epoch [36/100] train_loss: 0.1890, val_loss: 0.2052, lr: 0.001000, 2.83s
+2023-01-06 14:24:41,203 - INFO - epoch complete!
+2023-01-06 14:24:41,203 - INFO - evaluating now!
+2023-01-06 14:24:41,370 - INFO - Epoch [37/100] train_loss: 0.1778, val_loss: 0.2524, lr: 0.001000, 2.86s
+2023-01-06 14:24:44,081 - INFO - epoch complete!
+2023-01-06 14:24:44,082 - INFO - evaluating now!
+2023-01-06 14:24:44,249 - INFO - Epoch [38/100] train_loss: 0.1745, val_loss: 0.3000, lr: 0.001000, 2.88s
+2023-01-06 14:24:46,939 - INFO - epoch complete!
+2023-01-06 14:24:46,940 - INFO - evaluating now!
+2023-01-06 14:24:47,106 - INFO - Epoch [39/100] train_loss: 0.1697, val_loss: 0.3043, lr: 0.001000, 2.86s
+2023-01-06 14:24:49,837 - INFO - epoch complete!
+2023-01-06 14:24:49,837 - INFO - evaluating now!
+2023-01-06 14:24:50,005 - INFO - Epoch [40/100] train_loss: 0.1784, val_loss: 0.2745, lr: 0.001000, 2.90s
+2023-01-06 14:24:52,719 - INFO - epoch complete!
+2023-01-06 14:24:52,720 - INFO - evaluating now!
+2023-01-06 14:24:52,888 - INFO - Epoch [41/100] train_loss: 0.1713, val_loss: 0.2309, lr: 0.001000, 2.88s
+2023-01-06 14:24:55,639 - INFO - epoch complete!
+2023-01-06 14:24:55,640 - INFO - evaluating now!
+2023-01-06 14:24:55,812 - INFO - Epoch [42/100] train_loss: 0.1723, val_loss: 0.2328, lr: 0.001000, 2.92s
+2023-01-06 14:24:58,522 - INFO - epoch complete!
+2023-01-06 14:24:58,522 - INFO - evaluating now!
+2023-01-06 14:24:58,692 - INFO - Epoch [43/100] train_loss: 0.1701, val_loss: 0.2881, lr: 0.001000, 2.88s
+2023-01-06 14:25:01,414 - INFO - epoch complete!
+2023-01-06 14:25:01,414 - INFO - evaluating now!
+2023-01-06 14:25:01,584 - INFO - Epoch [44/100] train_loss: 0.1669, val_loss: 0.3208, lr: 0.001000, 2.89s
+2023-01-06 14:25:04,389 - INFO - epoch complete!
+2023-01-06 14:25:04,390 - INFO - evaluating now!
+2023-01-06 14:25:04,559 - INFO - Epoch [45/100] train_loss: 0.1669, val_loss: 0.3146, lr: 0.001000, 2.97s
+2023-01-06 14:25:07,275 - INFO - epoch complete!
+2023-01-06 14:25:07,276 - INFO - evaluating now!
+2023-01-06 14:25:07,448 - INFO - Epoch [46/100] train_loss: 0.1607, val_loss: 0.3003, lr: 0.001000, 2.89s
+2023-01-06 14:25:10,193 - INFO - epoch complete!
+2023-01-06 14:25:10,194 - INFO - evaluating now!
+2023-01-06 14:25:10,367 - INFO - Epoch [47/100] train_loss: 0.1696, val_loss: 0.2697, lr: 0.001000, 2.92s
+2023-01-06 14:25:13,086 - INFO - epoch complete!
+2023-01-06 14:25:13,086 - INFO - evaluating now!
+2023-01-06 14:25:13,256 - INFO - Epoch [48/100] train_loss: 0.1717, val_loss: 0.2178, lr: 0.001000, 2.89s
+2023-01-06 14:25:15,977 - INFO - epoch complete!
+2023-01-06 14:25:15,977 - INFO - evaluating now!
+2023-01-06 14:25:16,149 - INFO - Epoch [49/100] train_loss: 0.1712, val_loss: 0.2309, lr: 0.001000, 2.89s
+2023-01-06 14:25:18,894 - INFO - epoch complete!
+2023-01-06 14:25:18,894 - INFO - evaluating now!
+2023-01-06 14:25:19,063 - INFO - Epoch [50/100] train_loss: 0.1631, val_loss: 0.2519, lr: 0.001000, 2.91s
+2023-01-06 14:25:21,802 - INFO - epoch complete!
+2023-01-06 14:25:21,802 - INFO - evaluating now!
+2023-01-06 14:25:21,971 - INFO - Epoch [51/100] train_loss: 0.1630, val_loss: 0.2831, lr: 0.001000, 2.91s
+2023-01-06 14:25:24,681 - INFO - epoch complete!
+2023-01-06 14:25:24,682 - INFO - evaluating now!
+2023-01-06 14:25:24,850 - INFO - Epoch [52/100] train_loss: 0.1548, val_loss: 0.2692, lr: 0.001000, 2.88s
+2023-01-06 14:25:27,556 - INFO - epoch complete!
+2023-01-06 14:25:27,556 - INFO - evaluating now!
+2023-01-06 14:25:27,723 - INFO - Epoch [53/100] train_loss: 0.1510, val_loss: 0.3003, lr: 0.001000, 2.87s
+2023-01-06 14:25:30,434 - INFO - epoch complete!
+2023-01-06 14:25:30,435 - INFO - evaluating now!
+2023-01-06 14:25:30,603 - INFO - Epoch [54/100] train_loss: 0.1488, val_loss: 0.3062, lr: 0.001000, 2.88s
+2023-01-06 14:25:33,350 - INFO - epoch complete!
+2023-01-06 14:25:33,350 - INFO - evaluating now!
+2023-01-06 14:25:33,518 - INFO - Epoch [55/100] train_loss: 0.1490, val_loss: 0.3277, lr: 0.001000, 2.91s
+2023-01-06 14:25:36,211 - INFO - epoch complete!
+2023-01-06 14:25:36,211 - INFO - evaluating now!
+2023-01-06 14:25:36,377 - INFO - Epoch [56/100] train_loss: 0.1545, val_loss: 0.3009, lr: 0.001000, 2.86s
+2023-01-06 14:25:39,074 - INFO - epoch complete!
+2023-01-06 14:25:39,074 - INFO - evaluating now!
+2023-01-06 14:25:39,243 - INFO - Epoch [57/100] train_loss: 0.1601, val_loss: 0.2508, lr: 0.001000, 2.86s
+2023-01-06 14:25:42,069 - INFO - epoch complete!
+2023-01-06 14:25:42,070 - INFO - evaluating now!
+2023-01-06 14:25:42,238 - INFO - Epoch [58/100] train_loss: 0.1542, val_loss: 0.2396, lr: 0.001000, 2.99s
+2023-01-06 14:25:44,939 - INFO - epoch complete!
+2023-01-06 14:25:44,940 - INFO - evaluating now!
+2023-01-06 14:25:45,108 - INFO - Epoch [59/100] train_loss: 0.1527, val_loss: 0.2380, lr: 0.001000, 2.87s
+2023-01-06 14:25:47,791 - INFO - epoch complete!
+2023-01-06 14:25:47,791 - INFO - evaluating now!
+2023-01-06 14:25:47,957 - INFO - Epoch [60/100] train_loss: 0.1546, val_loss: 0.2200, lr: 0.001000, 2.85s
+2023-01-06 14:25:50,697 - INFO - epoch complete!
+2023-01-06 14:25:50,698 - INFO - evaluating now!
+2023-01-06 14:25:50,871 - INFO - Epoch [61/100] train_loss: 0.1534, val_loss: 0.2406, lr: 0.001000, 2.91s
+2023-01-06 14:25:53,544 - INFO - epoch complete!
+2023-01-06 14:25:53,544 - INFO - evaluating now!
+2023-01-06 14:25:53,717 - INFO - Epoch [62/100] train_loss: 0.1477, val_loss: 0.2456, lr: 0.001000, 2.85s
+2023-01-06 14:25:56,423 - INFO - epoch complete!
+2023-01-06 14:25:56,424 - INFO - evaluating now!
+2023-01-06 14:25:56,591 - INFO - Epoch [63/100] train_loss: 0.1526, val_loss: 0.2219, lr: 0.001000, 2.87s
+2023-01-06 14:25:59,313 - INFO - epoch complete!
+2023-01-06 14:25:59,313 - INFO - evaluating now!
+2023-01-06 14:25:59,482 - INFO - Epoch [64/100] train_loss: 0.1377, val_loss: 0.2292, lr: 0.001000, 2.89s
+2023-01-06 14:26:02,175 - INFO - epoch complete!
+2023-01-06 14:26:02,176 - INFO - evaluating now!
+2023-01-06 14:26:02,345 - INFO - Epoch [65/100] train_loss: 0.1432, val_loss: 0.2258, lr: 0.001000, 2.86s
+2023-01-06 14:26:05,032 - INFO - epoch complete!
+2023-01-06 14:26:05,032 - INFO - evaluating now!
+2023-01-06 14:26:05,200 - INFO - Epoch [66/100] train_loss: 0.1342, val_loss: 0.2140, lr: 0.001000, 2.86s
+2023-01-06 14:26:07,901 - INFO - epoch complete!
+2023-01-06 14:26:07,902 - INFO - evaluating now!
+2023-01-06 14:26:08,069 - INFO - Epoch [67/100] train_loss: 0.1353, val_loss: 0.2106, lr: 0.001000, 2.87s
+2023-01-06 14:26:10,763 - INFO - epoch complete!
+2023-01-06 14:26:10,763 - INFO - evaluating now!
+2023-01-06 14:26:10,936 - INFO - Epoch [68/100] train_loss: 0.1394, val_loss: 0.2097, lr: 0.001000, 2.87s
+2023-01-06 14:26:13,593 - INFO - epoch complete!
+2023-01-06 14:26:13,594 - INFO - evaluating now!
+2023-01-06 14:26:13,763 - INFO - Epoch [69/100] train_loss: 0.1278, val_loss: 0.2179, lr: 0.001000, 2.83s
+2023-01-06 14:26:16,582 - INFO - epoch complete!
+2023-01-06 14:26:16,582 - INFO - evaluating now!
+2023-01-06 14:26:16,751 - INFO - Epoch [70/100] train_loss: 0.1332, val_loss: 0.2116, lr: 0.001000, 2.99s
+2023-01-06 14:26:19,453 - INFO - epoch complete!
+2023-01-06 14:26:19,454 - INFO - evaluating now!
+2023-01-06 14:26:19,625 - INFO - Epoch [71/100] train_loss: 0.1255, val_loss: 0.2308, lr: 0.001000, 2.87s
+2023-01-06 14:26:22,326 - INFO - epoch complete!
+2023-01-06 14:26:22,327 - INFO - evaluating now!
+2023-01-06 14:26:22,500 - INFO - Epoch [72/100] train_loss: 0.1278, val_loss: 0.2299, lr: 0.001000, 2.87s
+2023-01-06 14:26:25,216 - INFO - epoch complete!
+2023-01-06 14:26:25,217 - INFO - evaluating now!
+2023-01-06 14:26:25,384 - INFO - Epoch [73/100] train_loss: 0.1356, val_loss: 0.2447, lr: 0.001000, 2.88s
+2023-01-06 14:26:28,050 - INFO - epoch complete!
+2023-01-06 14:26:28,051 - INFO - evaluating now!
+2023-01-06 14:26:28,218 - INFO - Epoch [74/100] train_loss: 0.1291, val_loss: 0.2287, lr: 0.001000, 2.83s
+2023-01-06 14:26:30,930 - INFO - epoch complete!
+2023-01-06 14:26:30,931 - INFO - evaluating now!
+2023-01-06 14:26:31,103 - INFO - Epoch [75/100] train_loss: 0.1318, val_loss: 0.2242, lr: 0.001000, 2.88s
+2023-01-06 14:26:33,771 - INFO - epoch complete!
+2023-01-06 14:26:33,771 - INFO - evaluating now!
+2023-01-06 14:26:33,943 - INFO - Epoch [76/100] train_loss: 0.1381, val_loss: 0.2141, lr: 0.001000, 2.84s
+2023-01-06 14:26:36,629 - INFO - epoch complete!
+2023-01-06 14:26:36,630 - INFO - evaluating now!
+2023-01-06 14:26:36,800 - INFO - Epoch [77/100] train_loss: 0.1350, val_loss: 0.2162, lr: 0.001000, 2.86s
+2023-01-06 14:26:39,485 - INFO - epoch complete!
+2023-01-06 14:26:39,486 - INFO - evaluating now!
+2023-01-06 14:26:39,655 - INFO - Epoch [78/100] train_loss: 0.1299, val_loss: 0.2206, lr: 0.001000, 2.86s
+2023-01-06 14:26:42,467 - INFO - epoch complete!
+2023-01-06 14:26:42,468 - INFO - evaluating now!
+2023-01-06 14:26:42,657 - INFO - Epoch [79/100] train_loss: 0.1283, val_loss: 0.2297, lr: 0.001000, 3.00s
+2023-01-06 14:26:45,405 - INFO - epoch complete!
+2023-01-06 14:26:45,406 - INFO - evaluating now!
+2023-01-06 14:26:45,581 - INFO - Epoch [80/100] train_loss: 0.1234, val_loss: 0.2469, lr: 0.001000, 2.92s
+2023-01-06 14:26:48,275 - INFO - epoch complete!
+2023-01-06 14:26:48,276 - INFO - evaluating now!
+2023-01-06 14:26:48,448 - INFO - Epoch [81/100] train_loss: 0.1278, val_loss: 0.2564, lr: 0.001000, 2.87s
+2023-01-06 14:26:51,273 - INFO - epoch complete!
+2023-01-06 14:26:51,274 - INFO - evaluating now!
+2023-01-06 14:26:51,440 - INFO - Epoch [82/100] train_loss: 0.1209, val_loss: 0.3086, lr: 0.001000, 2.99s
+2023-01-06 14:26:54,154 - INFO - epoch complete!
+2023-01-06 14:26:54,154 - INFO - evaluating now!
+2023-01-06 14:26:54,321 - INFO - Epoch [83/100] train_loss: 0.1236, val_loss: 0.2898, lr: 0.001000, 2.88s
+2023-01-06 14:26:57,015 - INFO - epoch complete!
+2023-01-06 14:26:57,015 - INFO - evaluating now!
+2023-01-06 14:26:57,190 - INFO - Epoch [84/100] train_loss: 0.1178, val_loss: 0.3048, lr: 0.001000, 2.87s
+2023-01-06 14:26:59,899 - INFO - epoch complete!
+2023-01-06 14:26:59,900 - INFO - evaluating now!
+2023-01-06 14:27:00,069 - INFO - Epoch [85/100] train_loss: 0.1159, val_loss: 0.3054, lr: 0.001000, 2.88s
+2023-01-06 14:27:02,779 - INFO - epoch complete!
+2023-01-06 14:27:02,779 - INFO - evaluating now!
+2023-01-06 14:27:02,948 - INFO - Epoch [86/100] train_loss: 0.1318, val_loss: 0.3106, lr: 0.001000, 2.88s
+2023-01-06 14:27:05,659 - INFO - epoch complete!
+2023-01-06 14:27:05,659 - INFO - evaluating now!
+2023-01-06 14:27:05,827 - INFO - Epoch [87/100] train_loss: 0.1266, val_loss: 0.2572, lr: 0.001000, 2.88s
+2023-01-06 14:27:08,549 - INFO - epoch complete!
+2023-01-06 14:27:08,550 - INFO - evaluating now!
+2023-01-06 14:27:08,718 - INFO - Epoch [88/100] train_loss: 0.1340, val_loss: 0.2440, lr: 0.001000, 2.89s
+2023-01-06 14:27:11,366 - INFO - epoch complete!
+2023-01-06 14:27:11,367 - INFO - evaluating now!
+2023-01-06 14:27:11,542 - INFO - Epoch [89/100] train_loss: 0.1212, val_loss: 0.2297, lr: 0.001000, 2.82s
+2023-01-06 14:27:14,138 - INFO - epoch complete!
+2023-01-06 14:27:14,138 - INFO - evaluating now!
+2023-01-06 14:27:14,310 - INFO - Epoch [90/100] train_loss: 0.1135, val_loss: 0.2326, lr: 0.001000, 2.77s
+2023-01-06 14:27:16,939 - INFO - epoch complete!
+2023-01-06 14:27:16,939 - INFO - evaluating now!
+2023-01-06 14:27:17,114 - INFO - Epoch [91/100] train_loss: 0.1133, val_loss: 0.2244, lr: 0.001000, 2.80s
+2023-01-06 14:27:19,840 - INFO - epoch complete!
+2023-01-06 14:27:19,841 - INFO - evaluating now!
+2023-01-06 14:27:20,010 - INFO - Epoch [92/100] train_loss: 0.1003, val_loss: 0.2208, lr: 0.001000, 2.90s
+2023-01-06 14:27:22,690 - INFO - epoch complete!
+2023-01-06 14:27:22,691 - INFO - evaluating now!
+2023-01-06 14:27:22,857 - INFO - Epoch [93/100] train_loss: 0.0942, val_loss: 0.2274, lr: 0.001000, 2.85s
+2023-01-06 14:27:25,550 - INFO - epoch complete!
+2023-01-06 14:27:25,551 - INFO - evaluating now!
+2023-01-06 14:27:25,719 - INFO - Epoch [94/100] train_loss: 0.0946, val_loss: 0.2283, lr: 0.001000, 2.86s
+2023-01-06 14:27:28,549 - INFO - epoch complete!
+2023-01-06 14:27:28,550 - INFO - evaluating now!
+2023-01-06 14:27:28,716 - INFO - Epoch [95/100] train_loss: 0.0910, val_loss: 0.2278, lr: 0.001000, 3.00s
+2023-01-06 14:27:31,449 - INFO - epoch complete!
+2023-01-06 14:27:31,449 - INFO - evaluating now!
+2023-01-06 14:27:31,616 - INFO - Epoch [96/100] train_loss: 0.0993, val_loss: 0.2249, lr: 0.001000, 2.90s
+2023-01-06 14:27:34,335 - INFO - epoch complete!
+2023-01-06 14:27:34,336 - INFO - evaluating now!
+2023-01-06 14:27:34,501 - INFO - Epoch [97/100] train_loss: 0.0988, val_loss: 0.2262, lr: 0.001000, 2.88s
+2023-01-06 14:27:37,229 - INFO - epoch complete!
+2023-01-06 14:27:37,230 - INFO - evaluating now!
+2023-01-06 14:27:37,400 - INFO - Epoch [98/100] train_loss: 0.1025, val_loss: 0.2319, lr: 0.001000, 2.90s
+2023-01-06 14:27:40,066 - INFO - epoch complete!
+2023-01-06 14:27:40,067 - INFO - evaluating now!
+2023-01-06 14:27:40,235 - INFO - Epoch [99/100] train_loss: 0.1055, val_loss: 0.2396, lr: 0.001000, 2.83s
+2023-01-06 14:27:40,235 - INFO - Trained totally 100 epochs, average train time is 2.684s, average eval time is 0.169s
+2023-01-06 14:27:40,246 - INFO - Loaded model at 14
+2023-01-06 14:27:40,246 - INFO - Saved model at ./libcity/cache/93216/model_cache/DeepTTE_Beijing_Taxi_Sample_new_longer30.m
+2023-01-06 14:27:40,255 - INFO - Start evaluating ...
+2023-01-06 14:27:40,883 - INFO - Evaluate result is saved at ./libcity/cache/93216/evaluate_cache/2023_01_06_14_27_40_DeepTTE_Beijing_Taxi_Sample_new_longer30.csv
+2023-01-06 14:27:40,894 - INFO - 
+          MAE      MAPE           MSE        RMSE  masked_MAE  masked_MAPE    masked_MSE  masked_RMSE       R2      EVAR
+1  495.294464  0.216082  474867.65625  689.106445  495.294464     0.216082  474867.65625   689.106445  0.59403  0.671792
